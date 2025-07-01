@@ -347,6 +347,7 @@ require('lazy').setup({
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>g', group = '[G]it' },
       },
     },
   },
@@ -885,6 +886,54 @@ require('lazy').setup({
     end,
   },
 
+  { -- Lazygit integration
+    'kdheepak/lazygit.nvim',
+    lazy = true,
+    cmd = {
+      'LazyGit',
+      'LazyGitConfig',
+      'LazyGitCurrentFile',
+      'LazyGitFilter',
+      'LazyGitFilterCurrentFile',
+    },
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+    },
+    config = function()
+      -- Configure floating window
+      vim.g.lazygit_floating_window_scaling_factor = 0.9
+      vim.g.lazygit_floating_window_winblend = 0
+      vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }
+      vim.g.lazygit_use_neovim_remote = 1
+    end,
+    keys = {
+      { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'Open Lazygit' },
+      { '<leader>gf', '<cmd>LazyGitCurrentFile<cr>', desc = 'Lazygit current file' },
+      { '<leader>gc', '<cmd>LazyGitFilterCurrentFile<cr>', desc = 'Lazygit commits for current file' },
+      {
+        '<leader>gb',
+        function()
+          require('gitsigns').blame_line { full = true }
+        end,
+        desc = 'Git blame line',
+      },
+      {
+        '<leader>gd',
+        function()
+          require('gitsigns').diffthis()
+        end,
+        desc = 'Git diff current file',
+      },
+      {
+        '<leader>gD',
+        function()
+          require('gitsigns').diffthis '~'
+        end,
+        desc = 'Git diff against HEAD',
+      },
+    },
+  },
+
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -965,7 +1014,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
