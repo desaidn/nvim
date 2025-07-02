@@ -292,6 +292,12 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      current_line_blame_opts = {
+        virt_text = true,
+        virt_text_pos = 'eol', -- end of line
+        delay = 200, -- slight delay before showing
+        ignore_whitespace = false,
+      },
     },
   },
 
@@ -895,6 +901,9 @@ require('lazy').setup({
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
       vim.cmd.colorscheme 'dark-plus'
+
+      -- Load git blame styling
+      dofile(vim.fn.stdpath 'config' .. '/colors/gitsigns-blame.lua')
     end,
   },
 

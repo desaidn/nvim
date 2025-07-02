@@ -63,6 +63,8 @@ Two git systems are integrated:
 - **gitsigns**: In-editor git signs and hunk operations (`<leader>h*`)
 - **lazygit**: Full-featured git GUI (`<leader>gg`)
 
+Git blame line styling is configured with enhanced visibility via a separate colors file (`colors/gitsigns-blame.lua`) that is independent of the main colorscheme. The blame text appears at the end of lines with improved contrast while maintaining a subtle background appearance.
+
 ### Customization Points
 - `lua/custom/plugins/init.lua` - Add new plugins without modifying core files
 - Uncomment kickstart plugins in init.lua (lines 1012-1016) to enable additional features
