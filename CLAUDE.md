@@ -66,11 +66,13 @@ Two git systems are integrated:
 Git blame line styling is configured with enhanced visibility via a separate colors file (`colors/gitsigns-blame.lua`) that is independent of the main colorscheme. The blame text appears at the end of lines with improved contrast while maintaining a subtle background appearance.
 
 ### File Explorer
-Neo-tree file explorer is enabled with right-side positioning:
+Neo-tree file explorer is enabled with right-side positioning and minimal styling:
 - `\` - Toggle neo-tree (reveals current file location)
 - Supports multiple sources: filesystem, buffers, git status
 - Key mappings: `?` for help, `a` to add files, `d` to delete, `r` to rename
 - Switch sources with `<Tab>` (filesystem → buffers → git_status)
+- Configured without icons for clean, text-based interface
+- Git status colors match the main colorscheme (+, ~, -, etc.)
 
 ### Customization Points
 - `lua/custom/plugins/init.lua` - Add new plugins without modifying core files

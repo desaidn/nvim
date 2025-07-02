@@ -18,6 +18,27 @@ return {
       position = "right",
       width = 30,
     },
+    default_component_configs = {
+      icon = {
+        folder_closed = "",
+        folder_open = "",
+        folder_empty = "",
+        default = "",
+      },
+      git_status = {
+        symbols = {
+          added = "+",
+          modified = "~",
+          deleted = "-",
+          renamed = "r",
+          untracked = "?",
+          ignored = "!",
+          unstaged = "u",
+          staged = "s",
+          conflict = "c",
+        }
+      }
+    },
     filesystem = {
       window = {
         mappings = {

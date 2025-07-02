@@ -904,6 +904,9 @@ require('lazy').setup({
 
       -- Load git blame styling
       dofile(vim.fn.stdpath 'config' .. '/colors/gitsigns-blame.lua')
+
+      -- Load neo-tree styling
+      dofile(vim.fn.stdpath 'config' .. '/colors/neo-tree.lua')
     end,
   },
 
