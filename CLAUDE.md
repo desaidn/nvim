@@ -30,9 +30,10 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 ### Key Bindings Structure
 - Leader key: `<Space>`
 - Search operations: `<leader>s*` (files, grep, help, etc.)
+- Terminal operations: `<leader>t*` (horizontal, small, fullscreen)
+- Toggle options: `<leader>T*` (inlay hints, blame line)
 - Git operations: `<leader>g*` (lazygit, blame, diff)
 - Git hunks: `<leader>h*` (stage, reset, preview)
-- Toggle options: `<leader>t*` (inlay hints, blame line)
 - LSP operations: `gr*` prefix (rename, references, definitions)
 
 ## Development Workflows
@@ -48,6 +49,14 @@ Currently configured for Lua development with lua_ls. To add other languages:
 1. Add server to `servers` table in init.lua (around line 674)
 2. Add formatters to `formatters_by_ft` in conform.nvim config (around line 770)
 3. Run `:Mason` to install required tools
+
+### Terminal Integration
+Built-in terminal functionality with convenient keymaps:
+- `<leader>th` - Horizontal terminal split (50% height)
+- `<leader>ts` - Small horizontal terminal split (10 lines)
+- `<leader>tf` - Fullscreen terminal
+- `<C-h/j/k/l>` in terminal mode - Navigate between windows
+- `<Esc><Esc>` - Exit terminal mode
 
 ### Git Integration
 Two git systems are integrated:
