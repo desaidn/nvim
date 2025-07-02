@@ -93,3 +93,18 @@ This configuration prioritizes:
 - Single-file simplicity while allowing modular growth  
 - Sane defaults with easy customization points
 - Learning-friendly structure with extensive comments
+
+## Coding Guidelines
+
+### Comments
+Only add comments when genuinely clarifying or documenting key behavior. Aim to write clear and readable code that is self-explanatory through:
+- Descriptive variable and function names
+- Logical code structure and organization
+- Small, focused functions with clear purposes
+
+Avoid redundant comments that simply restate what the code does. Reserve comments for:
+- Complex algorithms or business logic
+- Non-obvious configuration choices
+- Important architectural decisions
+- External API or plugin-specific requirements
+

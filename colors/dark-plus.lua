@@ -7,6 +7,8 @@ end
 -- Set colorscheme name
 vim.g.colors_name = 'dark-plus'
 
+local hl = require('utils').hl
+
 -- Color palette
 local colors = {
   -- Syntax colors
@@ -33,11 +35,6 @@ local colors = {
   border = '#6B6B6B',
   activity_badge = '#007ACC',
 }
-
--- Helper function to set highlights
-local function hl(group, opts)
-  vim.api.nvim_set_hl(0, group, opts)
-end
 
 -- Base editor colors
 hl('Normal', { fg = colors.fg, bg = colors.bg })
@@ -311,4 +308,3 @@ hl('TelescopePreviewTitle', { fg = colors.func, bg = colors.menu_bg, bold = true
 hl('TelescopeResultsTitle', { fg = colors.func, bg = colors.menu_bg, bold = true })
 hl('TelescopeSelection', { fg = colors.fg, bg = colors.inactive_selection })
 hl('TelescopeMatching', { fg = colors.activity_badge, bold = true })
-
