@@ -4,8 +4,8 @@ hl('NeoTreeNormal', { fg = '#D4D4D4', bg = '#252526' })
 hl('NeoTreeNormalNC', { fg = '#D4D4D4', bg = '#252526' })
 hl('NeoTreeWinSeparator', { fg = '#6B6B6B', bg = '#252526' })
 
-hl('NeoTreeDirectoryName', { fg = '#D4D4D4' })
-hl('NeoTreeDirectoryIcon', { fg = '#D4D4D4' })
+hl('NeoTreeDirectoryName', { fg = '#DCDCAA' })
+hl('NeoTreeDirectoryIcon', { fg = '#DCDCAA' })
 hl('NeoTreeFileName', { fg = '#CCCCCC' })
 
 hl('NeoTreeGitAdded', { fg = '#4EC9B0' })
