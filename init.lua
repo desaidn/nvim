@@ -124,6 +124,19 @@ vim.o.breakindent = true
 -- Save undo history
 vim.o.undofile = true
 
+-- Auto-reload buffers when files change on disk
+vim.o.autoread = true
+
+-- Enhanced autoread: trigger on focus, buffer enter, and cursor hold
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI' }, {
+  pattern = '*',
+  callback = function()
+    if vim.fn.mode() ~= 'c' then
+      vim.cmd('checktime')
+    end
+  end,
+})
+
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.o.ignorecase = true
 vim.o.smartcase = true
