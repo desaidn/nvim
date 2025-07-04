@@ -250,6 +250,15 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Make terminal buffers modifiable to allow text editing
+vim.api.nvim_create_autocmd('TermOpen', {
+  desc = 'Make terminal buffers modifiable',
+  group = vim.api.nvim_create_augroup('terminal-modifiable', { clear = true }),
+  callback = function()
+    vim.bo.modifiable = true
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
