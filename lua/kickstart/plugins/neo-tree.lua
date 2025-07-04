@@ -11,7 +11,7 @@ return {
   },
   lazy = false,
   keys = {
-    { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '\\', ':Neotree toggle<CR>', desc = 'NeoTree toggle', silent = true },
   },
   opts = {
     window = {
@@ -20,9 +20,9 @@ return {
     },
     default_component_configs = {
       icon = {
-        folder_closed = "",
-        folder_open = "",
-        folder_empty = "",
+        folder_closed = "[+]",
+        folder_open = "[-]",
+        folder_empty = "[.]",
         default = "",
       },
       git_status = {
@@ -46,7 +46,6 @@ return {
       },
       window = {
         mappings = {
-          ['\\'] = 'close_window',
         },
       },
     },
