@@ -5,9 +5,34 @@ return {
     event = { 'BufReadPre', 'BufNewFile' },
     config = function()
       local lint = require 'lint'
+
+      -- Function to find available ESLint executable
+      local function find_eslint()
+        -- Check for local project ESLint first
+        if vim.fn.executable './node_modules/.bin/eslint' == 1 then
+          return './node_modules/.bin/eslint'
+        end
+        -- Check for global ESLint from Mason
+        if vim.fn.executable 'eslint' == 1 then
+          return 'eslint'
+        end
+        return nil
+      end
+
+      -- Base linter configuration
       lint.linters_by_ft = {
         markdown = { 'markdownlint' },
       }
+
+      -- Only add ESLint if it's available
+      local eslint_cmd = find_eslint()
+      if eslint_cmd then
+        lint.linters.eslint.cmd = eslint_cmd
+        lint.linters_by_ft.javascript = { 'eslint' }
+        lint.linters_by_ft.javascriptreact = { 'eslint' }
+        lint.linters_by_ft.typescript = { 'eslint' }
+        lint.linters_by_ft.typescriptreact = { 'eslint' }
+      end
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
       -- instead set linters_by_ft like this:

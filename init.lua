@@ -128,6 +128,13 @@ end)
 -- Enable break indent
 vim.o.breakindent = true
 
+-- Default indentation settings
+vim.o.tabstop = 2 -- Number of spaces that a tab counts for
+vim.o.shiftwidth = 2 -- Number of spaces for each indentation level
+vim.o.expandtab = true -- Convert tabs to spaces
+vim.o.softtabstop = 2 -- Number of spaces for tab in insert mode
+vim.o.smartindent = true -- Smart indentation for new lines
+
 -- Save undo history
 vim.o.undofile = true
 
@@ -139,7 +146,7 @@ vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHo
   pattern = '*',
   callback = function()
     if vim.fn.mode() ~= 'c' then
-      vim.cmd('checktime')
+      vim.cmd 'checktime'
     end
   end,
 })
@@ -287,7 +294,7 @@ rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'NMAC427/guess-indent.nvim', -- Detect tabstop and shiftwidth automatically
+  { 'NMAC427/guess-indent.nvim', opts = {} }, -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -729,8 +736,21 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
-        --
+        ts_ls = {
+          settings = {
+            typescript = {
+              -- Support for Bun runtime
+              preferences = {
+                includePackageJsonAutoImports = 'auto',
+              },
+            },
+            javascript = {
+              preferences = {
+                includePackageJsonAutoImports = 'auto',
+              },
+            },
+          },
+        },
 
         lua_ls = {
           -- cmd = { ... },
@@ -764,6 +784,11 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        -- JavaScript/TypeScript tools
+        'prettier', -- Code formatter
+        'prettierd', -- Faster prettier daemon
+        'eslint', -- ESLint for linting (better flat config support)
+        'typescript-language-server', -- TypeScript LSP server
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -816,11 +841,19 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        -- JavaScript/TypeScript formatting with Prettier
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        jsonc = { 'prettierd', 'prettier', stop_after_first = true },
+        css = { 'prettierd', 'prettier', stop_after_first = true },
+        scss = { 'prettierd', 'prettier', stop_after_first = true },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
+        markdown = { 'prettierd', 'prettier', stop_after_first = true },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
       },
     },
   },
@@ -1064,7 +1097,7 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
