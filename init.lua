@@ -332,6 +332,7 @@ require('lazy').setup({
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
+      current_line_blame = true, -- Enable inline blame by default
       current_line_blame_opts = {
         virt_text = true,
         virt_text_pos = 'eol', -- end of line
@@ -689,7 +690,13 @@ require('lazy').setup({
       -- See :help vim.diagnostic.Opts
       vim.diagnostic.config {
         severity_sort = true,
-        float = { border = 'rounded', source = 'if_many' },
+        float = {
+          border = 'rounded',
+          source = 'if_many',
+          wrap = true,
+          max_width = 80,
+          max_height = 20,
+        },
         underline = { severity = vim.diagnostic.severity.ERROR },
         signs = vim.g.have_nerd_font and {
           text = {
