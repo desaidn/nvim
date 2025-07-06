@@ -117,3 +117,7 @@ Avoid redundant comments that simply restate what the code does. Reserve comment
 - Important architectural decisions
 - External API or plugin-specific requirements
 
+## Memory
+
+### Configuration Verification
+- Always verify that there's only one way to do something in the configuration
