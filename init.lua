@@ -268,7 +268,7 @@ local function open_claude_terminal()
   vim.wo.number = false
   vim.wo.relativenumber = false
   vim.wo.signcolumn = 'no'
-  
+
   -- Set fixed width for claude terminal and prevent resizing
   vim.cmd 'vertical resize 80'
   vim.wo.winfixwidth = true
@@ -290,7 +290,7 @@ local function open_claude_attach()
   vim.wo.number = false
   vim.wo.relativenumber = false
   vim.wo.signcolumn = 'no'
-  
+
   -- Set fixed width for claude terminal and prevent resizing
   vim.cmd 'vertical resize 80'
   vim.wo.winfixwidth = true
@@ -990,7 +990,7 @@ require('lazy').setup({
         -- <c-k>: Toggle signature help
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
-        preset = 'default',
+        preset = 'enter',
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -1000,12 +1000,61 @@ require('lazy').setup({
         -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
         -- Adjusts spacing to ensure icons are aligned
         nerd_font_variant = 'mono',
+        -- Disable all icons
+        use_nvim_cmp_as_default = false,
+        kind_icons = {},
       },
 
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = { auto_show = true, auto_show_delay_ms = 200 },
+
+        -- Customize completion menu appearance
+        menu = {
+          draw = {
+            -- Disable icons by showing only text
+            columns = {
+              { 'label', 'label_description', gap = 1 },
+              { 'kind' },
+            },
+            components = {
+              kind = {
+                -- Override kind component to show text only (no icons)
+                text = function(ctx)
+                  local kind_names = {
+                    Text = 'Text',
+                    Method = 'Method',
+                    Function = 'Function',
+                    Constructor = 'Constructor',
+                    Field = 'Field',
+                    Variable = 'Variable',
+                    Class = 'Class',
+                    Interface = 'Interface',
+                    Module = 'Module',
+                    Property = 'Property',
+                    Unit = 'Unit',
+                    Value = 'Value',
+                    Enum = 'Enum',
+                    Keyword = 'Keyword',
+                    Snippet = 'Snippet',
+                    Color = 'Color',
+                    File = 'File',
+                    Reference = 'Reference',
+                    Folder = 'Folder',
+                    EnumMember = 'EnumMember',
+                    Constant = 'Constant',
+                    Struct = 'Struct',
+                    Event = 'Event',
+                    Operator = 'Operator',
+                    TypeParameter = 'TypeParameter',
+                  }
+                  return kind_names[ctx.kind] or ctx.kind
+                end,
+              },
+            },
+          },
+        },
       },
 
       sources = {
