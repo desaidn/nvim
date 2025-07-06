@@ -20,9 +20,12 @@ return {
       end
 
       -- Base linter configuration
-      lint.linters_by_ft = {
-        markdown = { 'markdownlint' },
-      }
+      lint.linters_by_ft = {}
+
+      -- Only add markdownlint if it's available
+      if vim.fn.executable 'markdownlint' == 1 then
+        lint.linters_by_ft.markdown = { 'markdownlint' }
+      end
 
       -- Only add ESLint if it's available
       local eslint_cmd = find_eslint()
