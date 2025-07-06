@@ -108,6 +108,21 @@ vim.o.number = true
 --  Experiment for yourself to see if you like it!
 vim.o.relativenumber = true
 
+-- Auto-toggle relative numbers based on mode
+vim.api.nvim_create_augroup('relative-numbers', { clear = true })
+vim.api.nvim_create_autocmd({ 'InsertEnter', 'CmdlineEnter' }, {
+  group = 'relative-numbers',
+  callback = function()
+    vim.wo.relativenumber = false
+  end,
+})
+vim.api.nvim_create_autocmd({ 'InsertLeave', 'CmdlineLeave' }, {
+  group = 'relative-numbers',
+  callback = function()
+    vim.wo.relativenumber = true
+  end,
+})
+
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
 
