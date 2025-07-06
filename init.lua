@@ -252,6 +252,53 @@ vim.keymap.set('n', '<leader>th', '<cmd>split | terminal<CR>', { desc = '[T]ermi
 vim.keymap.set('n', '<leader>ts', '<cmd>10split | terminal<CR>', { desc = '[T]erminal [s]mall split' })
 vim.keymap.set('n', '<leader>tf', '<cmd>terminal<CR>', { desc = '[T]erminal [f]ullscreen' })
 
+-- Claude terminal function
+local function open_claude_terminal()
+  -- Check if claude is available in PATH
+  if vim.fn.executable 'claude' == 0 then
+    vim.notify('Claude executable not found in PATH', vim.log.levels.ERROR)
+    return
+  end
+
+  -- Open left vertical split with claude (80 columns - comfortable for reading/writing)
+  vim.cmd 'leftabove 80vsplit'
+  vim.cmd 'terminal claude'
+
+  -- Optional: Set terminal-specific settings for better chat experience
+  vim.wo.number = false
+  vim.wo.relativenumber = false
+  vim.wo.signcolumn = 'no'
+  
+  -- Set fixed width for claude terminal and prevent resizing
+  vim.cmd 'vertical resize 80'
+  vim.wo.winfixwidth = true
+end
+
+-- Claude attach function
+local function open_claude_attach()
+  -- Check if claude is available in PATH
+  if vim.fn.executable 'claude' == 0 then
+    vim.notify('Claude executable not found in PATH', vim.log.levels.ERROR)
+    return
+  end
+
+  -- Open left vertical split with claude --continue
+  vim.cmd 'leftabove 80vsplit'
+  vim.cmd 'terminal claude --continue'
+
+  -- Optional: Set terminal-specific settings for better chat experience
+  vim.wo.number = false
+  vim.wo.relativenumber = false
+  vim.wo.signcolumn = 'no'
+  
+  -- Set fixed width for claude terminal and prevent resizing
+  vim.cmd 'vertical resize 80'
+  vim.wo.winfixwidth = true
+end
+
+vim.keymap.set('n', '<leader>cc', open_claude_terminal, { desc = '[C]laude [c]hat sidebar' })
+vim.keymap.set('n', '<leader>ca', open_claude_attach, { desc = '[C]laude [a]ttach to previous session' })
+
 -- Half-page navigation with centered cursor
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half-page down and center cursor' })
 vim.keymap.set('n', '<C-z>', '<C-u>zz', { desc = 'Half-page up and center cursor' })
