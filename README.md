@@ -59,7 +59,7 @@ nvim
 
 ### File Explorer
 
-- `\` - Toggle neo-tree (right-side)
+- `<leader>e` - Toggle neo-tree (right-side)
 
 ### LSP
 
