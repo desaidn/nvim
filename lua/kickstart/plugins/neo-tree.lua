@@ -16,7 +16,9 @@ return {
   opts = {
     window = {
       position = 'right',
-      width = 40,
+      width = function()
+        return math.floor(vim.o.columns * 0.25)
+      end,
     },
     default_component_configs = {
       icon = {
@@ -40,6 +42,7 @@ return {
       },
     },
     filesystem = {
+      hijack_netrw_behavior = "disabled",
       filtered_items = {
         hide_dotfiles = false,
         hide_hidden = false,

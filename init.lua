@@ -248,8 +248,14 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Terminal keymaps
-vim.keymap.set('n', '<leader>th', '<cmd>split | terminal<CR>', { desc = '[T]erminal [h]orizontal split' })
-vim.keymap.set('n', '<leader>ts', '<cmd>10split | terminal<CR>', { desc = '[T]erminal [s]mall split' })
+vim.keymap.set('n', '<leader>th', function()
+  local height = math.floor(vim.o.lines * 0.3)
+  vim.cmd(height .. 'split | terminal')
+end, { desc = '[T]erminal [h]orizontal split (30%)' })
+vim.keymap.set('n', '<leader>ts', function()
+  local height = math.floor(vim.o.lines * 0.15)
+  vim.cmd(height .. 'split | terminal')
+end, { desc = '[T]erminal [s]mall split (15%)' })
 vim.keymap.set('n', '<leader>tf', '<cmd>terminal<CR>', { desc = '[T]erminal [f]ullscreen' })
 
 -- Claude terminal function
@@ -260,17 +266,20 @@ local function open_claude_terminal()
     return
   end
 
-  -- Open left vertical split with claude (80 columns - comfortable for reading/writing)
-  vim.cmd 'leftabove 80vsplit'
+  -- Calculate 40% of screen width for claude panel
+  local width = math.floor(vim.o.columns * 0.4)
+  
+  -- Open left vertical split with claude
+  vim.cmd('leftabove ' .. width .. 'vsplit')
   vim.cmd 'terminal claude'
 
-  -- Optional: Set terminal-specific settings for better chat experience
+  -- Set terminal-specific settings for better chat experience
   vim.wo.number = false
   vim.wo.relativenumber = false
   vim.wo.signcolumn = 'no'
 
-  -- Set fixed width for claude terminal and prevent resizing
-  vim.cmd 'vertical resize 80'
+  -- Set fixed width and prevent resizing
+  vim.cmd('vertical resize ' .. width)
   vim.wo.winfixwidth = true
 end
 
