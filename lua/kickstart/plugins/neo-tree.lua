@@ -6,7 +6,6 @@ return {
   version = '*',
   dependencies = {
     'nvim-lua/plenary.nvim',
-    'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
     'MunifTanjim/nui.nvim',
   },
   lazy = false,
@@ -34,7 +33,7 @@ return {
           deleted = '-',
           renamed = 'r',
           untracked = '?',
-          ignored = '!',
+          ignored = '',
           unstaged = 'u',
           staged = 's',
           conflict = 'c',
