@@ -216,9 +216,9 @@ vim.o.confirm = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { desc = 'Open [D]iagnostic [Q]uickfix list' })
 vim.keymap.set('n', '<leader>Td', function()
-  vim.diagnostic.enable(not vim.diagnostic.is_enabled({ bufnr = 0 }))
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled { bufnr = 0 })
 end, { desc = '[T]oggle [D]iagnostics for current buffer' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
@@ -254,12 +254,12 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', '<leader>th', function()
   local height = math.floor(vim.o.lines * 0.3)
   vim.cmd(height .. 'split | terminal')
-end, { desc = '[T]erminal [h]orizontal split (30%)' })
+end, { desc = '[T]erminal [H]orizontal split (30%)' })
 vim.keymap.set('n', '<leader>ts', function()
   local height = math.floor(vim.o.lines * 0.15)
   vim.cmd(height .. 'split | terminal')
-end, { desc = '[T]erminal [s]mall split (15%)' })
-vim.keymap.set('n', '<leader>tf', '<cmd>terminal<CR>', { desc = '[T]erminal [f]ullscreen' })
+end, { desc = '[T]erminal [S]mall split (15%)' })
+vim.keymap.set('n', '<leader>tf', '<cmd>terminal<CR>', { desc = '[T]erminal [F]ullscreen' })
 
 -- Claude terminal function
 local function open_claude_terminal()
@@ -271,7 +271,7 @@ local function open_claude_terminal()
 
   -- Calculate 40% of screen width for claude panel
   local width = math.floor(vim.o.columns * 0.4)
-  
+
   -- Open left vertical split with claude
   vim.cmd('leftabove ' .. width .. 'vsplit')
   vim.cmd 'terminal claude'
@@ -280,6 +280,7 @@ local function open_claude_terminal()
   vim.wo.number = false
   vim.wo.relativenumber = false
   vim.wo.signcolumn = 'no'
+  vim.wo.fillchars = 'vert: ' -- borderless
 
   -- Set fixed width and prevent resizing
   vim.cmd('vertical resize ' .. width)
@@ -294,22 +295,27 @@ local function open_claude_attach()
     return
   end
 
+  -- Calculate 40% of screen width for claude panel
+  local width = math.floor(vim.o.columns * 0.4)
+
   -- Open left vertical split with claude --continue
-  vim.cmd 'leftabove 80vsplit'
+  vim.cmd('leftabove ' .. width .. 'vsplit')
   vim.cmd 'terminal claude --continue'
 
   -- Optional: Set terminal-specific settings for better chat experience
   vim.wo.number = false
   vim.wo.relativenumber = false
   vim.wo.signcolumn = 'no'
+  vim.wo.fillchars = 'vert: '
 
   -- Set fixed width for claude terminal and prevent resizing
-  vim.cmd 'vertical resize 80'
+  vim.cmd('vertical resize ' .. width)
   vim.wo.winfixwidth = true
 end
 
-vim.keymap.set('n', '<leader>cc', open_claude_terminal, { desc = '[C]laude [c]hat sidebar' })
-vim.keymap.set('n', '<leader>ca', open_claude_attach, { desc = '[C]laude [a]ttach to previous session' })
+-- Claude keymaps
+vim.keymap.set('n', '<leader>cc', open_claude_terminal, { desc = '[C]laude [C]hat sidebar' })
+vim.keymap.set('n', '<leader>ca', open_claude_attach, { desc = '[C]laude [A]ttach to previous session' })
 
 -- Half-page navigation with centered cursor
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half-page down and center cursor' })
@@ -482,6 +488,11 @@ require('lazy').setup({
         { '<leader>e', group = '[E]xplorer' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         { '<leader>g', group = '[G]it' },
+        { '<leader>c', group = '[C]laude' },
+        { '<leader>f', group = '[F]ormat' },
+        { '<leader>q', group = '[Q]uickfix' },
+        { '<leader>r', group = '[R]ename/Replace' },
+        { '<leader>d', group = '[D]iagnostics' },
       },
     },
   },
@@ -672,7 +683,7 @@ require('lazy').setup({
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
-          map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
+          map('grn', vim.lsp.buf.rename, '[R]e[N]ame')
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
@@ -696,11 +707,11 @@ require('lazy').setup({
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          map('gO', require('telescope.builtin').lsp_document_symbols, 'Open Document Symbols')
+          map('gO', require('telescope.builtin').lsp_document_symbols, '[O]pen Document Symbols')
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
-          map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Open Workspace Symbols')
+          map('gW', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[O]pen [W]orkspace Symbols')
 
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
@@ -1128,29 +1139,29 @@ require('lazy').setup({
       vim.g.lazygit_use_neovim_remote = 1
     end,
     keys = {
-      { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'Open Lazygit' },
-      { '<leader>gf', '<cmd>LazyGitCurrentFile<cr>', desc = 'Lazygit current file' },
-      { '<leader>gc', '<cmd>LazyGitFilterCurrentFile<cr>', desc = 'Lazygit commits for current file' },
+      { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'Open [G]it GUI' },
+      { '<leader>gf', '<cmd>LazyGitCurrentFile<cr>', desc = 'Git [F]ile history' },
+      { '<leader>gc', '<cmd>LazyGitFilterCurrentFile<cr>', desc = 'Git [C]ommits for current file' },
       {
         '<leader>gb',
         function()
           require('gitsigns').blame_line { full = true }
         end,
-        desc = 'Git blame line',
+        desc = 'Git [B]lame line',
       },
       {
         '<leader>gd',
         function()
           require('gitsigns').diffthis()
         end,
-        desc = 'Git diff current file',
+        desc = 'Git [D]iff current file',
       },
       {
         '<leader>gD',
         function()
           require('gitsigns').diffthis '~'
         end,
-        desc = 'Git diff against HEAD',
+        desc = 'Git [D]iff against HEAD',
       },
     },
   },
