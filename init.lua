@@ -1041,41 +1041,6 @@ require('lazy').setup({
               { 'label', 'label_description', gap = 1 },
               { 'kind' },
             },
-            components = {
-              kind = {
-                -- Override kind component to show text only (no icons)
-                text = function(ctx)
-                  local kind_names = {
-                    Text = 'Text',
-                    Method = 'Method',
-                    Function = 'Function',
-                    Constructor = 'Constructor',
-                    Field = 'Field',
-                    Variable = 'Variable',
-                    Class = 'Class',
-                    Interface = 'Interface',
-                    Module = 'Module',
-                    Property = 'Property',
-                    Unit = 'Unit',
-                    Value = 'Value',
-                    Enum = 'Enum',
-                    Keyword = 'Keyword',
-                    Snippet = 'Snippet',
-                    Color = 'Color',
-                    File = 'File',
-                    Reference = 'Reference',
-                    Folder = 'Folder',
-                    EnumMember = 'EnumMember',
-                    Constant = 'Constant',
-                    Struct = 'Struct',
-                    Event = 'Event',
-                    Operator = 'Operator',
-                    TypeParameter = 'TypeParameter',
-                  }
-                  return kind_names[ctx.kind] or ctx.kind
-                end,
-              },
-            },
           },
         },
       },
