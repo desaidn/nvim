@@ -9,16 +9,19 @@ This is a Neovim configuration based on kickstart.nvim, providing a well-documen
 ## Core Architecture
 
 ### File Structure
+
 - `init.lua` - Main configuration file containing all core settings, keymaps, and plugin configurations
 - `lua/custom/plugins/init.lua` - Entry point for custom plugin additions (currently empty)
 - `lua/kickstart/plugins/` - Optional modular plugins that can be enabled:
   - `gitsigns.lua` - Enhanced git integration with keymaps (currently enabled)
   - `autopairs.lua`, `debug.lua`, `indent_line.lua`, `lint.lua`, `neo-tree.lua` - Available but not enabled
-- `colors/dark-plus.lua` - Custom colorscheme
+- `colors/dark.lua` - Custom colorscheme
 - `lazy-lock.json` - Plugin version lockfile
 
 ### Plugin Management
+
 Uses lazy.nvim as the plugin manager. Core plugins include:
+
 - **LSP**: nvim-lspconfig with Mason for auto-installation
 - **Completion**: blink.cmp with LuaSnip for snippets
 - **Fuzzy Finding**: Telescope with fzf-native
@@ -28,6 +31,7 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 - **UI**: which-key, mini.nvim modules (statusline, surround, text objects)
 
 ### Key Bindings Structure
+
 - Leader key: `<Space>`
 - Search operations: `<leader>s*` (files, grep, help, etc.)
 - Terminal operations: `<leader>t*` (horizontal, small, fullscreen)
@@ -39,19 +43,24 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 ## Development Workflows
 
 ### Plugin Management
+
 - `:Lazy` - View plugin status and manage installations
 - `:Lazy update` - Update all plugins
 - `:Mason` - Manage LSP servers, formatters, and linters
 - `:checkhealth` - Diagnose configuration issues
 
 ### LSP and Language Support
+
 Currently configured for Lua development with lua_ls. To add other languages:
+
 1. Add server to `servers` table in init.lua (around line 674)
 2. Add formatters to `formatters_by_ft` in conform.nvim config (around line 770)
 3. Run `:Mason` to install required tools
 
 ### Terminal Integration
+
 Built-in terminal functionality with convenient keymaps:
+
 - `<leader>th` - Horizontal terminal split (50% height)
 - `<leader>ts` - Small horizontal terminal split (10 lines)
 - `<leader>tf` - Fullscreen terminal
@@ -59,14 +68,18 @@ Built-in terminal functionality with convenient keymaps:
 - `<Esc><Esc>` - Exit terminal mode
 
 ### Git Integration
+
 Two git systems are integrated:
+
 - **gitsigns**: In-editor git signs and hunk operations (`<leader>h*`)
 - **lazygit**: Full-featured git GUI (`<leader>gg`)
 
 Git blame line styling is configured with enhanced visibility via a separate colors file (`colors/gitsigns-blame.lua`) that is independent of the main colorscheme. The blame text appears at the end of lines with improved contrast while maintaining a subtle background appearance.
 
 ### File Explorer
+
 Neo-tree file explorer is enabled with right-side positioning and minimal styling:
+
 - `\` - Toggle neo-tree (reveals current file location)
 - Supports multiple sources: filesystem, buffers, git status
 - Key mappings: `?` for help, `a` to add files, `d` to delete, `r` to rename
@@ -75,12 +88,14 @@ Neo-tree file explorer is enabled with right-side positioning and minimal stylin
 - Git status colors match the main colorscheme (+, ~, -, etc.)
 
 ### Customization Points
+
 - `lua/custom/plugins/init.lua` - Add new plugins without modifying core files
 - Uncomment kickstart plugins in init.lua (lines 1012-1016) to enable additional features
 - Modify `servers` table for LSP configuration
 - Adjust `formatters_by_ft` for language-specific formatting
 
 ### Important Settings
+
 - `vim.g.have_nerd_font = false` - Set to true if using a Nerd Font
 - Leader key is Space (`vim.g.mapleader = ' '`)
 - Auto-formatting on save enabled (can be disabled per filetype)
@@ -89,6 +104,7 @@ Neo-tree file explorer is enabled with right-side positioning and minimal stylin
 ## Dependencies
 
 External tools required:
+
 - `git`, `make`, `unzip`, C compiler
 - `ripgrep` (rg) for searching
 - `fd-find` for file finding
@@ -98,20 +114,24 @@ External tools required:
 ## Configuration Philosophy
 
 This configuration prioritizes:
+
 - Readability and documentation
-- Single-file simplicity while allowing modular growth  
+- Single-file simplicity while allowing modular growth
 - Sane defaults with easy customization points
 - Learning-friendly structure with extensive comments
 
 ## Coding Guidelines
 
 ### Comments
+
 Only add comments when genuinely clarifying or documenting key behavior. Aim to write clear and readable code that is self-explanatory through:
+
 - Descriptive variable and function names
 - Logical code structure and organization
 - Small, focused functions with clear purposes
 
 Avoid redundant comments that simply restate what the code does. Reserve comments for:
+
 - Complex algorithms or business logic
 - Non-obvious configuration choices
 - Important architectural decisions
@@ -120,7 +140,10 @@ Avoid redundant comments that simply restate what the code does. Reserve comment
 ## Memory
 
 ### Configuration Verification
+
 - Always verify that there's only one way to do something in the configuration
 
 ### Development Practices
+
 - Always look up nvim documentation before implementing anything
+

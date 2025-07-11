@@ -1105,10 +1105,10 @@ require('lazy').setup({
 
   {
     dir = vim.fn.stdpath 'config' .. '/colors',
-    name = 'dark-plus',
+    name = 'dark',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
-      vim.cmd.colorscheme 'dark-plus'
+      vim.cmd.colorscheme 'dark'
 
       -- Load git blame styling
       dofile(vim.fn.stdpath 'config' .. '/colors/gitsigns-blame.lua')

@@ -5,7 +5,7 @@ if vim.fn.exists 'syntax_on' then
 end
 
 -- Set colorscheme name
-vim.g.colors_name = 'dark-plus'
+vim.g.colors_name = 'dark'
 
 local hl = require('utils').hl
 
