@@ -42,7 +42,7 @@ return {
       },
     },
     filesystem = {
-      hijack_netrw_behavior = "disabled",
+      hijack_netrw_behavior = 'disabled',
       filtered_items = {
         hide_dotfiles = false,
         hide_hidden = false,
@@ -79,9 +79,8 @@ return {
       {
         event = 'neo_tree_buffer_enter',
         handler = function()
-          vim.wo.number = false
-          vim.wo.relativenumber = false
-          vim.wo.signcolumn = 'no'
+          vim.wo.number = true
+          vim.wo.relativenumber = true
         end,
       },
     },

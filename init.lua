@@ -289,12 +289,35 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Make terminal buffers modifiable to allow text editing
+-- Terminal configuration with mode-aware line numbers
+local terminal_group = vim.api.nvim_create_augroup('terminal-config', { clear = true })
+
+-- Make terminal buffers modifiable and set initial line numbers
 vim.api.nvim_create_autocmd('TermOpen', {
-  desc = 'Make terminal buffers modifiable',
-  group = vim.api.nvim_create_augroup('terminal-modifiable', { clear = true }),
+  desc = 'Configure terminal buffers',
+  group = terminal_group,
   callback = function()
     vim.bo.modifiable = true
+    vim.wo.number = true
+    vim.wo.relativenumber = true
+  end,
+})
+
+-- Switch to absolute numbers when entering terminal insert mode
+vim.api.nvim_create_autocmd('TermEnter', {
+  desc = 'Use absolute line numbers in terminal insert mode',
+  group = terminal_group,
+  callback = function()
+    vim.wo.relativenumber = false
+  end,
+})
+
+-- Switch to relative numbers when leaving terminal insert mode
+vim.api.nvim_create_autocmd('TermLeave', {
+  desc = 'Use relative line numbers in terminal normal mode',
+  group = terminal_group,
+  callback = function()
+    vim.wo.relativenumber = true
   end,
 })
 
