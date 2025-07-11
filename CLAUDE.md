@@ -121,3 +121,6 @@ Avoid redundant comments that simply restate what the code does. Reserve comment
 
 ### Configuration Verification
 - Always verify that there's only one way to do something in the configuration
+
+### Development Practices
+- Always look up nvim documentation before implementing anything
