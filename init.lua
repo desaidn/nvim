@@ -1037,8 +1037,7 @@ require('lazy').setup({
     end,
     keys = {
       { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'Open [G]it GUI' },
-      { '<leader>gf', '<cmd>LazyGitCurrentFile<cr>', desc = 'Git [F]ile history' },
-      { '<leader>gc', '<cmd>LazyGitFilterCurrentFile<cr>', desc = 'Git [C]ommits for current file' },
+      { '<leader>gf', '<cmd>LazyGitFilterCurrentFile<cr>', desc = 'Git [F]ile History' },
       {
         '<leader>gb',
         function()
@@ -1052,13 +1051,6 @@ require('lazy').setup({
           require('gitsigns').diffthis()
         end,
         desc = 'Git [D]iff current file',
-      },
-      {
-        '<leader>gD',
-        function()
-          require('gitsigns').diffthis '~'
-        end,
-        desc = 'Git [D]iff against HEAD',
       },
     },
   },
@@ -1140,7 +1132,7 @@ require('lazy').setup({
   --
   -- require 'kickstart.plugins.debug',
   require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
