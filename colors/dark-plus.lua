@@ -258,6 +258,12 @@ hl('StatusLineNC', { fg = colors.comment, bg = colors.menu_bg })
 hl('StatusLineTerm', { fg = colors.fg, bg = colors.activity_badge })
 hl('StatusLineTermNC', { fg = colors.comment, bg = colors.menu_bg })
 
+-- MiniStatusline: keep existing mode colors, make non-mode sections blue/white
+hl('MiniStatuslineInactive', { fg = colors.fg, bg = colors.activity_badge })
+hl('MiniStatuslineFilename', { fg = colors.fg, bg = colors.activity_badge })
+hl('MiniStatuslineFileinfo', { fg = colors.fg, bg = colors.activity_badge })
+hl('MiniStatuslineDevinfo', { fg = colors.fg, bg = colors.activity_badge })
+
 -- Tab line
 hl('TabLine', { fg = colors.comment, bg = colors.menu_bg })
 hl('TabLineFill', { bg = colors.bg })
