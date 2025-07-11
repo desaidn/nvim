@@ -2,8 +2,6 @@
 
 A lean Neovim configuration based on kickstart.nvim.
 
-<img width="2354" alt="Screenshot 2025-07-06 at 4 05 04 PM" src="https://github.com/user-attachments/assets/ac727a89-0a60-4373-af12-51117794765a" />
-
 **Philosophy**: One obvious way to do anything, text-based interface, git-centric workflow.
 
 ## Installation
