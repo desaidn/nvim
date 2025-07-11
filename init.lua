@@ -1111,7 +1111,7 @@ require('lazy').setup({
       vim.cmd.colorscheme 'dark'
 
       -- Load git blame styling
-      dofile(vim.fn.stdpath 'config' .. '/colors/gitsigns-blame.lua')
+      dofile(vim.fn.stdpath 'config' .. '/colors/gitsigns.lua')
 
       -- Load neo-tree styling
       dofile(vim.fn.stdpath 'config' .. '/colors/neo-tree.lua')
