@@ -260,62 +260,10 @@ vim.keymap.set('n', '<leader>ts', function()
   vim.cmd(height .. 'split | terminal')
 end, { desc = '[T]erminal [S]mall split (15%)' })
 vim.keymap.set('n', '<leader>tf', '<cmd>terminal<CR>', { desc = '[T]erminal [F]ullscreen' })
-
--- Claude terminal function
-local function open_claude_terminal()
-  -- Check if claude is available in PATH
-  if vim.fn.executable 'claude' == 0 then
-    vim.notify('Claude executable not found in PATH', vim.log.levels.ERROR)
-    return
-  end
-
-  -- Calculate 40% of screen width for claude panel
+vim.keymap.set('n', '<leader>tv', function()
   local width = math.floor(vim.o.columns * 0.4)
-
-  -- Open left vertical split with claude
-  vim.cmd('leftabove ' .. width .. 'vsplit')
-  vim.cmd 'terminal claude'
-
-  -- Set terminal-specific settings for better chat experience
-  vim.wo.number = false
-  vim.wo.relativenumber = false
-  vim.wo.signcolumn = 'no'
-  vim.wo.fillchars = 'vert: ' -- borderless
-
-  -- Set fixed width and prevent resizing
-  vim.cmd('vertical resize ' .. width)
-  vim.wo.winfixwidth = true
-end
-
--- Claude attach function
-local function open_claude_attach()
-  -- Check if claude is available in PATH
-  if vim.fn.executable 'claude' == 0 then
-    vim.notify('Claude executable not found in PATH', vim.log.levels.ERROR)
-    return
-  end
-
-  -- Calculate 40% of screen width for claude panel
-  local width = math.floor(vim.o.columns * 0.4)
-
-  -- Open left vertical split with claude --continue
-  vim.cmd('leftabove ' .. width .. 'vsplit')
-  vim.cmd 'terminal claude --continue'
-
-  -- Optional: Set terminal-specific settings for better chat experience
-  vim.wo.number = false
-  vim.wo.relativenumber = false
-  vim.wo.signcolumn = 'no'
-  vim.wo.fillchars = 'vert: '
-
-  -- Set fixed width for claude terminal and prevent resizing
-  vim.cmd('vertical resize ' .. width)
-  vim.wo.winfixwidth = true
-end
-
--- Claude keymaps
-vim.keymap.set('n', '<leader>cc', open_claude_terminal, { desc = '[C]laude [C]hat sidebar' })
-vim.keymap.set('n', '<leader>ca', open_claude_attach, { desc = '[C]laude [A]ttach to previous session' })
+  vim.cmd('leftabove ' .. width .. 'vsplit | terminal')
+end, { desc = '[T]erminal [V]ertical split (40%)' })
 
 -- Half-page navigation with centered cursor
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half-page down and center cursor' })

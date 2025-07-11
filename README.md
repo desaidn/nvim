@@ -44,9 +44,10 @@ nvim
 
 ### Terminal
 
-- `<leader>th` - Horizontal split (50% height)
-- `<leader>ts` - Small split (10 lines)
+- `<leader>th` - Horizontal split (30% height)
+- `<leader>ts` - Small split (15% height)
 - `<leader>tf` - Fullscreen terminal
+- `<leader>tv` - Vertical split (40% width)
 
 ### Git
 
@@ -66,9 +67,6 @@ nvim
 - `grn` - Rename
 - `K` - Hover documentation
 
-### Claude Code
-
-- `<leader>cc` - Launch Claude Code in side panel
 
 ## Configuration
 

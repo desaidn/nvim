@@ -61,9 +61,10 @@ Currently configured for Lua development with lua_ls. To add other languages:
 
 Built-in terminal functionality with convenient keymaps:
 
-- `<leader>th` - Horizontal terminal split (50% height)
-- `<leader>ts` - Small horizontal terminal split (10 lines)
+- `<leader>th` - Horizontal terminal split (30% height)
+- `<leader>ts` - Small horizontal terminal split (15% height)
 - `<leader>tf` - Fullscreen terminal
+- `<leader>tv` - Vertical terminal split (40% width)
 - `<C-h/j/k/l>` in terminal mode - Navigate between windows
 - `<Esc><Esc>` - Exit terminal mode
 
