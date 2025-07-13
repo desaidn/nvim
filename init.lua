@@ -203,6 +203,13 @@ vim.o.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'LazyLoad',
+  callback = function()
+    vim.cmd.colorscheme 'default'
+  end,
+})
+
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
@@ -1119,6 +1126,18 @@ require('lazy').setup({
     --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+  },
+
+  { -- Undo tree visualization
+    'mbbill/undotree',
+    cmd = 'UndotreeToggle',
+    keys = {
+      { '<leader>u', '<cmd>UndotreeToggle<cr>', desc = 'Toggle [U]ndo tree' },
+    },
+    config = function()
+      vim.g.undotree_WindowLayout = 2
+      vim.g.undotree_SetFocusWhenToggle = 1
+    end,
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
