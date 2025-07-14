@@ -50,22 +50,22 @@ return {
 
         -- Actions
         -- visual mode
-        map('v', '<leader>hs', function()
+        map('v', '<leader>gs', function()
           gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
         end, { desc = 'Git [S]tage hunk' })
-        map('v', '<leader>hr', function()
+        map('v', '<leader>gr', function()
           gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
         end, { desc = 'Git [R]eset hunk' })
         -- normal mode
-        map('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'Git [S]tage hunk' })
-        map('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'Git [R]eset hunk' })
-        map('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'Git [S]tage buffer' })
-        map('n', '<leader>hu', gitsigns.undo_stage_hunk, { desc = 'Git [U]ndo stage hunk' })
-        map('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'Git [R]eset buffer' })
-        map('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'Git [P]review hunk' })
-        map('n', '<leader>hb', gitsigns.blame_line, { desc = 'Git [B]lame line' })
-        map('n', '<leader>hd', gitsigns.diffthis, { desc = 'Git [D]iff against index' })
-        map('n', '<leader>hD', function()
+        map('n', '<leader>gs', gitsigns.stage_hunk, { desc = 'Git [S]tage hunk' })
+        map('n', '<leader>gr', gitsigns.reset_hunk, { desc = 'Git [R]eset hunk' })
+        map('n', '<leader>gS', gitsigns.stage_buffer, { desc = 'Git [S]tage buffer' })
+        map('n', '<leader>gu', gitsigns.undo_stage_hunk, { desc = 'Git [U]ndo stage hunk' })
+        map('n', '<leader>gR', gitsigns.reset_buffer, { desc = 'Git [R]eset buffer' })
+        map('n', '<leader>gp', gitsigns.preview_hunk, { desc = 'Git [P]review hunk' })
+        map('n', '<leader>gl', gitsigns.blame_line, { desc = 'Git B[l]ame line' })
+        map('n', '<leader>gi', gitsigns.diffthis, { desc = 'Git D[i]ff against index' })
+        map('n', '<leader>gD', function()
           gitsigns.diffthis '@'
         end, { desc = 'Git [D]iff against last commit' })
         -- Toggles

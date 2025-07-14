@@ -440,7 +440,6 @@ require('lazy').setup({
         { '<leader>t', group = '[T]erminal' },
         { '<leader>T', group = '[T]oggle' },
         { '<leader>e', group = '[E]xplorer' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         { '<leader>g', group = '[G]it' },
         { '<leader>c', group = '[C]laude' },
         { '<leader>f', group = '[F]ormat' },
@@ -1045,20 +1044,6 @@ require('lazy').setup({
     keys = {
       { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'Open [G]it GUI' },
       { '<leader>gf', '<cmd>LazyGitFilterCurrentFile<cr>', desc = 'Git [F]ile History' },
-      {
-        '<leader>gb',
-        function()
-          require('gitsigns').blame_line { full = true }
-        end,
-        desc = 'Git [B]lame line',
-      },
-      {
-        '<leader>gd',
-        function()
-          require('gitsigns').diffthis()
-        end,
-        desc = 'Git [D]iff current file',
-      },
     },
   },
 
