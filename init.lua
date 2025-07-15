@@ -253,11 +253,11 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- Terminal keymaps
 vim.keymap.set('n', '<leader>th', function()
   local height = math.floor(vim.o.lines * 0.3)
-  vim.cmd(height .. 'split | terminal')
+  vim.cmd('botright ' .. height .. 'split | terminal')
 end, { desc = '[T]erminal [H]orizontal split (30%)' })
 vim.keymap.set('n', '<leader>ts', function()
   local height = math.floor(vim.o.lines * 0.15)
-  vim.cmd(height .. 'split | terminal')
+  vim.cmd('botright ' .. height .. 'split | terminal')
 end, { desc = '[T]erminal [S]mall split (15%)' })
 vim.keymap.set('n', '<leader>tf', '<cmd>terminal<CR>', { desc = '[T]erminal [F]ullscreen' })
 vim.keymap.set('n', '<leader>tv', function()
