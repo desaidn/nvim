@@ -203,13 +203,6 @@ vim.o.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
-vim.api.nvim_create_autocmd('User', {
-  pattern = 'LazyLoad',
-  callback = function()
-    vim.cmd.colorscheme 'default'
-  end,
-})
-
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
@@ -355,6 +348,68 @@ rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+
+  {
+    'Mofiqul/vscode.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('vscode').setup {
+        style = 'dark',
+        transparent = false,
+        italic_comments = true,
+        underline_links = true,
+        disable_nvimtree_bg = true,
+        group_overrides = {
+          StatusLine = { fg = '#ffffff', bg = '#007acc', bold = false },
+          StatusLineNC = { fg = '#ffffff', bg = '#007acc', bold = false },
+
+          MiniStatuslineModeNormal = { bg = '#16825d', fg = '#ffffff', bold = true },
+          MiniStatuslineModeInsert = { bg = '#c5282f', fg = '#ffffff', bold = true },
+          MiniStatuslineModeVisual = { bg = '#af5f00', fg = '#ffffff', bold = true },
+          MiniStatuslineModeReplace = { bg = '#d70000', fg = '#ffffff', bold = true },
+          MiniStatuslineModeCommand = { bg = '#5f5f00', fg = '#ffffff', bold = true },
+          MiniStatuslineModeOther = { bg = '#444444', fg = '#ffffff', bold = true },
+
+          MiniStatuslineFilename = { bg = '#007acc', fg = '#ffffff', bold = false },
+          MiniStatuslineFileinfo = { bg = '#007acc', fg = '#ffffff', bold = false },
+          MiniStatuslineDevinfo = { bg = '#007acc', fg = '#ffffff', bold = false },
+          MiniStatuslineInactive = { bg = '#007acc', fg = '#ffffff', bold = false },
+
+          CursorLine = { bg = '#2a2d2e' },
+          CursorLineNr = { fg = '#ffffff', bg = '#2a2d2e', bold = true },
+          
+          -- Neo-tree VSCode Dark+ styling
+          NeoTreeNormal = { bg = '#1e1e1e', fg = '#cccccc' },
+          NeoTreeNormalNC = { bg = '#1e1e1e', fg = '#cccccc' },
+          NeoTreeWinSeparator = { bg = '#1e1e1e', fg = '#1e1e1e' },
+          NeoTreeEndOfBuffer = { bg = '#1e1e1e', fg = '#1e1e1e' },
+          NeoTreeRootName = { fg = '#ffffff', bold = true },
+          NeoTreeDirectoryName = { fg = '#cccccc' },
+          NeoTreeDirectoryIcon = { fg = '#cccccc' },
+          NeoTreeFileName = { fg = '#cccccc' },
+          NeoTreeFileIcon = { fg = '#cccccc' },
+          NeoTreeIndentMarker = { fg = '#464647' },
+          NeoTreeExpander = { fg = '#cccccc' },
+          NeoTreeDotfile = { fg = '#6a6a6a' },
+          NeoTreeHiddenByName = { fg = '#6a6a6a' },
+          NeoTreeGitAdded = { fg = '#73c991' },
+          NeoTreeGitConflict = { fg = '#f85149' },
+          NeoTreeGitDeleted = { fg = '#f85149' },
+          NeoTreeGitIgnored = { fg = '#6a6a6a' },
+          NeoTreeGitModified = { fg = '#e2c08d' },
+          NeoTreeGitUnstaged = { fg = '#f85149' },
+          NeoTreeGitUntracked = { fg = '#73c991' },
+          NeoTreeGitStaged = { fg = '#73c991' },
+          -- Line numbers in neo-tree should match editor background
+          LineNr = { bg = '#1e1e1e', fg = '#858585' },
+          CursorLineNr = { bg = '#1e1e1e', fg = '#ffffff', bold = true },
+        },
+      }
+      vim.cmd.colorscheme 'vscode'
+    end,
+  },
+
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   { 'NMAC427/guess-indent.nvim', opts = {} }, -- Detect tabstop and shiftwidth automatically
 
@@ -1040,6 +1095,15 @@ require('lazy').setup({
       vim.g.lazygit_floating_window_winblend = 0
       vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }
       vim.g.lazygit_use_neovim_remote = 1
+      
+      -- Hide line numbers in lazygit terminal
+      vim.api.nvim_create_autocmd({ 'FileType', 'TermOpen' }, {
+        pattern = { 'lazygit', '*lazygit*' },
+        callback = function()
+          vim.wo.number = false
+          vim.wo.relativenumber = false
+        end,
+      })
     end,
     keys = {
       { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'Open [G]it GUI' },
@@ -1111,6 +1175,20 @@ require('lazy').setup({
     --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+  },
+
+  { -- Show treesitter context
+    'nvim-treesitter/nvim-treesitter-context',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    opts = {
+      enable = true,
+      max_lines = 4,
+      min_window_height = 20,
+      line_numbers = true,
+      multiline_threshold = 1,
+      trim_scope = 'outer',
+      mode = 'cursor',
+    },
   },
 
   { -- Undo tree visualization
