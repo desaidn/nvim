@@ -378,7 +378,7 @@ require('lazy').setup({
 
           CursorLine = { bg = '#2a2d2e' },
           CursorLineNr = { fg = '#ffffff', bg = '#2a2d2e', bold = true },
-          
+
           -- Neo-tree VSCode Dark+ styling
           NeoTreeNormal = { bg = '#1e1e1e', fg = '#cccccc' },
           NeoTreeNormalNC = { bg = '#1e1e1e', fg = '#cccccc' },
@@ -1095,7 +1095,7 @@ require('lazy').setup({
       vim.g.lazygit_floating_window_winblend = 0
       vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }
       vim.g.lazygit_use_neovim_remote = 1
-      
+
       -- Hide line numbers in lazygit terminal
       vim.api.nvim_create_autocmd({ 'FileType', 'TermOpen' }, {
         pattern = { 'lazygit', '*lazygit*' },
