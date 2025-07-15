@@ -376,10 +376,10 @@ require('lazy').setup({
           MiniStatuslineDevinfo = { bg = '#007acc', fg = '#ffffff', bold = false },
           MiniStatuslineInactive = { bg = '#007acc', fg = '#ffffff', bold = false },
 
+          LineNr = { bg = '#1e1e1e', fg = '#858585' },
           CursorLine = { bg = '#2a2d2e' },
           CursorLineNr = { fg = '#ffffff', bg = '#2a2d2e', bold = true },
 
-          -- Neo-tree VSCode Dark+ styling
           NeoTreeNormal = { bg = '#1e1e1e', fg = '#cccccc' },
           NeoTreeNormalNC = { bg = '#1e1e1e', fg = '#cccccc' },
           NeoTreeWinSeparator = { bg = '#1e1e1e', fg = '#1e1e1e' },
@@ -401,9 +401,6 @@ require('lazy').setup({
           NeoTreeGitUnstaged = { fg = '#f85149' },
           NeoTreeGitUntracked = { fg = '#73c991' },
           NeoTreeGitStaged = { fg = '#73c991' },
-          -- Line numbers in neo-tree should match editor background
-          LineNr = { bg = '#1e1e1e', fg = '#858585' },
-          CursorLineNr = { bg = '#1e1e1e', fg = '#ffffff', bold = true },
         },
       }
       vim.cmd.colorscheme 'vscode'
