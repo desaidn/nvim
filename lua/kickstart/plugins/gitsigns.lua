@@ -19,7 +19,7 @@ return {
       current_line_blame_opts = {
         virt_text = true,
         virt_text_pos = 'eol', -- end of line
-        delay = 200, -- slight delay before showing
+        delay = 50, -- minimal delay for instant blame
         ignore_whitespace = false,
       },
       on_attach = function(bufnr)

@@ -156,6 +156,9 @@ vim.o.undofile = true
 -- Auto-reload buffers when files change on disk
 vim.o.autoread = true
 
+-- Decrease update time for instant diagnostics
+vim.o.updatetime = 100
+
 -- Enhanced autoread: trigger on focus, buffer enter, and cursor hold
 vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI' }, {
   pattern = '*',
@@ -166,15 +169,41 @@ vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHo
   end,
 })
 
+-- Instant buffer and diagnostic refresh on file changes
+vim.api.nvim_create_autocmd({ 'BufWritePost', 'FileChangedShellPost' }, {
+  pattern = '*',
+  callback = function()
+    -- Force diagnostic refresh on save
+    vim.diagnostic.reset()
+    -- Trigger LSP refresh if available
+    vim.defer_fn(function()
+      for _, client in pairs(vim.lsp.get_clients()) do
+        if client.server_capabilities.diagnosticProvider then
+          vim.lsp.buf.refresh()
+        end
+      end
+    end, 10) -- Small delay to let LSP process the file change
+  end,
+})
+
+-- Instant buffer refresh on focus with enhanced LSP integration
+vim.api.nvim_create_autocmd('FocusGained', {
+  pattern = '*',
+  callback = function()
+    vim.cmd 'checktime'
+    -- Refresh diagnostics when gaining focus
+    vim.defer_fn(function()
+      vim.diagnostic.reset()
+    end, 50)
+  end,
+})
+
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
 -- Keep signcolumn on by default
 vim.o.signcolumn = 'yes'
-
--- Decrease update time
-vim.o.updatetime = 250
 
 -- Decrease mapped sequence wait time
 vim.o.timeoutlen = 300
@@ -781,6 +810,7 @@ require('lazy').setup({
       -- See :help vim.diagnostic.Opts
       vim.diagnostic.config {
         severity_sort = true,
+        update_in_insert = true, -- Real-time diagnostics while typing
         float = {
           border = 'rounded',
           source = 'if_many',
@@ -904,6 +934,11 @@ require('lazy').setup({
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for ts_ls)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+
+            -- Add performance optimizations
+            server.flags = server.flags or {}
+            server.flags.debounce_text_changes = 50 -- Faster LSP updates (default: 150ms)
+
             require('lspconfig')[server_name].setup(server)
           end,
         },
@@ -1036,7 +1071,15 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = true, auto_show_delay_ms = 200 },
+        documentation = { auto_show = true, auto_show_delay_ms = 50 },
+
+        -- Instant completion triggers
+        trigger = {
+          prefetch_on_insert = true, -- Prefetch immediately on insert
+          show_on_keyword = true, -- Show on any alphanumeric
+          show_on_trigger_character = true, -- Show on LSP trigger chars
+          show_on_accept_on_trigger_character = true,
+        },
 
         -- Customize completion menu appearance
         menu = {
@@ -1087,11 +1130,8 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim',
     },
     config = function()
-      -- Configure floating window
-      vim.g.lazygit_floating_window_scaling_factor = 0.9
-      vim.g.lazygit_floating_window_winblend = 0
-      vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' }
-      vim.g.lazygit_use_neovim_remote = 1
+      -- Configure floating window to span full width
+      vim.g.lazygit_floating_window_scaling_factor = 1.0
 
       -- Hide line numbers in lazygit terminal
       vim.api.nvim_create_autocmd({ 'FileType', 'TermOpen' }, {
