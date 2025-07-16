@@ -1099,8 +1099,7 @@ require('lazy').setup({
       })
     end,
     keys = {
-      { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'Open [G]it GUI' },
-      { '<leader>gf', '<cmd>LazyGitFilterCurrentFile<cr>', desc = 'Git [F]ile History' },
+      { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'Open [G]it [G]UI' },
     },
   },
 
@@ -1210,6 +1209,119 @@ require('lazy').setup({
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+
+  -- Diffview.nvim for viewing git diffs as file tree
+  {
+    'sindrets/diffview.nvim',
+    config = function()
+      require('diffview').setup {
+        diff_binaries = false,
+        enhanced_diff_hl = false, -- Keep subtle highlighting for readability
+        use_icons = vim.g.have_nerd_font, -- Use icons only if nerd font available
+        show_help_hints = true,
+        watch_index = true, -- Auto-update when git index changes
+        view = {
+          default = {
+            layout = 'diff2_horizontal',
+            disable_diagnostics = true,
+            winbar_info = true,
+          },
+          merge_tool = {
+            layout = 'diff3_horizontal',
+            disable_diagnostics = true,
+            winbar_info = true,
+          },
+          file_history = {
+            layout = 'diff2_vertical',
+            disable_diagnostics = true,
+            winbar_info = true,
+          },
+        },
+        file_panel = {
+          listing_style = 'tree',
+          tree_options = {
+            flatten_dirs = true,
+            folder_statuses = 'only_folded',
+          },
+          win_config = {
+            position = 'right',
+            width = 35,
+            height = 10,
+          },
+        },
+        file_history_panel = {
+          log_options = {
+            git = {
+              single_file = {
+                diff_merges = 'first-parent',
+                follow = true,
+              },
+              multi_file = {
+                diff_merges = 'first-parent',
+              },
+            },
+          },
+          win_config = {
+            position = 'bottom',
+            height = 16,
+          },
+        },
+      }
+
+      -- State for persisting diff comparison
+      local last_diff_ref = nil
+
+      -- Custom command and toggle function
+      local function toggle_diff_compare()
+        local diffview_lib = require 'diffview.lib'
+        if diffview_lib.get_current_view() then
+          vim.cmd 'DiffviewClose'
+        else
+          if last_diff_ref then
+            vim.cmd('DiffviewOpen ' .. last_diff_ref)
+          else
+            local ref = vim.fn.input 'Enter git refs to compare (e.g. main..feature, abc123, HEAD~2): '
+            if ref ~= '' then
+              last_diff_ref = ref
+              vim.cmd('DiffviewOpen ' .. ref)
+            end
+          end
+        end
+      end
+
+      vim.api.nvim_create_user_command('DiffCompare', function()
+        local ref = vim.fn.input 'Enter git refs to compare (e.g. main..feature, abc123, HEAD~2): '
+        if ref ~= '' then
+          last_diff_ref = ref
+          vim.cmd('DiffviewOpen ' .. ref)
+        end
+      end, { desc = 'Compare arbitrary git references' })
+
+      -- Function to open current file in a new buffer
+      local function open_file_in_buffer()
+        local file_path = vim.api.nvim_buf_get_name(0)
+        if file_path and file_path ~= '' then
+          local line_num = vim.api.nvim_win_get_cursor(0)[1]
+          vim.cmd('tabnew ' .. file_path)
+          vim.api.nvim_win_set_cursor(0, { line_num, 0 })
+        end
+      end
+
+      -- Keymaps
+      vim.keymap.set('n', '<leader>gd', toggle_diff_compare, { desc = 'Toggle git diff view' })
+      vim.keymap.set('n', '<leader>gc', '<cmd>DiffCompare<cr>', { desc = 'Compare git refs' })
+      vim.keymap.set('n', '<leader>gr', '<cmd>DiffviewRefresh<cr>', { desc = 'Refresh git diff view' })
+      vim.keymap.set('n', '<leader>ge', open_file_in_buffer, { desc = 'Edit current file in new buffer' })
+      vim.keymap.set('n', '<leader>gh', '<cmd>DiffviewFileHistory %<cr>', { desc = 'View current file history' })
+      vim.keymap.set('n', '<leader>gl', function()
+        local line = vim.api.nvim_win_get_cursor(0)[1]
+        local file = vim.api.nvim_buf_get_name(0)
+        if file and file ~= '' then
+          vim.cmd('DiffviewFileHistory -L' .. line .. ',' .. line .. ':' .. vim.fn.fnamemodify(file, ':~:.'))
+        end
+      end, { desc = 'View current line history' })
+    end,
+  },
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
