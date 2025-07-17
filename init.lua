@@ -1222,7 +1222,7 @@ require('lazy').setup({
         watch_index = true, -- Auto-update when git index changes
         view = {
           default = {
-            layout = 'diff2_horizontal',
+            layout = 'diff2_vertical',
             disable_diagnostics = true,
             winbar_info = true,
           },
