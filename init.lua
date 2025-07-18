@@ -1216,13 +1216,13 @@ require('lazy').setup({
     config = function()
       require('diffview').setup {
         diff_binaries = false,
-        enhanced_diff_hl = false, -- Keep subtle highlighting for readability
+        enhanced_diff_hl = true, -- Keep subtle highlighting for readability
         use_icons = vim.g.have_nerd_font, -- Use icons only if nerd font available
         show_help_hints = true,
         watch_index = true, -- Auto-update when git index changes
         view = {
           default = {
-            layout = 'diff2_vertical',
+            layout = 'diff2_horizontal',
             disable_diagnostics = true,
             winbar_info = true,
           },
@@ -1232,7 +1232,7 @@ require('lazy').setup({
             winbar_info = true,
           },
           file_history = {
-            layout = 'diff2_vertical',
+            layout = 'diff2_horizontal',
             disable_diagnostics = true,
             winbar_info = true,
           },
