@@ -208,6 +208,13 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
+-- Custom filetype detection
+vim.filetype.add {
+  extension = {
+    smithy = 'smithy',
+  },
+}
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -1149,11 +1156,52 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'java',
+        'kotlin',
+        'javascript',
+        'typescript',
+        'tsx',
+        'css',
+        'scss',
+        'json',
+        'jsonc',
+        'yaml',
+        'toml',
+        'dockerfile',
+        'sql',
+        'regex',
+        'gitignore',
+        'gitcommit',
+        'python',
+        'go',
+        'rust',
+        'smithy',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
+      sync_install = false,
       highlight = {
         enable = true,
+        -- Disable highlighting for large files to improve performance
+        disable = function(lang, buf)
+          local max_filesize = 100 * 1024 -- 100 KB
+          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+          if ok and stats and stats.size > max_filesize then
+            return true
+          end
+        end,
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
