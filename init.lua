@@ -333,7 +333,7 @@ vim.api.nvim_create_autocmd('TermLeave', {
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+  local out = vim.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
   if vim.v.shell_error ~= 0 then
     error('Error cloning lazy.nvim:\n' .. out)
   end
@@ -453,9 +453,15 @@ require('lazy').setup({
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
+      preset = 'classic', -- Use classic preset for familiar behavior
       -- delay between pressing a key and opening which-key (milliseconds)
-      -- this setting is independent of vim.o.timeoutlen
-      delay = 0,
+      delay = function(ctx)
+        return ctx.plugin and 0 or 0 -- Always show immediately
+      end,
+      -- Configure triggers to work in all relevant modes
+      triggers = {
+        { '<auto>', mode = 'nixsotc' }, -- normal, insert, visual, select, operator-pending, terminal, command
+      },
       icons = {
         -- set icon mappings to true if you have a Nerd Font
         mappings = vim.g.have_nerd_font,
@@ -495,16 +501,16 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
-        { '<leader>s', group = '[S]earch' },
-        { '<leader>t', group = '[T]erminal' },
-        { '<leader>T', group = '[T]oggle' },
-        { '<leader>e', group = '[E]xplorer' },
-        { '<leader>g', group = '[G]it' },
-        { '<leader>c', group = '[C]laude' },
-        { '<leader>f', group = '[F]ormat' },
-        { '<leader>q', group = '[Q]uickfix' },
-        { '<leader>r', group = '[R]ename/Replace' },
-        { '<leader>d', group = '[D]iagnostics' },
+        { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
+        { '<leader>t', group = '[T]erminal', mode = { 'n', 'v' } },
+        { '<leader>T', group = '[T]oggle', mode = { 'n', 'v' } },
+        { '<leader>e', group = '[E]xplorer', mode = { 'n', 'v' } },
+        { '<leader>g', group = '[G]it', mode = { 'n', 'v' } },
+        { '<leader>c', group = '[C]laude', mode = { 'n', 'v' } },
+        { '<leader>f', group = '[F]ormat', mode = { 'n', 'v' } },
+        { '<leader>q', group = '[Q]uickfix', mode = { 'n', 'v' } },
+        { '<leader>r', group = '[R]ename/Replace', mode = { 'n', 'v' } },
+        { '<leader>d', group = '[D]iagnostics', mode = { 'n', 'v' } },
       },
     },
   },
@@ -1222,7 +1228,7 @@ require('lazy').setup({
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     opts = {
       enable = true,
-      max_lines = 4,
+      max_lines = 20,
       min_window_height = 20,
       line_numbers = true,
       multiline_threshold = 1,
