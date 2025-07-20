@@ -222,59 +222,58 @@ vim.filetype.add {
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Diagnostic keymaps
-vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { desc = 'Open [D]iagnostic [Q]uickfix list' })
-vim.keymap.set('n', '<leader>Td', function()
-  vim.diagnostic.enable(not vim.diagnostic.is_enabled { bufnr = 0 })
-end, { desc = '[T]oggle [D]iagnostics for current buffer' })
-
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
--- Terminal mode navigation keymaps
-vim.keymap.set('t', '<C-h>', '<C-\\><C-n><C-w>h', { desc = 'Terminal: Move to left window' })
-vim.keymap.set('t', '<C-j>', '<C-\\><C-n><C-w>j', { desc = 'Terminal: Move to bottom window' })
-vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k', { desc = 'Terminal: Move to top window' })
-vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l', { desc = 'Terminal: Move to right window' })
-
--- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
-
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
--- Terminal keymaps
-vim.keymap.set('n', '<leader>th', function()
-  local height = math.floor(vim.o.lines * 0.3)
-  vim.cmd('botright ' .. height .. 'split | terminal')
-end, { desc = '[T]erminal [H]orizontal split (30%)' })
-vim.keymap.set('n', '<leader>ts', function()
-  local height = math.floor(vim.o.lines * 0.15)
-  vim.cmd('botright ' .. height .. 'split | terminal')
-end, { desc = '[T]erminal [S]mall split (15%)' })
-vim.keymap.set('n', '<leader>tf', '<cmd>terminal<CR>', { desc = '[T]erminal [F]ullscreen' })
-vim.keymap.set('n', '<leader>tv', function()
-  local width = math.floor(vim.o.columns * 0.4)
-  vim.cmd('leftabove ' .. width .. 'vsplit | terminal')
-end, { desc = '[T]erminal [V]ertical split (40%)' })
-
 -- Half-page navigation with centered cursor
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half-page down and center cursor' })
 vim.keymap.set('n', '<C-z>', '<C-u>zz', { desc = 'Half-page up and center cursor' })
+
+-- Keybinds to make split navigation easier.
+--  Use CTRL+<hjkl> to switch between windows
+--  See `:help wincmd` for a list of all window commands
+local function setup_window_navigation()
+  local keymaps = {
+    { '<C-h>', '<C-w><C-h>', 'Move focus to the left window' },
+    { '<C-l>', '<C-w><C-l>', 'Move focus to the right window' },
+    { '<C-j>', '<C-w><C-j>', 'Move focus to the lower window' },
+    { '<C-k>', '<C-w><C-k>', 'Move focus to the upper window' },
+  }
+  for _, keymap in ipairs(keymaps) do
+    vim.keymap.set('n', keymap[1], keymap[2], { desc = keymap[3] })
+  end
+end
+setup_window_navigation()
+
+-- [[ Terminal Configuration ]]
+local function setup_terminal_keymaps()
+  -- Exit terminal mode shortcut
+  vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+  
+  -- Terminal mode navigation
+  local nav_keymaps = {
+    { '<C-h>', '<C-\\><C-n><C-w>h', 'Terminal: Move to left window' },
+    { '<C-j>', '<C-\\><C-n><C-w>j', 'Terminal: Move to bottom window' },
+    { '<C-k>', '<C-\\><C-n><C-w>k', 'Terminal: Move to top window' },
+    { '<C-l>', '<C-\\><C-n><C-w>l', 'Terminal: Move to right window' },
+  }
+  for _, keymap in ipairs(nav_keymaps) do
+    vim.keymap.set('t', keymap[1], keymap[2], { desc = keymap[3] })
+  end
+  
+  -- Terminal creation keymaps
+  vim.keymap.set('n', '<leader>th', function()
+    local height = math.floor(vim.o.lines * 0.3)
+    vim.cmd('botright ' .. height .. 'split | terminal')
+  end, { desc = '[T]erminal [H]orizontal split (30%)' })
+  vim.keymap.set('n', '<leader>ts', function()
+    local height = math.floor(vim.o.lines * 0.15)
+    vim.cmd('botright ' .. height .. 'split | terminal')
+  end, { desc = '[T]erminal [S]mall split (15%)' })
+  vim.keymap.set('n', '<leader>tf', '<cmd>terminal<CR>', { desc = '[T]erminal [F]ullscreen' })
+  vim.keymap.set('n', '<leader>tv', function()
+    local width = math.floor(vim.o.columns * 0.4)
+    vim.cmd('leftabove ' .. width .. 'vsplit | terminal')
+  end, { desc = '[T]erminal [V]ertical split (40%)' })
+end
+setup_terminal_keymaps()
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -296,10 +295,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Terminal configuration - hide line numbers in all terminals
+-- Terminal buffer configuration
 local terminal_group = vim.api.nvim_create_augroup('terminal-config', { clear = true })
-
--- Configure terminal buffers to hide line numbers
 vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter' }, {
   desc = 'Configure terminal buffers without line numbers',
   group = terminal_group,
@@ -312,6 +309,48 @@ vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter' }, {
     end
   end,
 })
+
+-- [[ Diagnostic Configuration ]]
+-- Diagnostic keymaps
+vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { desc = 'Open [D]iagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>Td', function()
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled { bufnr = 0 })
+end, { desc = '[T]oggle [D]iagnostics for current buffer' })
+
+-- Diagnostic config
+-- See `:help vim.diagnostic.Opts`
+vim.diagnostic.config {
+  severity_sort = true,
+  float = {
+    border = 'rounded',
+    source = 'if_many',
+    wrap = true,
+    max_width = 80,
+    max_height = 20,
+  },
+  underline = { severity = vim.diagnostic.severity.ERROR },
+  signs = vim.g.have_nerd_font and {
+    text = {
+      [vim.diagnostic.severity.ERROR] = '󰅚 ',
+      [vim.diagnostic.severity.WARN] = '󰀪 ',
+      [vim.diagnostic.severity.INFO] = '󰋽 ',
+      [vim.diagnostic.severity.HINT] = '󰌶 ',
+    },
+  } or {},
+  virtual_text = {
+    source = 'if_many',
+    spacing = 2,
+    format = function(diagnostic)
+      local diagnostic_message = {
+        [vim.diagnostic.severity.ERROR] = diagnostic.message,
+        [vim.diagnostic.severity.WARN] = diagnostic.message,
+        [vim.diagnostic.severity.INFO] = diagnostic.message,
+        [vim.diagnostic.severity.HINT] = diagnostic.message,
+      }
+      return diagnostic_message[diagnostic.severity]
+    end,
+  },
+}
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -346,6 +385,27 @@ require('lazy').setup({
     lazy = false,
     priority = 1000,
     config = function()
+      -- Color palette for consistent theming
+      local colors = {
+        bg_primary = '#1e1e1e',
+        bg_secondary = '#2a2d2e',
+        fg_primary = '#ffffff',
+        fg_secondary = '#cccccc',
+        fg_tertiary = '#858585',
+        fg_muted = '#6a6a6a',
+        accent_blue = '#007acc',
+        accent_green = '#16825d',
+        accent_red = '#c5282f',
+        accent_orange = '#af5f00',
+        accent_dark_red = '#d70000',
+        accent_olive = '#5f5f00',
+        accent_gray = '#444444',
+        indent_marker = '#464647',
+        git_added = '#73c991',
+        git_modified = '#e2c08d',
+        git_deleted = '#f85149',
+      }
+
       require('vscode').setup {
         style = 'dark',
         transparent = false,
@@ -353,46 +413,51 @@ require('lazy').setup({
         underline_links = true,
         disable_nvimtree_bg = true,
         group_overrides = {
-          StatusLine = { fg = '#ffffff', bg = '#007acc', bold = false },
-          StatusLineNC = { fg = '#ffffff', bg = '#007acc', bold = false },
+          -- Status line
+          StatusLine = { fg = colors.fg_primary, bg = colors.accent_blue, bold = false },
+          StatusLineNC = { fg = colors.fg_primary, bg = colors.accent_blue, bold = false },
 
-          MiniStatuslineModeNormal = { bg = '#16825d', fg = '#ffffff', bold = true },
-          MiniStatuslineModeInsert = { bg = '#c5282f', fg = '#ffffff', bold = true },
-          MiniStatuslineModeVisual = { bg = '#af5f00', fg = '#ffffff', bold = true },
-          MiniStatuslineModeReplace = { bg = '#d70000', fg = '#ffffff', bold = true },
-          MiniStatuslineModeCommand = { bg = '#5f5f00', fg = '#ffffff', bold = true },
-          MiniStatuslineModeOther = { bg = '#444444', fg = '#ffffff', bold = true },
+          -- Mini statusline modes
+          MiniStatuslineModeNormal = { bg = colors.accent_green, fg = colors.fg_primary, bold = true },
+          MiniStatuslineModeInsert = { bg = colors.accent_red, fg = colors.fg_primary, bold = true },
+          MiniStatuslineModeVisual = { bg = colors.accent_orange, fg = colors.fg_primary, bold = true },
+          MiniStatuslineModeReplace = { bg = colors.accent_dark_red, fg = colors.fg_primary, bold = true },
+          MiniStatuslineModeCommand = { bg = colors.accent_olive, fg = colors.fg_primary, bold = true },
+          MiniStatuslineModeOther = { bg = colors.accent_gray, fg = colors.fg_primary, bold = true },
 
-          MiniStatuslineFilename = { bg = '#007acc', fg = '#ffffff', bold = false },
-          MiniStatuslineFileinfo = { bg = '#007acc', fg = '#ffffff', bold = false },
-          MiniStatuslineDevinfo = { bg = '#007acc', fg = '#ffffff', bold = false },
-          MiniStatuslineInactive = { bg = '#007acc', fg = '#ffffff', bold = false },
+          -- Mini statusline components
+          MiniStatuslineFilename = { bg = colors.accent_blue, fg = colors.fg_primary, bold = false },
+          MiniStatuslineFileinfo = { bg = colors.accent_blue, fg = colors.fg_primary, bold = false },
+          MiniStatuslineDevinfo = { bg = colors.accent_blue, fg = colors.fg_primary, bold = false },
+          MiniStatuslineInactive = { bg = colors.accent_blue, fg = colors.fg_primary, bold = false },
 
-          LineNr = { bg = '#1e1e1e', fg = '#858585' },
-          CursorLine = { bg = '#2a2d2e' },
-          CursorLineNr = { fg = '#ffffff', bg = '#2a2d2e', bold = true },
+          -- Line numbers and cursor
+          LineNr = { bg = colors.bg_primary, fg = colors.fg_tertiary },
+          CursorLine = { bg = colors.bg_secondary },
+          CursorLineNr = { fg = colors.fg_primary, bg = colors.bg_secondary, bold = true },
 
-          NeoTreeNormal = { bg = '#1e1e1e', fg = '#cccccc' },
-          NeoTreeNormalNC = { bg = '#1e1e1e', fg = '#cccccc' },
-          NeoTreeWinSeparator = { bg = '#1e1e1e', fg = '#1e1e1e' },
-          NeoTreeEndOfBuffer = { bg = '#1e1e1e', fg = '#1e1e1e' },
-          NeoTreeRootName = { fg = '#ffffff', bold = true },
-          NeoTreeDirectoryName = { fg = '#cccccc' },
-          NeoTreeDirectoryIcon = { fg = '#cccccc' },
-          NeoTreeFileName = { fg = '#cccccc' },
-          NeoTreeFileIcon = { fg = '#cccccc' },
-          NeoTreeIndentMarker = { fg = '#464647' },
-          NeoTreeExpander = { fg = '#cccccc' },
-          NeoTreeDotfile = { fg = '#6a6a6a' },
-          NeoTreeHiddenByName = { fg = '#6a6a6a' },
-          NeoTreeGitAdded = { fg = '#73c991' },
-          NeoTreeGitConflict = { fg = '#f85149' },
-          NeoTreeGitDeleted = { fg = '#f85149' },
-          NeoTreeGitIgnored = { fg = '#6a6a6a' },
-          NeoTreeGitModified = { fg = '#e2c08d' },
-          NeoTreeGitUnstaged = { fg = '#f85149' },
-          NeoTreeGitUntracked = { fg = '#73c991' },
-          NeoTreeGitStaged = { fg = '#73c991' },
+          -- NeoTree styling
+          NeoTreeNormal = { bg = colors.bg_primary, fg = colors.fg_secondary },
+          NeoTreeNormalNC = { bg = colors.bg_primary, fg = colors.fg_secondary },
+          NeoTreeWinSeparator = { bg = colors.bg_primary, fg = colors.bg_primary },
+          NeoTreeEndOfBuffer = { bg = colors.bg_primary, fg = colors.bg_primary },
+          NeoTreeRootName = { fg = colors.fg_primary, bold = true },
+          NeoTreeDirectoryName = { fg = colors.fg_secondary },
+          NeoTreeDirectoryIcon = { fg = colors.fg_secondary },
+          NeoTreeFileName = { fg = colors.fg_secondary },
+          NeoTreeFileIcon = { fg = colors.fg_secondary },
+          NeoTreeIndentMarker = { fg = colors.indent_marker },
+          NeoTreeExpander = { fg = colors.fg_secondary },
+          NeoTreeDotfile = { fg = colors.fg_muted },
+          NeoTreeHiddenByName = { fg = colors.fg_muted },
+          NeoTreeGitAdded = { fg = colors.git_added },
+          NeoTreeGitConflict = { fg = colors.git_deleted },
+          NeoTreeGitDeleted = { fg = colors.git_deleted },
+          NeoTreeGitIgnored = { fg = colors.fg_muted },
+          NeoTreeGitModified = { fg = colors.git_modified },
+          NeoTreeGitUnstaged = { fg = colors.git_deleted },
+          NeoTreeGitUntracked = { fg = colors.git_added },
+          NeoTreeGitStaged = { fg = colors.git_added },
         },
       }
       vim.cmd.colorscheme 'vscode'
@@ -575,16 +640,26 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-      vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-      vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-      vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      
+      -- Setup telescope keymaps
+      local function setup_telescope_keymaps()
+        local keymaps = {
+          { '<leader>sh', builtin.help_tags, '[S]earch [H]elp' },
+          { '<leader>sk', builtin.keymaps, '[S]earch [K]eymaps' },
+          { '<leader>sf', builtin.find_files, '[S]earch [F]iles' },
+          { '<leader>ss', builtin.builtin, '[S]earch [S]elect Telescope' },
+          { '<leader>sw', builtin.grep_string, '[S]earch current [W]ord' },
+          { '<leader>sg', builtin.live_grep, '[S]earch by [G]rep' },
+          { '<leader>sd', builtin.diagnostics, '[S]earch [D]iagnostics' },
+          { '<leader>sr', builtin.resume, '[S]earch [R]esume' },
+          { '<leader>s.', builtin.oldfiles, '[S]earch Recent Files ("." for repeat)' },
+          { '<leader><leader>', builtin.buffers, '[ ] Find existing buffers' },
+        }
+        for _, keymap in ipairs(keymaps) do
+          vim.keymap.set('n', keymap[1], keymap[2], { desc = keymap[3] })
+        end
+      end
+      setup_telescope_keymaps()
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
@@ -775,41 +850,6 @@ require('lazy').setup({
         end,
       })
 
-      -- Diagnostic Config
-      -- See :help vim.diagnostic.Opts
-      vim.diagnostic.config {
-        severity_sort = true,
-        float = {
-          border = 'rounded',
-          source = 'if_many',
-          wrap = true,
-          max_width = 80,
-          max_height = 20,
-        },
-        underline = { severity = vim.diagnostic.severity.ERROR },
-        signs = vim.g.have_nerd_font and {
-          text = {
-            [vim.diagnostic.severity.ERROR] = '󰅚 ',
-            [vim.diagnostic.severity.WARN] = '󰀪 ',
-            [vim.diagnostic.severity.INFO] = '󰋽 ',
-            [vim.diagnostic.severity.HINT] = '󰌶 ',
-          },
-        } or {},
-        virtual_text = {
-          source = 'if_many',
-          spacing = 2,
-          format = function(diagnostic)
-            local diagnostic_message = {
-              [vim.diagnostic.severity.ERROR] = diagnostic.message,
-              [vim.diagnostic.severity.WARN] = diagnostic.message,
-              [vim.diagnostic.severity.INFO] = diagnostic.message,
-              [vim.diagnostic.severity.HINT] = diagnostic.message,
-            }
-            return diagnostic_message[diagnostic.severity]
-          end,
-        },
-      }
-
       -- LSP servers and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
       --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
@@ -939,22 +979,27 @@ require('lazy').setup({
           }
         end
       end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
+      formatters_by_ft = (function()
+        local prettier_config = { 'prettierd', 'prettier', stop_after_first = true }
+        local formatters = { lua = { 'stylua' } }
+        
         -- JavaScript/TypeScript formatting with Prettier
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        typescript = { 'prettierd', 'prettier', stop_after_first = true },
-        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        json = { 'prettierd', 'prettier', stop_after_first = true },
-        jsonc = { 'prettierd', 'prettier', stop_after_first = true },
-        css = { 'prettierd', 'prettier', stop_after_first = true },
-        scss = { 'prettierd', 'prettier', stop_after_first = true },
-        html = { 'prettierd', 'prettier', stop_after_first = true },
-        markdown = { 'prettierd', 'prettier', stop_after_first = true },
+        local js_ts_filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' }
+        for _, filetype in ipairs(js_ts_filetypes) do
+          formatters[filetype] = prettier_config
+        end
+        
+        -- Other Prettier-supported filetypes
+        local prettier_filetypes = { 'json', 'jsonc', 'css', 'scss', 'html', 'markdown' }
+        for _, filetype in ipairs(prettier_filetypes) do
+          formatters[filetype] = prettier_config
+        end
+        
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-      },
+        -- formatters.python = { "isort", "black" }
+        
+        return formatters
+      end)(),
     },
   },
 
@@ -1092,8 +1137,6 @@ require('lazy').setup({
     },
   },
 
-  -- Highlight todo, notes, etc in comments
-  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -1130,6 +1173,21 @@ require('lazy').setup({
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
+    end,
+  },
+
+  -- [[ Small Utility Plugins ]]
+  -- Highlight todo, notes, etc in comments
+  { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+
+  -- Undo tree visualization
+  {
+    'mbbill/undotree',
+    cmd = 'UndotreeToggle',
+    keys = { { '<leader>u', '<cmd>UndotreeToggle<cr>', desc = 'Toggle [U]ndo tree' } },
+    config = function()
+      vim.g.undotree_WindowLayout = 2
+      vim.g.undotree_SetFocusWhenToggle = 1
     end,
   },
   { -- Highlight, edit, and navigate code
@@ -1213,17 +1271,6 @@ require('lazy').setup({
     },
   },
 
-  { -- Undo tree visualization
-    'mbbill/undotree',
-    cmd = 'UndotreeToggle',
-    keys = {
-      { '<leader>u', '<cmd>UndotreeToggle<cr>', desc = 'Toggle [U]ndo tree' },
-    },
-    config = function()
-      vim.g.undotree_WindowLayout = 2
-      vim.g.undotree_SetFocusWhenToggle = 1
-    end,
-  },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
