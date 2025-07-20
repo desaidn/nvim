@@ -296,35 +296,20 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Terminal configuration with mode-aware line numbers
+-- Terminal configuration - hide line numbers in all terminals
 local terminal_group = vim.api.nvim_create_augroup('terminal-config', { clear = true })
 
--- Make terminal buffers modifiable and set initial line numbers
-vim.api.nvim_create_autocmd('TermOpen', {
-  desc = 'Configure terminal buffers',
+-- Configure terminal buffers to hide line numbers
+vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter' }, {
+  desc = 'Configure terminal buffers without line numbers',
   group = terminal_group,
   callback = function()
-    vim.bo.modifiable = true
-    vim.wo.number = true
-    vim.wo.relativenumber = true
-  end,
-})
-
--- Switch to absolute numbers when entering terminal insert mode
-vim.api.nvim_create_autocmd('TermEnter', {
-  desc = 'Use absolute line numbers in terminal insert mode',
-  group = terminal_group,
-  callback = function()
-    vim.wo.relativenumber = false
-  end,
-})
-
--- Switch to relative numbers when leaving terminal insert mode
-vim.api.nvim_create_autocmd('TermLeave', {
-  desc = 'Use relative line numbers in terminal normal mode',
-  group = terminal_group,
-  callback = function()
-    vim.wo.relativenumber = true
+    if vim.bo.buftype == 'terminal' then
+      vim.bo.modifiable = true
+      vim.opt_local.number = false
+      vim.opt_local.relativenumber = false
+      vim.opt_local.signcolumn = 'no'
+    end
   end,
 })
 
@@ -1101,15 +1086,6 @@ require('lazy').setup({
     },
     config = function()
       vim.g.lazygit_floating_window_scaling_factor = 1.0
-
-      -- Hide line numbers in lazygit terminal
-      vim.api.nvim_create_autocmd({ 'FileType', 'TermOpen' }, {
-        pattern = { 'lazygit', '*lazygit*' },
-        callback = function()
-          vim.wo.number = false
-          vim.wo.relativenumber = false
-        end,
-      })
     end,
     keys = {
       { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'Open [G]it [G]UI' },
