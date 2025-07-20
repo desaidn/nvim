@@ -208,12 +208,69 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- Custom filetype detection
-vim.filetype.add {
-  extension = {
-    smithy = 'smithy',
-  },
-}
+-- [[ Custom Tabline Configuration ]]
+-- Enable tabline and configure minimal tab experience
+vim.o.showtabline = 2 -- Always show tabline
+
+-- Custom tabline function for minimal, informative tabs
+function _G.custom_tabline()
+  local tabline = ''
+  local current_tab = vim.fn.tabpagenr()
+  local total_tabs = vim.fn.tabpagenr '$'
+
+  for tab_num = 1, total_tabs do
+    local bufnr = vim.fn.tabpagebuflist(tab_num)[vim.fn.tabpagewinnr(tab_num)]
+    local filename = vim.fn.bufname(bufnr)
+    local modified = vim.fn.getbufvar(bufnr, '&modified') == 1
+    local buftype = vim.fn.getbufvar(bufnr, '&buftype')
+
+    -- Get clean filename
+    local display_name
+    if filename == '' then
+      display_name = '[No Name]'
+    elseif buftype == 'terminal' then
+      display_name = 'Terminal'
+    else
+      display_name = vim.fn.fnamemodify(filename, ':t')
+      if display_name == '' then
+        display_name = '[No Name]'
+      end
+    end
+
+    -- Truncate long names
+    if #display_name > 20 then
+      display_name = display_name:sub(1, 17) .. '...'
+    end
+
+    -- Build tab content with extra padding for thickness
+    local tab_content = '  ' .. display_name
+
+    -- Add modified indicator
+    if modified then
+      tab_content = tab_content .. ' •'
+    end
+
+    tab_content = tab_content .. '  '
+
+    -- Add highlight groups and click handlers
+    if tab_num == current_tab then
+      tabline = tabline .. '%#TabLineSel#'
+    else
+      tabline = tabline .. '%#TabLine#'
+    end
+
+    -- Add tab number for click handling
+    tabline = tabline .. '%' .. tab_num .. 'T' .. tab_content
+  end
+
+  -- Fill the rest with TabLineFill
+  tabline = tabline .. '%#TabLineFill#%T'
+
+  return tabline
+end
+
+-- Set the custom tabline
+vim.o.tabline = '%!v:lua.custom_tabline()'
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -225,6 +282,18 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Half-page navigation with centered cursor
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half-page down and center cursor' })
 vim.keymap.set('n', '<C-z>', '<C-u>zz', { desc = 'Half-page up and center cursor' })
+
+-- Tab navigation keymaps
+vim.keymap.set('n', '<leader>tn', '<cmd>tabnew<CR>', { desc = '[T]ab [N]ew' })
+vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<CR>', { desc = '[T]ab [C]lose' })
+vim.keymap.set('n', '<leader>to', '<cmd>tabonly<CR>', { desc = '[T]ab [O]nly (close others)' })
+vim.keymap.set('n', 'gt', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
+vim.keymap.set('n', 'gT', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
+vim.keymap.set('n', '<leader>1', '1gt', { desc = 'Go to tab 1' })
+vim.keymap.set('n', '<leader>2', '2gt', { desc = 'Go to tab 2' })
+vim.keymap.set('n', '<leader>3', '3gt', { desc = 'Go to tab 3' })
+vim.keymap.set('n', '<leader>4', '4gt', { desc = 'Go to tab 4' })
+vim.keymap.set('n', '<leader>5', '5gt', { desc = 'Go to tab 5' })
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -246,7 +315,7 @@ setup_window_navigation()
 local function setup_terminal_keymaps()
   -- Exit terminal mode shortcut
   vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-  
+
   -- Terminal mode navigation
   local nav_keymaps = {
     { '<C-h>', '<C-\\><C-n><C-w>h', 'Terminal: Move to left window' },
@@ -257,7 +326,7 @@ local function setup_terminal_keymaps()
   for _, keymap in ipairs(nav_keymaps) do
     vim.keymap.set('t', keymap[1], keymap[2], { desc = keymap[3] })
   end
-  
+
   -- Terminal creation keymaps
   vim.keymap.set('n', '<leader>th', function()
     local height = math.floor(vim.o.lines * 0.3)
@@ -458,6 +527,10 @@ require('lazy').setup({
           NeoTreeGitUnstaged = { fg = colors.git_deleted },
           NeoTreeGitUntracked = { fg = colors.git_added },
           NeoTreeGitStaged = { fg = colors.git_added },
+
+          TabLine = { bg = colors.bg_primary, fg = colors.fg_tertiary },
+          TabLineSel = { bg = colors.bg_secondary, fg = colors.fg_primary, bold = true },
+          TabLineFill = { bg = colors.bg_primary },
         },
       }
       vim.cmd.colorscheme 'vscode'
@@ -552,7 +625,7 @@ require('lazy').setup({
       -- Document existing key chains
       spec = {
         { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
-        { '<leader>t', group = '[T]erminal', mode = { 'n', 'v' } },
+        { '<leader>t', group = '[T]erminal/[T]abs', mode = { 'n', 'v' } },
         { '<leader>T', group = '[T]oggle', mode = { 'n', 'v' } },
         { '<leader>e', group = '[E]xplorer', mode = { 'n', 'v' } },
         { '<leader>g', group = '[G]it', mode = { 'n', 'v' } },
@@ -640,7 +713,7 @@ require('lazy').setup({
 
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
-      
+
       -- Setup telescope keymaps
       local function setup_telescope_keymaps()
         local keymaps = {
@@ -982,22 +1055,22 @@ require('lazy').setup({
       formatters_by_ft = (function()
         local prettier_config = { 'prettierd', 'prettier', stop_after_first = true }
         local formatters = { lua = { 'stylua' } }
-        
+
         -- JavaScript/TypeScript formatting with Prettier
         local js_ts_filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' }
         for _, filetype in ipairs(js_ts_filetypes) do
           formatters[filetype] = prettier_config
         end
-        
+
         -- Other Prettier-supported filetypes
         local prettier_filetypes = { 'json', 'jsonc', 'css', 'scss', 'html', 'markdown' }
         for _, filetype in ipairs(prettier_filetypes) do
           formatters[filetype] = prettier_config
         end
-        
+
         -- Conform can also run multiple formatters sequentially
         -- formatters.python = { "isort", "black" }
-        
+
         return formatters
       end)(),
     },
@@ -1137,7 +1210,6 @@ require('lazy').setup({
     },
   },
 
-
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -1270,7 +1342,6 @@ require('lazy').setup({
       mode = 'cursor',
     },
   },
-
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
