@@ -15,7 +15,6 @@ This is a Neovim configuration based on kickstart.nvim, providing a well-documen
 - `lua/kickstart/plugins/` - Optional modular plugins that can be enabled:
   - `gitsigns.lua` - Enhanced git integration with keymaps (currently enabled)
   - `autopairs.lua`, `debug.lua`, `lint.lua`, `neo-tree.lua` - Available but not enabled
-- `colors/dark.lua` - Custom colorscheme
 - `lazy-lock.json` - Plugin version lockfile
 
 ### Plugin Management
