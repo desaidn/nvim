@@ -583,7 +583,7 @@ require('lazy').setup({
       end,
       -- Configure triggers to work in all relevant modes
       triggers = {
-        { '<auto>', mode = 'nixsotc' }, -- normal, insert, visual, select, operator-pending, terminal, command
+        { '<auto>', mode = 'nixsoc' }, -- normal, insert, visual, select, operator-pending, command (no terminal to avoid conflict with lazygit)
       },
       icons = {
         -- set icon mappings to true if you have a Nerd Font
