@@ -19,7 +19,7 @@ return {
         if vim.fn.executable 'eslint_d' == 1 then
           return 'eslint_d'
         end
-        
+
         -- Fallback behavior based on configuration
         if ESLINT_FALLBACK_ENABLED then
           -- Check for local project eslint
@@ -31,7 +31,7 @@ return {
             return 'eslint'
           end
         end
-        
+
         return nil -- No linter available or fallback disabled
       end
 
@@ -47,7 +47,7 @@ return {
       local eslint_cmd = find_eslint_d()
       if eslint_cmd then
         -- Configure the linter based on what we found
-        if eslint_cmd:match('eslint_d') then
+        if eslint_cmd:match 'eslint_d' then
           -- Using eslint_d - configure eslint_d linter
           lint.linters.eslint_d.cmd = eslint_cmd
           lint.linters_by_ft.javascript = { 'eslint_d' }
