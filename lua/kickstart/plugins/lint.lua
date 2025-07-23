@@ -6,17 +6,33 @@ return {
     config = function()
       local lint = require 'lint'
 
-      -- Function to find available ESLint executable
-      local function find_eslint()
-        -- Check for local project ESLint first
-        if vim.fn.executable './node_modules/.bin/eslint' == 1 then
-          return './node_modules/.bin/eslint'
+      -- Configuration: Set to false to disable fallback to regular eslint
+      local ESLINT_FALLBACK_ENABLED = true
+
+      -- Function to find available ESLint daemon with configurable fallback
+      local function find_eslint_d()
+        -- Check for local project eslint_d first
+        if vim.fn.executable './node_modules/.bin/eslint_d' == 1 then
+          return './node_modules/.bin/eslint_d'
         end
-        -- Check for global ESLint from Mason
-        if vim.fn.executable 'eslint' == 1 then
-          return 'eslint'
+        -- Check for global eslint_d from Mason
+        if vim.fn.executable 'eslint_d' == 1 then
+          return 'eslint_d'
         end
-        return nil
+        
+        -- Fallback behavior based on configuration
+        if ESLINT_FALLBACK_ENABLED then
+          -- Check for local project eslint
+          if vim.fn.executable './node_modules/.bin/eslint' == 1 then
+            return './node_modules/.bin/eslint'
+          end
+          -- Check for global eslint from Mason
+          if vim.fn.executable 'eslint' == 1 then
+            return 'eslint'
+          end
+        end
+        
+        return nil -- No linter available or fallback disabled
       end
 
       -- Base linter configuration
@@ -27,14 +43,25 @@ return {
         lint.linters_by_ft.markdown = { 'markdownlint' }
       end
 
-      -- Only add ESLint if it's available
-      local eslint_cmd = find_eslint()
+      -- Only add ESLint daemon if it's available
+      local eslint_cmd = find_eslint_d()
       if eslint_cmd then
-        lint.linters.eslint.cmd = eslint_cmd
-        lint.linters_by_ft.javascript = { 'eslint' }
-        lint.linters_by_ft.javascriptreact = { 'eslint' }
-        lint.linters_by_ft.typescript = { 'eslint' }
-        lint.linters_by_ft.typescriptreact = { 'eslint' }
+        -- Configure the linter based on what we found
+        if eslint_cmd:match('eslint_d') then
+          -- Using eslint_d - configure eslint_d linter
+          lint.linters.eslint_d.cmd = eslint_cmd
+          lint.linters_by_ft.javascript = { 'eslint_d' }
+          lint.linters_by_ft.javascriptreact = { 'eslint_d' }
+          lint.linters_by_ft.typescript = { 'eslint_d' }
+          lint.linters_by_ft.typescriptreact = { 'eslint_d' }
+        else
+          -- Fallback to regular eslint
+          lint.linters.eslint.cmd = eslint_cmd
+          lint.linters_by_ft.javascript = { 'eslint' }
+          lint.linters_by_ft.javascriptreact = { 'eslint' }
+          lint.linters_by_ft.typescript = { 'eslint' }
+          lint.linters_by_ft.typescriptreact = { 'eslint' }
+        end
       end
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,

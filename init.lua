@@ -1000,7 +1000,7 @@ require('lazy').setup({
         -- JavaScript/TypeScript tools
         'prettier', -- Code formatter
         'prettierd', -- Faster prettier daemon
-        'eslint', -- ESLint for linting (better flat config support)
+        'eslint_d', -- ESLint daemon for faster linting
         'typescript-language-server', -- TypeScript LSP server
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
