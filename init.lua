@@ -242,8 +242,8 @@ function _G.custom_tabline()
       display_name = display_name:sub(1, 17) .. '...'
     end
 
-    -- Build tab content with extra padding for thickness
-    local tab_content = '  ' .. display_name
+    -- Build tab content with tab number and extra padding for thickness
+    local tab_content = '  ' .. tab_num .. ': ' .. display_name
 
     -- Add modified indicator
     if modified then
@@ -289,11 +289,17 @@ vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<CR>', { desc = '[T]ab [C]lose' 
 vim.keymap.set('n', '<leader>to', '<cmd>tabonly<CR>', { desc = '[T]ab [O]nly (close others)' })
 vim.keymap.set('n', 'gt', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
 vim.keymap.set('n', 'gT', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
+-- Tab number navigation keymaps (1-9 for tabs 1-9, 0 for tab 10)
 vim.keymap.set('n', '<leader>1', '1gt', { desc = 'Go to tab 1' })
 vim.keymap.set('n', '<leader>2', '2gt', { desc = 'Go to tab 2' })
 vim.keymap.set('n', '<leader>3', '3gt', { desc = 'Go to tab 3' })
 vim.keymap.set('n', '<leader>4', '4gt', { desc = 'Go to tab 4' })
 vim.keymap.set('n', '<leader>5', '5gt', { desc = 'Go to tab 5' })
+vim.keymap.set('n', '<leader>6', '6gt', { desc = 'Go to tab 6' })
+vim.keymap.set('n', '<leader>7', '7gt', { desc = 'Go to tab 7' })
+vim.keymap.set('n', '<leader>8', '8gt', { desc = 'Go to tab 8' })
+vim.keymap.set('n', '<leader>9', '9gt', { desc = 'Go to tab 9' })
+vim.keymap.set('n', '<leader>0', '10gt', { desc = 'Go to tab 10' })
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -310,39 +316,6 @@ local function setup_window_navigation()
   end
 end
 setup_window_navigation()
-
--- [[ Terminal Configuration ]]
-local function setup_terminal_keymaps()
-  -- Exit terminal mode shortcut
-  vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
-  -- Terminal mode navigation
-  local nav_keymaps = {
-    { '<C-h>', '<C-\\><C-n><C-w>h', 'Terminal: Move to left window' },
-    { '<C-j>', '<C-\\><C-n><C-w>j', 'Terminal: Move to bottom window' },
-    { '<C-k>', '<C-\\><C-n><C-w>k', 'Terminal: Move to top window' },
-    { '<C-l>', '<C-\\><C-n><C-w>l', 'Terminal: Move to right window' },
-  }
-  for _, keymap in ipairs(nav_keymaps) do
-    vim.keymap.set('t', keymap[1], keymap[2], { desc = keymap[3] })
-  end
-
-  -- Terminal creation keymaps
-  vim.keymap.set('n', '<leader>th', function()
-    local height = math.floor(vim.o.lines * 0.3)
-    vim.cmd('botright ' .. height .. 'split | terminal')
-  end, { desc = '[T]erminal [H]orizontal split (30%)' })
-  vim.keymap.set('n', '<leader>ts', function()
-    local height = math.floor(vim.o.lines * 0.15)
-    vim.cmd('botright ' .. height .. 'split | terminal')
-  end, { desc = '[T]erminal [S]mall split (15%)' })
-  vim.keymap.set('n', '<leader>tf', '<cmd>terminal<CR>', { desc = '[T]erminal [F]ullscreen' })
-  vim.keymap.set('n', '<leader>tv', function()
-    local width = math.floor(vim.o.columns * 0.4)
-    vim.cmd('leftabove ' .. width .. 'vsplit | terminal')
-  end, { desc = '[T]erminal [V]ertical split (40%)' })
-end
-setup_terminal_keymaps()
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -381,7 +354,7 @@ vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter' }, {
 
 -- [[ Diagnostic Configuration ]]
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { desc = 'Open [D]iagnostic [Q]uickfix list' })
+-- Note: Diagnostic list functionality now handled by trouble.nvim with <leader>dd
 vim.keymap.set('n', '<leader>Td', function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled { bufnr = 0 })
 end, { desc = '[T]oggle [D]iagnostics for current buffer' })
@@ -965,6 +938,7 @@ require('lazy').setup({
           },
         },
 
+        -- Lua
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -979,6 +953,15 @@ require('lazy').setup({
             },
           },
         },
+
+        -- Additional language servers
+        pyright = {}, -- Python
+        rust_analyzer = {}, -- Rust
+        gopls = {}, -- Go
+        jsonls = {}, -- JSON
+        yamlls = {}, -- YAML
+        html = {}, -- HTML
+        cssls = {}, -- CSS
       }
 
       -- Ensure the servers and tools above are installed
@@ -1002,6 +985,14 @@ require('lazy').setup({
         'prettierd', -- Faster prettier daemon
         'eslint_d', -- ESLint daemon for faster linting
         'typescript-language-server', -- TypeScript LSP server
+        -- Additional language servers
+        'pyright', -- Python LSP
+        'rust-analyzer', -- Rust LSP
+        'gopls', -- Go LSP
+        'json-lsp', -- JSON LSP
+        'yaml-language-server', -- YAML LSP
+        'html-lsp', -- HTML LSP
+        'css-lsp', -- CSS LSP
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -1359,6 +1350,84 @@ require('lazy').setup({
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+
+  -- trouble.nvim - Enhanced diagnostics and lists UI
+  {
+    'folke/trouble.nvim',
+    opts = {
+      focus = true,
+    },
+    cmd = 'Trouble',
+    keys = {
+      { '<leader>dd', '<cmd>Trouble diagnostics toggle<cr>', desc = '[D]iagnostics trouble' },
+      { '<leader>dr', '<cmd>Trouble lsp_references toggle<cr>', desc = '[D]iagnostics [R]eferences' },
+      { '<leader>ds', '<cmd>Trouble symbols toggle focus=false<cr>', desc = '[D]iagnostics [S]ymbols' },
+    },
+  },
+
+  -- oil.nvim - Edit directories like buffers
+  {
+    'stevearc/oil.nvim',
+    opts = {
+      default_file_explorer = false, -- Don't replace netrw, we have neo-tree
+      view_options = {
+        show_hidden = true,
+      },
+    },
+    keys = {
+      { '<leader>ef', '<cmd>Oil<cr>', desc = '[E]dit [F]iles (oil)' },
+    },
+  },
+
+  -- toggleterm.nvim - Advanced terminal management
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    opts = {
+      size = function(term)
+        if term.direction == 'horizontal' then
+          return 15
+        elseif term.direction == 'vertical' then
+          return math.floor(vim.o.columns * 0.4)
+        end
+      end,
+      open_mapping = [[<leader>tt]], -- Enable terminal mode toggling
+      terminal_mappings = true, -- Allow mappings in terminal mode
+      direction = 'horizontal',
+      float_opts = {
+        border = 'curved',
+        width = math.floor(vim.o.columns * 0.8),
+        height = math.floor(vim.o.lines * 0.8),
+      },
+    },
+    config = function(_, opts)
+      require('toggleterm').setup(opts)
+
+      -- Terminal mode escape mapping
+      vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+    end,
+    keys = {
+      { '<leader>tt', '<cmd>ToggleTerm<cr>', desc = '[T]erminal smart [T]oggle', mode = { 'n', 't' } },
+      { '<leader>tf', '<cmd>ToggleTerm direction=float<cr>', desc = '[T]erminal [F]loating' },
+      { '<leader>th', '<cmd>ToggleTerm direction=horizontal<cr>', desc = '[T]erminal [H]orizontal' },
+      { '<leader>tv', '<cmd>ToggleTerm direction=vertical<cr>', desc = '[T]erminal [V]ertical' },
+      { '<leader>ts', '<cmd>ToggleTerm size=10 direction=horizontal<cr>', desc = '[T]erminal [S]mall' },
+      -- Multiple terminal management
+      {
+        '<leader>ta',
+        function()
+          local Terminal = require('toggleterm.terminal').Terminal
+          local new_term = Terminal:new {
+            direction = 'horizontal',
+            hidden = false,
+          }
+          new_term:toggle()
+        end,
+        desc = '[T]erminal [A]dd new',
+      },
+      { '<leader>tc', '<cmd>TermSelect<cr>', desc = '[T]erminal [C]hoose' },
+    },
+  },
 
   -- Diffview.nvim for viewing git diffs as file tree
   {

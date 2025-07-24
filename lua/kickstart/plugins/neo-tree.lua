@@ -10,7 +10,7 @@ return {
   },
   lazy = false,
   keys = {
-    { '<leader>e', ':Neotree toggle<CR>', desc = 'Toggle [E]xplorer', silent = true },
+    { '<leader>ee', ':Neotree toggle<CR>', desc = '[E]xplorer toggle', silent = true },
   },
   opts = {
     window = {
@@ -86,8 +86,8 @@ return {
       {
         event = 'neo_tree_buffer_enter',
         handler = function()
-          vim.wo.number = true
-          vim.wo.relativenumber = true
+          vim.wo.number = false
+          vim.wo.relativenumber = false
         end,
       },
     },
