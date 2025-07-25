@@ -110,13 +110,13 @@ vim.o.relativenumber = true
 
 -- Auto-toggle relative numbers based on mode
 vim.api.nvim_create_augroup('relative-numbers', { clear = true })
-vim.api.nvim_create_autocmd({ 'InsertEnter', 'CmdlineEnter' }, {
+vim.api.nvim_create_autocmd('InsertEnter', {
   group = 'relative-numbers',
   callback = function()
     vim.wo.relativenumber = false
   end,
 })
-vim.api.nvim_create_autocmd({ 'InsertLeave', 'CmdlineLeave' }, {
+vim.api.nvim_create_autocmd('InsertLeave', {
   group = 'relative-numbers',
   callback = function()
     vim.wo.relativenumber = true
@@ -351,6 +351,19 @@ vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter' }, {
     end
   end,
 })
+
+-- [[ Terminal Configuration ]]
+-- Terminal mode escape mapping
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
+-- Persistent fullscreen terminal buffer function
+local function terminal_fullscreen()
+  vim.cmd 'tabnew'
+  vim.cmd 'terminal'
+  vim.cmd 'startinsert'
+end
+
+vim.keymap.set('n', '<leader>tf', terminal_fullscreen, { desc = '[T]erminal [F]ullscreen (persistent buffer)' })
 
 -- [[ Diagnostic Configuration ]]
 -- Diagnostic keymaps
@@ -1379,54 +1392,24 @@ require('lazy').setup({
     },
   },
 
-  -- toggleterm.nvim - Advanced terminal management
+  -- toggleterm.nvim - Persistent toggle terminal for quick commands
   {
     'akinsho/toggleterm.nvim',
     version = '*',
     opts = {
-      size = function(term)
-        if term.direction == 'horizontal' then
-          return 15
-        elseif term.direction == 'vertical' then
-          return math.floor(vim.o.columns * 0.4)
-        end
-      end,
-      open_mapping = [[<leader>tt]], -- Enable terminal mode toggling
-      terminal_mappings = false, -- Allow mappings in terminal mode
-      insert_mappings = true, -- Allow mappings in insert mode
+      size = math.floor(vim.o.lines * 0.4),
+      open_mapping = false,
       direction = 'horizontal',
-      float_opts = {
-        border = 'curved',
-        width = math.floor(vim.o.columns * 0.8),
-        height = math.floor(vim.o.lines * 0.8),
-      },
+      close_on_exit = false,
+      shell = vim.o.shell,
+      persist_mode = true,
+      persist_size = true,
+      start_in_insert = true,
+      terminal_mappings = false,
+      insert_mappings = false,
     },
-    config = function(_, opts)
-      require('toggleterm').setup(opts)
-
-      -- Terminal mode escape mapping
-      vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-    end,
     keys = {
-      { '<leader>tt', '<cmd>ToggleTerm<cr>', desc = '[T]erminal smart [T]oggle', mode = { 'n', 't' } },
-      { '<leader>tf', '<cmd>ToggleTerm direction=float<cr>', desc = '[T]erminal [F]loating' },
-      { '<leader>th', '<cmd>ToggleTerm direction=horizontal<cr>', desc = '[T]erminal [H]orizontal' },
-      { '<leader>tv', '<cmd>ToggleTerm direction=vertical<cr>', desc = '[T]erminal [V]ertical' },
-      { '<leader>ts', '<cmd>ToggleTerm size=10 direction=horizontal<cr>', desc = '[T]erminal [S]mall' },
-      -- Multiple terminal management
-      {
-        '<leader>ta',
-        function()
-          local Terminal = require('toggleterm.terminal').Terminal
-          local new_term = Terminal:new {
-            direction = 'horizontal',
-            hidden = false,
-          }
-          new_term:toggle()
-        end,
-        desc = '[T]erminal [A]dd new',
-      },
-      { '<leader>tc', '<cmd>TermSelect<cr>', desc = '[T]erminal [C]hoose' },
+      { '<leader>tt', '<cmd>ToggleTerm<cr>', desc = '[T]erminal [T]oggle (persistent, quick commands)', mode = { 'n', 't' } },
     },
   },
 
@@ -1465,9 +1448,13 @@ require('lazy').setup({
           },
           win_config = {
             position = 'right',
-            width = 35,
+            width = 50,
             height = 10,
           },
+        },
+        signs = {
+          fold_closed = '',
+          fold_open = '',
         },
         file_history_panel = {
           log_options = {
