@@ -290,16 +290,16 @@ vim.keymap.set('n', '<leader>to', '<cmd>tabonly<CR>', { desc = '[T]ab [O]nly (cl
 vim.keymap.set('n', 'gt', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
 vim.keymap.set('n', 'gT', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
 -- Tab number navigation keymaps (1-9 for tabs 1-9, 0 for tab 10)
-vim.keymap.set('n', '<leader>1', '1gt', { desc = 'Go to tab 1' })
-vim.keymap.set('n', '<leader>2', '2gt', { desc = 'Go to tab 2' })
-vim.keymap.set('n', '<leader>3', '3gt', { desc = 'Go to tab 3' })
-vim.keymap.set('n', '<leader>4', '4gt', { desc = 'Go to tab 4' })
-vim.keymap.set('n', '<leader>5', '5gt', { desc = 'Go to tab 5' })
-vim.keymap.set('n', '<leader>6', '6gt', { desc = 'Go to tab 6' })
-vim.keymap.set('n', '<leader>7', '7gt', { desc = 'Go to tab 7' })
-vim.keymap.set('n', '<leader>8', '8gt', { desc = 'Go to tab 8' })
-vim.keymap.set('n', '<leader>9', '9gt', { desc = 'Go to tab 9' })
-vim.keymap.set('n', '<leader>0', '10gt', { desc = 'Go to tab 10' })
+vim.keymap.set('n', '<leader>1', '1gt')
+vim.keymap.set('n', '<leader>2', '2gt')
+vim.keymap.set('n', '<leader>3', '3gt')
+vim.keymap.set('n', '<leader>4', '4gt')
+vim.keymap.set('n', '<leader>5', '5gt')
+vim.keymap.set('n', '<leader>6', '6gt')
+vim.keymap.set('n', '<leader>7', '7gt')
+vim.keymap.set('n', '<leader>8', '8gt')
+vim.keymap.set('n', '<leader>9', '9gt')
+vim.keymap.set('n', '<leader>0', '10gt')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -363,7 +363,7 @@ local function terminal_fullscreen()
   vim.cmd 'startinsert'
 end
 
-vim.keymap.set('n', '<leader>tf', terminal_fullscreen, { desc = '[T]erminal [F]ullscreen (persistent buffer)' })
+vim.keymap.set('n', '<leader>tf', terminal_fullscreen, { desc = '[T]erminal [F]ullscreen' })
 
 -- [[ Diagnostic Configuration ]]
 -- Diagnostic keymaps
@@ -620,6 +620,16 @@ require('lazy').setup({
         { '<leader>q', group = '[Q]uickfix', mode = { 'n', 'v' } },
         { '<leader>r', group = '[R]ename/Replace', mode = { 'n', 'v' } },
         { '<leader>d', group = '[D]iagnostics', mode = { 'n', 'v' } },
+        { '<leader>1', hidden = true },
+        { '<leader>2', hidden = true },
+        { '<leader>3', hidden = true },
+        { '<leader>4', hidden = true },
+        { '<leader>5', hidden = true },
+        { '<leader>6', hidden = true },
+        { '<leader>7', hidden = true },
+        { '<leader>8', hidden = true },
+        { '<leader>9', hidden = true },
+        { '<leader>0', hidden = true },
       },
     },
   },
@@ -1398,18 +1408,14 @@ require('lazy').setup({
     version = '*',
     opts = {
       size = math.floor(vim.o.lines * 0.4),
-      open_mapping = false,
       direction = 'horizontal',
       close_on_exit = false,
-      shell = vim.o.shell,
       persist_mode = true,
       persist_size = true,
       start_in_insert = true,
-      terminal_mappings = false,
-      insert_mappings = false,
     },
     keys = {
-      { '<leader>tt', '<cmd>ToggleTerm<cr>', desc = '[T]erminal [T]oggle (persistent, quick commands)', mode = { 'n', 't' } },
+      { '<leader>tt', '<cmd>ToggleTerm<cr>', desc = '[T]erminal [T]oggle', mode = 'n' },
     },
   },
 
