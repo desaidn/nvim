@@ -556,7 +556,7 @@ require('lazy').setup({
       end,
       -- Configure triggers to work in all relevant modes
       triggers = {
-        { '<auto>', mode = 'nixsoc' }, -- normal, insert, visual, select, operator-pending, command (no terminal to avoid conflict with lazygit)
+        { '<leader>', mode = { 'n', 'v' } },
       },
       icons = {
         -- set icon mappings to true if you have a Nerd Font
@@ -1393,6 +1393,7 @@ require('lazy').setup({
       end,
       open_mapping = [[<leader>tt]], -- Enable terminal mode toggling
       terminal_mappings = true, -- Allow mappings in terminal mode
+      insert_mappings = true, -- Allow mappings in insert mode
       direction = 'horizontal',
       float_opts = {
         border = 'curved',
