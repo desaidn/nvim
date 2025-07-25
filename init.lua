@@ -1392,7 +1392,7 @@ require('lazy').setup({
         end
       end,
       open_mapping = [[<leader>tt]], -- Enable terminal mode toggling
-      terminal_mappings = true, -- Allow mappings in terminal mode
+      terminal_mappings = false, -- Allow mappings in terminal mode
       insert_mappings = true, -- Allow mappings in insert mode
       direction = 'horizontal',
       float_opts = {
