@@ -567,10 +567,6 @@ require('lazy').setup({
       delay = function(ctx)
         return ctx.plugin and 0 or 0 -- Always show immediately
       end,
-      -- Configure triggers to work in all relevant modes
-      triggers = {
-        { '<leader>', mode = { 'n', 'v' } },
-      },
       icons = {
         -- set icon mappings to true if you have a Nerd Font
         mappings = vim.g.have_nerd_font,
