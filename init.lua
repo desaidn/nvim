@@ -208,69 +208,8 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- [[ Custom Tabline Configuration ]]
--- Enable tabline and configure minimal tab experience
-vim.o.showtabline = 2 -- Always show tabline
-
--- Custom tabline function for minimal, informative tabs
-function _G.custom_tabline()
-  local tabline = ''
-  local current_tab = vim.fn.tabpagenr()
-  local total_tabs = vim.fn.tabpagenr '$'
-
-  for tab_num = 1, total_tabs do
-    local bufnr = vim.fn.tabpagebuflist(tab_num)[vim.fn.tabpagewinnr(tab_num)]
-    local filename = vim.fn.bufname(bufnr)
-    local modified = vim.fn.getbufvar(bufnr, '&modified') == 1
-    local buftype = vim.fn.getbufvar(bufnr, '&buftype')
-
-    -- Get clean filename
-    local display_name
-    if filename == '' then
-      display_name = '[No Name]'
-    elseif buftype == 'terminal' then
-      display_name = 'Terminal'
-    else
-      display_name = vim.fn.fnamemodify(filename, ':t')
-      if display_name == '' then
-        display_name = '[No Name]'
-      end
-    end
-
-    -- Truncate long names
-    if #display_name > 20 then
-      display_name = display_name:sub(1, 17) .. '...'
-    end
-
-    -- Build tab content with tab number and extra padding for thickness
-    local tab_content = '  ' .. tab_num .. ': ' .. display_name
-
-    -- Add modified indicator
-    if modified then
-      tab_content = tab_content .. ' •'
-    end
-
-    tab_content = tab_content .. '  '
-
-    -- Add highlight groups and click handlers
-    if tab_num == current_tab then
-      tabline = tabline .. '%#TabLineSel#'
-    else
-      tabline = tabline .. '%#TabLine#'
-    end
-
-    -- Add tab number for click handling
-    tabline = tabline .. '%' .. tab_num .. 'T' .. tab_content
-  end
-
-  -- Fill the rest with TabLineFill
-  tabline = tabline .. '%#TabLineFill#%T'
-
-  return tabline
-end
-
--- Set the custom tabline
-vim.o.tabline = '%!v:lua.custom_tabline()'
+-- Hide tabline for buffer-centric workflow
+vim.o.showtabline = 0
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -283,23 +222,11 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half-page down and center cursor' })
 vim.keymap.set('n', '<C-z>', '<C-u>zz', { desc = 'Half-page up and center cursor' })
 
--- Tab navigation keymaps
-vim.keymap.set('n', '<leader>tn', '<cmd>tabnew<CR>', { desc = '[T]ab [N]ew' })
 vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<CR>', { desc = '[T]ab [C]lose' })
-vim.keymap.set('n', '<leader>to', '<cmd>tabonly<CR>', { desc = '[T]ab [O]nly (close others)' })
 vim.keymap.set('n', 'gt', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
 vim.keymap.set('n', 'gT', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
--- Tab number navigation keymaps (1-9 for tabs 1-9, 0 for tab 10)
-vim.keymap.set('n', '<leader>1', '1gt')
-vim.keymap.set('n', '<leader>2', '2gt')
-vim.keymap.set('n', '<leader>3', '3gt')
-vim.keymap.set('n', '<leader>4', '4gt')
-vim.keymap.set('n', '<leader>5', '5gt')
-vim.keymap.set('n', '<leader>6', '6gt')
-vim.keymap.set('n', '<leader>7', '7gt')
-vim.keymap.set('n', '<leader>8', '8gt')
-vim.keymap.set('n', '<leader>9', '9gt')
-vim.keymap.set('n', '<leader>0', '10gt')
+
+vim.keymap.set('n', '<leader>bd', '<cmd>bdelete<CR>', { desc = '[B]uffer [D]elete' })
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -358,7 +285,7 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 
 -- Persistent fullscreen terminal buffer function
 local function terminal_fullscreen()
-  vim.cmd 'tabnew'
+  vim.cmd 'enew'
   vim.cmd 'terminal'
   vim.cmd 'startinsert'
 end
