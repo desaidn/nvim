@@ -208,8 +208,59 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- Hide tabline for buffer-centric workflow
-vim.o.showtabline = 0
+-- Show tabline only when multiple tabs exist
+vim.o.showtabline = 1
+
+-- Custom minimal tabline function
+function _G.minimal_tabline()
+  local tabline = ''
+  local current_tab = vim.fn.tabpagenr()
+  local total_tabs = vim.fn.tabpagenr '$'
+
+  for tab_num = 1, total_tabs do
+    local bufnr = vim.fn.tabpagebuflist(tab_num)[vim.fn.tabpagewinnr(tab_num)]
+    local filename = vim.fn.bufname(bufnr)
+    local buftype = vim.fn.getbufvar(bufnr, '&buftype')
+    local modified = vim.fn.getbufvar(bufnr, '&modified') == 1
+
+    -- Get clean, minimal name
+    local display_name
+    if buftype == 'terminal' then
+      display_name = 'term'
+    elseif filename == '' then
+      display_name = 'new'
+    else
+      display_name = vim.fn.fnamemodify(filename, ':t') -- Just filename, no path
+      if display_name == '' then
+        display_name = 'new'
+      end
+    end
+
+    -- Minimal tab format: number + name + modified indicator
+    local tab_content = ' ' .. tab_num .. ':' .. display_name
+    if modified then
+      tab_content = tab_content .. '+'
+    end
+    tab_content = tab_content .. ' '
+
+    -- Apply highlighting
+    if tab_num == current_tab then
+      tabline = tabline .. '%#TabLineSel#'
+    else
+      tabline = tabline .. '%#TabLine#'
+    end
+
+    -- Add clickable tab
+    tabline = tabline .. '%' .. tab_num .. 'T' .. tab_content
+  end
+
+  -- Fill remaining space
+  tabline = tabline .. '%#TabLineFill#%T'
+  return tabline
+end
+
+-- Set custom tabline
+vim.o.tabline = '%!v:lua.minimal_tabline()'
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
