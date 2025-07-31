@@ -271,7 +271,6 @@ vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter' }, {
   group = terminal_group,
   callback = function()
     if vim.bo.buftype == 'terminal' then
-      vim.bo.modifiable = true
       vim.opt_local.number = false
       vim.opt_local.relativenumber = false
       vim.opt_local.signcolumn = 'no'
@@ -1456,6 +1455,25 @@ require('lazy').setup({
           vim.cmd('DiffviewFileHistory -L' .. line .. ',' .. line .. ':' .. vim.fn.fnamemodify(file, ':~:.'))
         end
       end, { desc = 'View current line history' })
+    end,
+  },
+
+  -- term-edit.nvim - Vim keybindings in terminal buffers
+  {
+    'chomosuke/term-edit.nvim',
+    event = 'TermOpen',
+    version = '1.*',
+    config = function()
+      require('term-edit').setup {
+        -- Detect end of shell prompt - adjust based on your shell
+        prompt_end = '%$ ', -- Works for bash/zsh with default PS1
+
+        -- Reduce delay for better responsiveness
+        feedkeys_delay = 5,
+
+        -- Keep debug off for performance
+        debug = false,
+      }
     end,
   },
 
