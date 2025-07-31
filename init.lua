@@ -447,10 +447,10 @@ require('lazy').setup({
       }
       vim.cmd.colorscheme 'vscode'
 
-      -- Override diff colors to match VSCode (green for modifications) after colorscheme loads
+      -- Override diff colors
       -- Use existing git_added color for consistency with your git highlighting
       vim.api.nvim_set_hl(0, 'DiffAdd', { bg = '#1c3a25', fg = colors.git_added }) -- Green for additions
-      vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#1c3a25', fg = colors.git_added }) -- Green for changes (VSCode-like)
+      vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#1c3a25', fg = colors.git_added }) -- Green for changes
       vim.api.nvim_set_hl(0, 'DiffText', { bg = '#2d5c3e', fg = colors.git_added, bold = true }) -- Brighter green for specific text
       vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#3a1c1c', fg = colors.git_deleted }) -- Keep red for deletions
 
