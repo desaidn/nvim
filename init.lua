@@ -1372,19 +1372,6 @@ require('lazy').setup({
     },
   },
 
-  -- oil.nvim - Edit directories like buffers
-  {
-    'stevearc/oil.nvim',
-    opts = {
-      default_file_explorer = false, -- Don't replace netrw, we have neo-tree
-      view_options = {
-        show_hidden = true,
-      },
-    },
-    keys = {
-      { '<leader>ef', '<cmd>Oil<cr>', desc = '[E]dit [F]iles (oil)' },
-    },
-  },
 
 
   -- Diffview.nvim for viewing git diffs as file tree

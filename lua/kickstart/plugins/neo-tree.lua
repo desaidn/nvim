@@ -10,7 +10,7 @@ return {
   },
   lazy = false,
   keys = {
-    { '<leader>ee', ':Neotree toggle<CR>', desc = '[E]xplorer toggle', silent = true },
+    { '<leader>e', ':Neotree toggle<CR>', desc = '[E]xplorer', silent = true },
   },
   opts = {
     window = {

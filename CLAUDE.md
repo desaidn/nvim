@@ -77,7 +77,7 @@ Git blame line styling is configured with enhanced visibility via a separate col
 
 Neo-tree file explorer is enabled with right-side positioning and minimal styling:
 
-- `\` - Toggle neo-tree (reveals current file location)
+- `<leader>e` - Toggle neo-tree (reveals current file location)
 - Supports multiple sources: filesystem, buffers, git status
 - Key mappings: `?` for help, `a` to add files, `d` to delete, `r` to rename
 - Switch sources with `<Tab>` (filesystem → buffers → git_status)
