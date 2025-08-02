@@ -33,7 +33,7 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 
 - Leader key: `<Space>`
 - Search operations: `<leader>s*` (files, grep, help, etc.)
-- Terminal operations: `<leader>t*` (horizontal, small, fullscreen)
+- Terminal operations: `<leader>t` (fullscreen)
 - Toggle options: `<leader>T*` (inlay hints, blame line)
 - Git operations: `<leader>g*` (lazygit, blame, diff)
 - Git hunks: `<leader>h*` (stage, reset, preview)
@@ -58,12 +58,9 @@ Currently configured for Lua development with lua_ls. To add other languages:
 
 ### Terminal Integration
 
-Built-in terminal functionality with convenient keymaps:
+Built-in terminal functionality:
 
-- `<leader>th` - Horizontal terminal split (30% height)
-- `<leader>ts` - Small horizontal terminal split (15% height)
-- `<leader>tf` - Fullscreen terminal
-- `<leader>tv` - Vertical terminal split (40% width)
+- `<leader>t` - Fullscreen terminal
 - `<C-h/j/k/l>` in terminal mode - Navigate between windows
 - `<Esc><Esc>` - Exit terminal mode
 

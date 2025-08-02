@@ -42,10 +42,7 @@ nvim
 
 ### Terminal
 
-- `<leader>th` - Horizontal split (30% height)
-- `<leader>ts` - Small split (15% height)
-- `<leader>tf` - Fullscreen terminal
-- `<leader>tv` - Vertical split (40% width)
+- `<leader>t` - Fullscreen terminal
 
 ### Git
 

@@ -340,7 +340,7 @@ local function terminal_fullscreen()
   vim.cmd 'startinsert'
 end
 
-vim.keymap.set('n', '<leader>tf', terminal_fullscreen, { desc = '[T]erminal [F]ullscreen' })
+vim.keymap.set('n', '<leader>t', terminal_fullscreen, { desc = '[T]erminal' })
 
 -- [[ Diagnostic Configuration ]]
 -- Diagnostic keymaps
@@ -1386,22 +1386,6 @@ require('lazy').setup({
     },
   },
 
-  -- toggleterm.nvim - Persistent toggle terminal for quick commands
-  {
-    'akinsho/toggleterm.nvim',
-    version = '*',
-    opts = {
-      size = math.floor(vim.o.lines * 0.4),
-      direction = 'horizontal',
-      close_on_exit = false,
-      persist_mode = true,
-      persist_size = true,
-      start_in_insert = true,
-    },
-    keys = {
-      { '<leader>tt', '<cmd>ToggleTerm<cr>', desc = '[T]erminal [T]oggle', mode = 'n' },
-    },
-  },
 
   -- Diffview.nvim for viewing git diffs as file tree
   {
