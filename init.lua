@@ -279,7 +279,6 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half-page down and center cursor' })
 vim.keymap.set('n', '<C-z>', '<C-u>zz', { desc = 'Half-page up and center cursor' })
 
-vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<CR>', { desc = '[T]ab [C]lose' })
 vim.keymap.set('n', 'gt', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
 vim.keymap.set('n', 'gT', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
 
