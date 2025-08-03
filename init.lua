@@ -1281,6 +1281,12 @@ require('lazy').setup({
       vim.g.undotree_SetFocusWhenToggle = 1
     end,
   },
+
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    opts = {},
+  },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
