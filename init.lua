@@ -1433,8 +1433,8 @@ require('lazy').setup({
           },
         },
         signs = {
-          fold_closed = '',
-          fold_open = '',
+          fold_closed = '+',
+          fold_open = '-',
         },
         file_history_panel = {
           log_options = {
