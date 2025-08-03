@@ -526,6 +526,10 @@ require('lazy').setup({
       -- Enhanced diff highlighting groups (since enhanced_diff_hl = true in diffview config)
       vim.api.nvim_set_hl(0, 'DiffviewDiffAddAsDelete', { bg = '#3a1c1c', fg = colors.git_deleted }) -- LHS deletions
       vim.api.nvim_set_hl(0, 'DiffviewDiffDelete', { bg = '#3a1c1c', fg = colors.git_deleted }) -- Deletion markers
+
+      -- Improve LSP hover documentation contrast with border and distinct background
+      vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#2d2d30', fg = '#ffffff' }) -- Slightly lighter background than main
+      vim.api.nvim_set_hl(0, 'FloatBorder', { fg = colors.accent_blue, bg = '#2d2d30' }) -- Blue border with matching background
     end,
   },
 
