@@ -283,7 +283,6 @@ vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<CR>', { desc = '[T]ab [C]lose' 
 vim.keymap.set('n', 'gt', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
 vim.keymap.set('n', 'gT', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
 
-
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --  See `:help wincmd` for a list of all window commands
@@ -328,15 +327,17 @@ vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter', 'InsertLeave',
   callback = function()
     local buftype = vim.bo.buftype
     local filetype = vim.bo.filetype
-    
+
     -- Disable line numbers for special buffer types
-    if buftype == 'terminal' or 
-       filetype == 'neo-tree' or 
-       filetype == 'help' or 
-       filetype == 'quickfix' or
-       filetype == 'trouble' or
-       buftype == 'nofile' or 
-       buftype == 'prompt' then
+    if
+      buftype == 'terminal'
+      or filetype == 'neo-tree'
+      or filetype == 'help'
+      or filetype == 'quickfix'
+      or filetype == 'trouble'
+      or buftype == 'nofile'
+      or buftype == 'prompt'
+    then
       vim.opt_local.number = false
       vim.opt_local.relativenumber = false
       if buftype == 'terminal' then
@@ -1388,8 +1389,6 @@ require('lazy').setup({
       { '<leader>ds', '<cmd>Trouble symbols toggle focus=false<cr>', desc = '[D]iagnostics [S]ymbols' },
     },
   },
-
-
 
   -- Diffview.nvim for viewing git diffs as file tree
   {
