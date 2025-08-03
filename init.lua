@@ -108,18 +108,24 @@ vim.o.number = true
 --  Experiment for yourself to see if you like it!
 vim.o.relativenumber = true
 
--- Auto-toggle relative numbers based on mode
+-- Auto-toggle relative numbers based on mode (only for normal file buffers)
 vim.api.nvim_create_augroup('relative-numbers', { clear = true })
 vim.api.nvim_create_autocmd('InsertEnter', {
   group = 'relative-numbers',
   callback = function()
-    vim.wo.relativenumber = false
+    -- Only disable relative numbers in normal file buffers
+    if vim.bo.buftype == '' and vim.bo.filetype ~= 'neo-tree' then
+      vim.wo.relativenumber = false
+    end
   end,
 })
 vim.api.nvim_create_autocmd('InsertLeave', {
   group = 'relative-numbers',
   callback = function()
-    vim.wo.relativenumber = true
+    -- Only enable relative numbers in normal file buffers
+    if vim.bo.buftype == '' and vim.bo.filetype ~= 'neo-tree' then
+      vim.wo.relativenumber = true
+    end
   end,
 })
 
@@ -277,7 +283,6 @@ vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<CR>', { desc = '[T]ab [C]lose' 
 vim.keymap.set('n', 'gt', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
 vim.keymap.set('n', 'gT', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
 
-vim.keymap.set('n', '<leader>bd', '<cmd>bdelete<CR>', { desc = '[B]uffer [D]elete' })
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -315,16 +320,28 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Terminal buffer configuration
-local terminal_group = vim.api.nvim_create_augroup('terminal-config', { clear = true })
-vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter' }, {
-  desc = 'Configure terminal buffers without line numbers',
-  group = terminal_group,
+-- Special buffer configuration (terminal, neo-tree, etc.)
+local special_buffer_group = vim.api.nvim_create_augroup('special-buffer-config', { clear = true })
+vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter', 'InsertLeave', 'ModeChanged', 'BufWinEnter' }, {
+  desc = 'Configure special buffers without line numbers',
+  group = special_buffer_group,
   callback = function()
-    if vim.bo.buftype == 'terminal' then
+    local buftype = vim.bo.buftype
+    local filetype = vim.bo.filetype
+    
+    -- Disable line numbers for special buffer types
+    if buftype == 'terminal' or 
+       filetype == 'neo-tree' or 
+       filetype == 'help' or 
+       filetype == 'quickfix' or
+       filetype == 'trouble' or
+       buftype == 'nofile' or 
+       buftype == 'prompt' then
       vim.opt_local.number = false
       vim.opt_local.relativenumber = false
-      vim.opt_local.signcolumn = 'no'
+      if buftype == 'terminal' then
+        vim.opt_local.signcolumn = 'no'
+      end
     end
   end,
 })
