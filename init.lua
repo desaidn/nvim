@@ -516,14 +516,14 @@ require('lazy').setup({
       vim.cmd.colorscheme 'vscode'
 
       -- Override diff colors
-      vim.api.nvim_set_hl(0, 'DiffAdd', { bg = '#0d1f11', fg = colors.git_added }) -- Subtle green for additions
-      vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#0d1f11', fg = colors.git_added }) -- Subtle green for changes
-      vim.api.nvim_set_hl(0, 'DiffText', { bg = '#1a3d25', fg = colors.git_added, bold = true }) -- Slightly more visible for emphasis
-      vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#1f0d0d', fg = colors.git_deleted }) -- Subtle red for deletions
+      vim.api.nvim_set_hl(0, 'DiffAdd', { bg = '#0d1f11' }) -- Subtle green background, preserve syntax colors
+      vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#0d1f11' }) -- Subtle green background, preserve syntax colors
+      vim.api.nvim_set_hl(0, 'DiffText', { bg = '#1a3d25', bold = true }) -- Slightly more visible for emphasis, preserve syntax colors
+      vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#1f0d0d' }) -- Subtle red background, preserve syntax colors
 
       -- Enhanced diff highlighting groups (since enhanced_diff_hl = true in diffview config)
-      vim.api.nvim_set_hl(0, 'DiffviewDiffAddAsDelete', { bg = '#1f0d0d', fg = colors.git_deleted }) -- LHS deletions
-      vim.api.nvim_set_hl(0, 'DiffviewDiffDelete', { bg = '#1f0d0d', fg = colors.git_deleted }) -- Deletion markers
+      vim.api.nvim_set_hl(0, 'DiffviewDiffAddAsDelete', { bg = '#1f0d0d' }) -- LHS deletions, preserve syntax colors
+      vim.api.nvim_set_hl(0, 'DiffviewDiffDelete', { bg = '#1f0d0d' }) -- Deletion markers, preserve syntax colors
 
       -- Improve LSP hover documentation contrast with border and distinct background
       vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#2d2d30', fg = '#ffffff' }) -- Slightly lighter background than main
