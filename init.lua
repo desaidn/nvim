@@ -950,16 +950,30 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {
+          -- Disable overlapping diagnostics since we use eslint_d
+          on_attach = function(client, bufnr)
+            -- Disable semantic tokens to reduce conflicts
+            client.server_capabilities.semanticTokensProvider = nil
+          end,
           settings = {
             typescript = {
               -- Support for Bun runtime
               preferences = {
                 includePackageJsonAutoImports = 'auto',
               },
+              -- Disable TypeScript's built-in ESLint-like checks
+              suggest = {
+                includeCompletionsForModuleExports = true,
+                includeCompletionsWithInsertText = true,
+              },
             },
             javascript = {
               preferences = {
                 includePackageJsonAutoImports = 'auto',
+              },
+              suggest = {
+                includeCompletionsForModuleExports = true,
+                includeCompletionsWithInsertText = true,
               },
             },
           },
