@@ -214,59 +214,8 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- Show tabline only when multiple tabs exist
-vim.o.showtabline = 1
-
--- Custom minimal tabline function
-function _G.minimal_tabline()
-  local tabline = ''
-  local current_tab = vim.fn.tabpagenr()
-  local total_tabs = vim.fn.tabpagenr '$'
-
-  for tab_num = 1, total_tabs do
-    local bufnr = vim.fn.tabpagebuflist(tab_num)[vim.fn.tabpagewinnr(tab_num)]
-    local filename = vim.fn.bufname(bufnr)
-    local buftype = vim.fn.getbufvar(bufnr, '&buftype')
-    local modified = vim.fn.getbufvar(bufnr, '&modified') == 1
-
-    -- Get clean, minimal name
-    local display_name
-    if buftype == 'terminal' then
-      display_name = 'term'
-    elseif filename == '' then
-      display_name = 'new'
-    else
-      display_name = vim.fn.fnamemodify(filename, ':t') -- Just filename, no path
-      if display_name == '' then
-        display_name = 'new'
-      end
-    end
-
-    -- Minimal tab format: number + name + modified indicator
-    local tab_content = ' ' .. tab_num .. ':' .. display_name
-    if modified then
-      tab_content = tab_content .. '+'
-    end
-    tab_content = tab_content .. ' '
-
-    -- Apply highlighting
-    if tab_num == current_tab then
-      tabline = tabline .. '%#TabLineSel#'
-    else
-      tabline = tabline .. '%#TabLine#'
-    end
-
-    -- Add clickable tab
-    tabline = tabline .. '%' .. tab_num .. 'T' .. tab_content
-  end
-
-  -- Fill remaining space
-  tabline = tabline .. '%#TabLineFill#%T'
-  return tabline
-end
-
--- Set custom tabline
-vim.o.tabline = '%!v:lua.minimal_tabline()'
+-- Never show tabline (tmux handles tabs)
+vim.o.showtabline = 0
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -279,8 +228,6 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half-page down and center cursor' })
 vim.keymap.set('n', '<C-z>', '<C-u>zz', { desc = 'Half-page up and center cursor' })
 
-vim.keymap.set('n', 'gt', '<cmd>tabnext<CR>', { desc = 'Go to next tab' })
-vim.keymap.set('n', 'gT', '<cmd>tabprevious<CR>', { desc = 'Go to previous tab' })
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -350,14 +297,6 @@ vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter', 'InsertLeave',
 -- Terminal mode escape mapping
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- Persistent fullscreen terminal buffer function
-local function terminal_fullscreen()
-  vim.cmd 'enew'
-  vim.cmd 'terminal'
-  vim.cmd 'startinsert'
-end
-
-vim.keymap.set('n', '<leader>t', terminal_fullscreen, { desc = '[T]erminal' })
 
 -- [[ Diagnostic Configuration ]]
 -- Diagnostic keymaps
@@ -508,9 +447,6 @@ require('lazy').setup({
           NeoTreeGitUntracked = { fg = colors.git_added },
           NeoTreeGitStaged = { fg = colors.git_added },
 
-          TabLine = { bg = colors.bg_primary, fg = colors.fg_tertiary },
-          TabLineSel = { bg = colors.bg_secondary, fg = colors.fg_primary, bold = true },
-          TabLineFill = { bg = colors.bg_primary },
         },
       }
       vim.cmd.colorscheme 'vscode'
@@ -521,9 +457,6 @@ require('lazy').setup({
       vim.api.nvim_set_hl(0, 'DiffText', { bg = '#1a3d25', bold = true }) -- Slightly more visible for emphasis, preserve syntax colors
       vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#1f0d0d' }) -- Subtle red background, preserve syntax colors
 
-      -- Enhanced diff highlighting groups (since enhanced_diff_hl = true in diffview config)
-      vim.api.nvim_set_hl(0, 'DiffviewDiffAddAsDelete', { bg = '#1f0d0d' }) -- LHS deletions, preserve syntax colors
-      vim.api.nvim_set_hl(0, 'DiffviewDiffDelete', { bg = '#1f0d0d' }) -- Deletion markers, preserve syntax colors
 
       -- Improve LSP hover documentation contrast with border and distinct background
       vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#2d2d30', fg = '#ffffff' }) -- Slightly lighter background than main
@@ -615,7 +548,6 @@ require('lazy').setup({
       -- Document existing key chains
       spec = {
         { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
-        { '<leader>t', group = '[T]erminal', mode = { 'n', 'v' } },
         { '<leader>T', group = '[T]oggle', mode = { 'n', 'v' } },
         { '<leader>e', group = '[E]xplorer', mode = { 'n', 'v' } },
         { '<leader>g', group = '[G]it', mode = { 'n', 'v' } },
@@ -1221,26 +1153,6 @@ require('lazy').setup({
     },
   },
 
-  { -- Lazygit integration
-    'kdheepak/lazygit.nvim',
-    lazy = true,
-    cmd = {
-      'LazyGit',
-      'LazyGitConfig',
-      'LazyGitCurrentFile',
-      'LazyGitFilter',
-      'LazyGitFilterCurrentFile',
-    },
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-    },
-    config = function()
-      vim.g.lazygit_floating_window_scaling_factor = 1.0
-    end,
-    keys = {
-      { '<leader>gg', '<cmd>LazyGit<cr>', desc = 'Open [G]it [G]UI' },
-    },
-  },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -1443,141 +1355,7 @@ require('lazy').setup({
     },
   },
 
-  -- Diffview.nvim for viewing git diffs as file tree
-  {
-    'sindrets/diffview.nvim',
-    config = function()
-      require('diffview').setup {
-        diff_binaries = false,
-        enhanced_diff_hl = true, -- Keep subtle highlighting for readability
-        use_icons = vim.g.have_nerd_font, -- Use icons only if nerd font available
-        show_help_hints = true,
-        watch_index = true, -- Auto-update when git index changes
-        view = {
-          default = {
-            layout = 'diff2_horizontal',
-            disable_diagnostics = true,
-            winbar_info = true,
-          },
-          merge_tool = {
-            layout = 'diff3_horizontal',
-            disable_diagnostics = true,
-            winbar_info = true,
-          },
-          file_history = {
-            layout = 'diff2_horizontal',
-            disable_diagnostics = true,
-            winbar_info = true,
-          },
-        },
-        file_panel = {
-          listing_style = 'tree',
-          tree_options = {
-            flatten_dirs = true,
-            folder_statuses = 'only_folded',
-          },
-          win_config = {
-            position = 'right',
-            width = 50,
-            height = 10,
-          },
-        },
-        signs = {
-          fold_closed = '+',
-          fold_open = '-',
-        },
-        file_history_panel = {
-          log_options = {
-            git = {
-              single_file = {
-                diff_merges = 'first-parent',
-                follow = true,
-              },
-              multi_file = {
-                diff_merges = 'first-parent',
-              },
-            },
-          },
-          win_config = {
-            position = 'bottom',
-            height = 16,
-          },
-        },
-      }
 
-      -- State for persisting diff comparison
-      local last_diff_ref = nil
-
-      -- Custom command and toggle function
-      local function toggle_diff_compare()
-        local diffview_lib = require 'diffview.lib'
-        if diffview_lib.get_current_view() then
-          vim.cmd 'DiffviewClose'
-        else
-          if last_diff_ref then
-            vim.cmd('DiffviewOpen ' .. last_diff_ref)
-          else
-            local ref = vim.fn.input 'Enter git refs to compare (e.g. main..feature, abc123, HEAD~2): '
-            if ref ~= '' then
-              last_diff_ref = ref
-              vim.cmd('DiffviewOpen ' .. ref)
-            end
-          end
-        end
-      end
-
-      vim.api.nvim_create_user_command('DiffCompare', function()
-        local ref = vim.fn.input 'Enter git refs to compare (e.g. main..feature, abc123, HEAD~2): '
-        if ref ~= '' then
-          last_diff_ref = ref
-          vim.cmd('DiffviewOpen ' .. ref)
-        end
-      end, { desc = 'Compare arbitrary git references' })
-
-      -- Function to open current file in a new buffer
-      local function open_file_in_buffer()
-        local file_path = vim.api.nvim_buf_get_name(0)
-        if file_path and file_path ~= '' then
-          local line_num = vim.api.nvim_win_get_cursor(0)[1]
-          vim.cmd('tabnew ' .. file_path)
-          vim.api.nvim_win_set_cursor(0, { line_num, 0 })
-        end
-      end
-
-      -- Keymaps
-      vim.keymap.set('n', '<leader>gd', toggle_diff_compare, { desc = 'Toggle git diff view' })
-      vim.keymap.set('n', '<leader>gc', '<cmd>DiffCompare<cr>', { desc = 'Compare git refs' })
-      vim.keymap.set('n', '<leader>gr', '<cmd>DiffviewRefresh<cr>', { desc = 'Refresh git diff view' })
-      vim.keymap.set('n', '<leader>ge', open_file_in_buffer, { desc = 'Edit current file in new buffer' })
-      vim.keymap.set('n', '<leader>gh', '<cmd>DiffviewFileHistory %<cr>', { desc = 'View current file history' })
-      vim.keymap.set('n', '<leader>gl', function()
-        local line = vim.api.nvim_win_get_cursor(0)[1]
-        local file = vim.api.nvim_buf_get_name(0)
-        if file and file ~= '' then
-          vim.cmd('DiffviewFileHistory -L' .. line .. ',' .. line .. ':' .. vim.fn.fnamemodify(file, ':~:.'))
-        end
-      end, { desc = 'View current line history' })
-    end,
-  },
-
-  -- term-edit.nvim - Vim keybindings in terminal buffers
-  {
-    'chomosuke/term-edit.nvim',
-    event = 'TermOpen',
-    version = '1.*',
-    config = function()
-      require('term-edit').setup {
-        -- Detect end of shell prompt - adjust based on your shell
-        prompt_end = '%$ ', -- Works for bash/zsh with default PS1
-
-        -- Reduce delay for better responsiveness
-        feedkeys_delay = 5,
-
-        -- Keep debug off for performance
-        debug = false,
-      }
-    end,
-  },
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.

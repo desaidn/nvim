@@ -33,11 +33,10 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 
 - Leader key: `<Space>`
 - Search operations: `<leader>s*` (files, grep, help, etc.)
-- Terminal operations: `<leader>t` (fullscreen)
-- Toggle options: `<leader>T*` (inlay hints, blame line)
-- Git operations: `<leader>g*` (lazygit, blame, diff)
-- Git hunks: `<leader>h*` (stage, reset, preview)
+- Toggle options: `<leader>T*` (inlay hints, diagnostics)
+- Git operations: `<leader>g*` (blame toggle)
 - LSP operations: `gr*` prefix (rename, references, definitions)
+- Diagnostics: `<leader>d*` (trouble, references, symbols)
 
 ## Development Workflows
 
@@ -50,28 +49,28 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 
 ### LSP and Language Support
 
-Currently configured for Lua development with lua_ls. To add other languages:
+Configured with multiple language servers including TypeScript, Python, Rust, Go, Lua, and more. To add other languages:
 
-1. Add server to `servers` table in init.lua (around line 674)
-2. Add formatters to `formatters_by_ft` in conform.nvim config (around line 770)
+1. Add server to `servers` table in init.lua (around line 941)
+2. Add formatters to `formatters_by_ft` in conform.nvim config (around line 1087)
 3. Run `:Mason` to install required tools
 
 ### Terminal Integration
 
-Built-in terminal functionality:
+Minimal terminal integration (tmux handles primary terminal functionality):
 
-- `<leader>t` - Fullscreen terminal
-- `<C-h/j/k/l>` in terminal mode - Navigate between windows
-- `<Esc><Esc>` - Exit terminal mode
+- `<Esc><Esc>` - Exit terminal mode when needed
+- `<C-h/j/k/l>` - Navigate between windows
 
 ### Git Integration
 
-Two git systems are integrated:
+Focused on in-editor git functionality:
 
-- **gitsigns**: In-editor git signs and hunk operations (`<leader>h*`)
-- **lazygit**: Full-featured git GUI (`<leader>gg`)
+- **gitsigns**: In-editor git signs, blame, and hunk navigation
+- `<leader>gb` - Toggle git blame line
+- `]c` / `[c` - Navigate between git hunks
 
-Git blame line styling is configured with enhanced visibility via a separate colors file (`colors/gitsigns-blame.lua`) that is independent of the main colorscheme. The blame text appears at the end of lines with improved contrast while maintaining a subtle background appearance.
+Git blame line styling is configured with enhanced visibility and appears at the end of lines with improved contrast while maintaining a subtle background appearance.
 
 ### File Explorer
 
@@ -112,10 +111,10 @@ External tools required:
 
 This configuration prioritizes:
 
-- Readability and documentation
-- Single-file simplicity while allowing modular growth
-- Sane defaults with easy customization points
-- Learning-friendly structure with extensive comments
+- **Text editing focus**: Core LSP, search, and navigation functionality
+- **Minimal external dependencies**: Let tmux handle terminal/window management  
+- **Readability and documentation**: Single-file simplicity with extensive comments
+- **Integration with ecosystem**: Works seamlessly with tmux-based workflows
 
 ## Coding Guidelines
 

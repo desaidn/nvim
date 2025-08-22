@@ -2,7 +2,7 @@
 
 A lean Neovim configuration based on kickstart.nvim.
 
-**Philosophy**: One obvious way to do anything, text-based interface, git-centric workflow.
+**Philosophy**: Text editing focused, minimal dependencies, tmux-integrated workflow.
 
 ## Installation
 
@@ -40,16 +40,16 @@ nvim
 
 ## Key Bindings
 
-### Terminal
+### Search & Navigation
 
-- `<leader>t` - Fullscreen terminal
+- `<leader>sf` - Find files
+- `<leader>sg` - Live grep
+- `<leader><leader>` - Find buffers
 
 ### Git
 
-- `<leader>gg` - Lazygit
-- `<leader>gd` - Git diff
-- `<leader>hp` - Preview hunk
-- `<leader>hs` - Stage hunk
+- `<leader>gb` - Toggle git blame
+- `]c` / `[c` - Navigate git hunks
 
 ### File Explorer
 
@@ -61,6 +61,10 @@ nvim
 - `grr` - References
 - `grn` - Rename
 - `K` - Hover documentation
+
+### Diagnostics
+
+- `<leader>dd` - Toggle diagnostics
 
 
 ## Configuration
