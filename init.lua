@@ -387,6 +387,7 @@ require('lazy').setup({
         accent_orange = '#af5f00',
         accent_dark_red = '#d70000',
         accent_olive = '#5f5f00',
+        accent_purple = '#8b5fbf',
         accent_gray = '#444444',
         indent_marker = '#464647',
         git_added = '#73c991',
@@ -408,9 +409,9 @@ require('lazy').setup({
           -- Mini statusline modes
           MiniStatuslineModeNormal = { bg = colors.accent_green, fg = colors.fg_primary, bold = true },
           MiniStatuslineModeInsert = { bg = colors.accent_red, fg = colors.fg_primary, bold = true },
-          MiniStatuslineModeVisual = { bg = colors.accent_orange, fg = colors.fg_primary, bold = true },
+          MiniStatuslineModeVisual = { bg = colors.accent_purple, fg = colors.fg_primary, bold = true },
           MiniStatuslineModeReplace = { bg = colors.accent_dark_red, fg = colors.fg_primary, bold = true },
-          MiniStatuslineModeCommand = { bg = colors.accent_olive, fg = colors.fg_primary, bold = true },
+          MiniStatuslineModeCommand = { bg = colors.accent_orange, fg = colors.fg_primary, bold = true },
           MiniStatuslineModeOther = { bg = colors.accent_gray, fg = colors.fg_primary, bold = true },
 
           -- Mini statusline components
