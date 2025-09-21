@@ -149,6 +149,15 @@ vim.o.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
+-- Terminal color integration - use terminal's colors
+vim.o.termguicolors = true
+
+-- Set all text to clean white on terminal background
+vim.api.nvim_set_hl(0, 'Normal', { bg = 'NONE', fg = '#f8f8f2' })
+vim.api.nvim_set_hl(0, 'NormalNC', { bg = 'NONE', fg = '#f8f8f2' })
+vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'NONE' })
+vim.api.nvim_set_hl(0, 'EndOfBuffer', { bg = 'NONE' })
+
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
@@ -305,101 +314,6 @@ rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
-
-  {
-    'Mofiqul/vscode.nvim',
-    lazy = false,
-    priority = 1000,
-    config = function()
-      -- Color palette for consistent theming
-      local colors = {
-        bg_primary = '#1e1e1e',
-        bg_secondary = '#2a2d2e',
-        fg_primary = '#ffffff',
-        fg_secondary = '#cccccc',
-        fg_tertiary = '#858585',
-        fg_muted = '#6a6a6a',
-        accent_blue = '#007acc',
-        accent_green = '#16825d',
-        accent_red = '#c5282f',
-        accent_orange = '#af5f00',
-        accent_dark_red = '#d70000',
-        accent_olive = '#5f5f00',
-        accent_purple = '#8b5fbf',
-        accent_gray = '#444444',
-        indent_marker = '#464647',
-        git_added = '#73c991',
-        git_modified = '#e2c08d',
-        git_deleted = '#f85149',
-      }
-
-      require('vscode').setup {
-        style = 'dark',
-        transparent = false,
-        italic_comments = true,
-        underline_links = true,
-        disable_nvimtree_bg = true,
-        group_overrides = {
-          -- Status line
-          StatusLine = { fg = colors.fg_primary, bg = colors.accent_blue, bold = false },
-          StatusLineNC = { fg = colors.fg_primary, bg = colors.accent_blue, bold = false },
-
-          -- Mini statusline modes
-          MiniStatuslineModeNormal = { bg = colors.accent_green, fg = colors.fg_primary, bold = true },
-          MiniStatuslineModeInsert = { bg = colors.accent_red, fg = colors.fg_primary, bold = true },
-          MiniStatuslineModeVisual = { bg = colors.accent_purple, fg = colors.fg_primary, bold = true },
-          MiniStatuslineModeReplace = { bg = colors.accent_dark_red, fg = colors.fg_primary, bold = true },
-          MiniStatuslineModeCommand = { bg = colors.accent_orange, fg = colors.fg_primary, bold = true },
-          MiniStatuslineModeOther = { bg = colors.accent_gray, fg = colors.fg_primary, bold = true },
-
-          -- Mini statusline components
-          MiniStatuslineFilename = { bg = colors.accent_blue, fg = colors.fg_primary, bold = false },
-          MiniStatuslineFileinfo = { bg = colors.accent_blue, fg = colors.fg_primary, bold = false },
-          MiniStatuslineDevinfo = { bg = colors.accent_blue, fg = colors.fg_primary, bold = false },
-          MiniStatuslineInactive = { bg = colors.accent_blue, fg = colors.fg_primary, bold = false },
-
-          -- Line numbers and cursor
-          LineNr = { bg = colors.bg_primary, fg = colors.fg_tertiary },
-          CursorLine = { bg = colors.bg_secondary },
-          CursorLineNr = { fg = colors.fg_primary, bg = colors.bg_secondary, bold = true },
-
-          -- NeoTree styling
-          NeoTreeNormal = { bg = colors.bg_primary, fg = colors.fg_secondary },
-          NeoTreeNormalNC = { bg = colors.bg_primary, fg = colors.fg_secondary },
-          NeoTreeWinSeparator = { bg = colors.bg_primary, fg = colors.bg_primary },
-          NeoTreeEndOfBuffer = { bg = colors.bg_primary, fg = colors.bg_primary },
-          NeoTreeRootName = { fg = colors.fg_primary, bold = true },
-          NeoTreeDirectoryName = { fg = colors.fg_secondary },
-          NeoTreeDirectoryIcon = { fg = colors.fg_secondary },
-          NeoTreeFileName = { fg = colors.fg_secondary },
-          NeoTreeFileIcon = { fg = colors.fg_secondary },
-          NeoTreeIndentMarker = { fg = colors.indent_marker },
-          NeoTreeExpander = { fg = colors.fg_secondary },
-          NeoTreeDotfile = { fg = colors.fg_muted },
-          NeoTreeHiddenByName = { fg = colors.fg_muted },
-          NeoTreeGitAdded = { fg = colors.git_added },
-          NeoTreeGitConflict = { fg = colors.git_deleted },
-          NeoTreeGitDeleted = { fg = colors.git_deleted },
-          NeoTreeGitIgnored = { fg = colors.fg_muted },
-          NeoTreeGitModified = { fg = colors.git_modified },
-          NeoTreeGitUnstaged = { fg = colors.git_deleted },
-          NeoTreeGitUntracked = { fg = colors.git_added },
-          NeoTreeGitStaged = { fg = colors.git_added },
-        },
-      }
-      vim.cmd.colorscheme 'vscode'
-
-      -- Override diff colors
-      vim.api.nvim_set_hl(0, 'DiffAdd', { bg = '#0d1f11' }) -- Subtle green background, preserve syntax colors
-      vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#0d1f11' }) -- Subtle green background, preserve syntax colors
-      vim.api.nvim_set_hl(0, 'DiffText', { bg = '#1a3d25', bold = true }) -- Slightly more visible for emphasis, preserve syntax colors
-      vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#1f0d0d' }) -- Subtle red background, preserve syntax colors
-
-      -- Improve LSP hover documentation contrast with border and distinct background
-      vim.api.nvim_set_hl(0, 'NormalFloat', { bg = '#2d2d30', fg = '#ffffff' }) -- Slightly lighter background than main
-      vim.api.nvim_set_hl(0, 'FloatBorder', { fg = colors.accent_blue, bg = '#2d2d30' }) -- Blue border with matching background
-    end,
-  },
 
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   { 'NMAC427/guess-indent.nvim', opts = {} }, -- Detect tabstop and shiftwidth automatically
