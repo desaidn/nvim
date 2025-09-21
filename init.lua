@@ -149,12 +149,12 @@ vim.o.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
--- Terminal color integration - use terminal's colors
+-- Terminal color integration
 vim.o.termguicolors = true
 
--- Set all text to clean white on terminal background
-vim.api.nvim_set_hl(0, 'Normal', { bg = 'NONE', fg = '#f8f8f2' })
-vim.api.nvim_set_hl(0, 'NormalNC', { bg = 'NONE', fg = '#f8f8f2' })
+-- Use terminal background with Neovim's default text colors
+vim.api.nvim_set_hl(0, 'Normal', { bg = 'NONE' })
+vim.api.nvim_set_hl(0, 'NormalNC', { bg = 'NONE' })
 vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'NONE' })
 vim.api.nvim_set_hl(0, 'EndOfBuffer', { bg = 'NONE' })
 
