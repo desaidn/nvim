@@ -48,21 +48,19 @@ vim.o.number = true
 --  Experiment for yourself to see if you like it!
 vim.o.relativenumber = true
 
--- Auto-toggle relative numbers based on mode (only for normal file buffers)
-vim.api.nvim_create_augroup('relative-numbers', { clear = true })
+-- Auto-toggle relative numbers based on mode
+local id = vim.api.nvim_create_augroup('relative-numbers', { clear = true })
 vim.api.nvim_create_autocmd('InsertEnter', {
-  group = 'relative-numbers',
+  group = id,
   callback = function()
-    -- Only disable relative numbers in normal file buffers
     if vim.bo.buftype == '' and vim.bo.filetype ~= 'neo-tree' then
       vim.wo.relativenumber = false
     end
   end,
 })
 vim.api.nvim_create_autocmd('InsertLeave', {
-  group = 'relative-numbers',
+  group = id,
   callback = function()
-    -- Only enable relative numbers in normal file buffers
     if vim.bo.buftype == '' and vim.bo.filetype ~= 'neo-tree' then
       vim.wo.relativenumber = true
     end
@@ -152,18 +150,68 @@ vim.o.scrolloff = 10
 -- Terminal color integration
 vim.o.termguicolors = true
 
--- Use terminal background with Neovim's default text colors
-vim.api.nvim_set_hl(0, 'Normal', { bg = 'NONE' })
-vim.api.nvim_set_hl(0, 'NormalNC', { bg = 'NONE' })
-vim.api.nvim_set_hl(0, 'SignColumn', { bg = 'NONE' })
-vim.api.nvim_set_hl(0, 'EndOfBuffer', { bg = 'NONE' })
+local transparent_groups = {
+  'Normal', -- Main editor background
+  'NormalNC', -- Non-current window background
+  'SignColumn', -- Sign column (git signs, diagnostics)
+  'EndOfBuffer', -- ~ lines past end of buffer
+  'WinBar', -- Window title bar
+  'WinBarNC', -- Non-current window title bar
+  -- 'StatusLine', -- Status line
+  -- 'StatusLineNC', -- Non-current status line
+  'CursorLine', -- Current line highlight
+  'CursorColumn', -- Current column highlight
+  'ColorColumn', -- Column guide
+  'Folded', -- Folded lines
+}
+
+for _, group in ipairs(transparent_groups) do
+  local hl = vim.api.nvim_get_hl(0, { name = group })
+  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = 'NONE' }))
+end
+
+local FLOAT_BG = '#363a42' -- Medium grey, more contrast than terminal
+
+local float_groups = {
+  'NormalFloat', -- Floating window background
+  'FloatBorder', -- Floating window border
+  'Pmenu', -- Popup menu (completion)
+  'PmenuSbar', -- Popup menu scrollbar background
+  'TelescopeNormal', -- Telescope picker background
+  'TelescopeBorder', -- Telescope border
+  'WhichKeyFloat', -- Which-key popup background
+}
+
+for _, group in ipairs(float_groups) do
+  local hl = vim.api.nvim_get_hl(0, { name = group })
+  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = FLOAT_BG }))
+end
+
+-- Replace cyan accent with peach
+local ACCENT_COLOR = '#ffb86c'
+
+local cyan_groups = {
+  'Function',
+  'Special',
+  'Changed',
+  'MoreMsg',
+  'Question',
+  'Directory',
+  'QuickFixLine',
+  'DiagnosticInfo',
+}
+
+for _, group in ipairs(cyan_groups) do
+  local hl = vim.api.nvim_get_hl(0, { name = group })
+  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { fg = ACCENT_COLOR }))
+end
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
--- Never show tabline (tmux handles tabs)
+-- Never show tabline (use tmux for this)
 vim.o.showtabline = 0
 
 -- [[ Basic Keymaps ]]
@@ -567,7 +615,17 @@ require('lazy').setup({
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
-      { 'j-hui/fidget.nvim', opts = {} },
+      {
+        'j-hui/fidget.nvim',
+        opts = {
+          notification = {
+            window = {
+              winblend = 0, -- Transparency (0 = opaque, 100 = fully transparent)
+              normal_hl = 'Normal', -- Use Normal highlight (transparent bg)
+            },
+          },
+        },
+      },
 
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
