@@ -170,7 +170,7 @@ for _, group in ipairs(transparent_groups) do
   vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = 'NONE' }))
 end
 
-local FLOAT_BG = '#363a42' -- Medium grey, more contrast than terminal
+local FLOAT_BG = '#1e222a' -- Dark grey
 
 local float_groups = {
   'NormalFloat', -- Floating window background
