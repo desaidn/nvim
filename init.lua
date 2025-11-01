@@ -241,6 +241,19 @@ local function setup_window_navigation()
 end
 setup_window_navigation()
 
+-- Copy file paths to clipboard
+vim.keymap.set('n', '<leader>pa', function()
+  local path = vim.fn.expand '%:p'
+  vim.fn.setreg('+', path)
+  print('Copied absolute path: ' .. path)
+end, { desc = 'Copy [P]ath [A]bsolute' })
+
+vim.keymap.set('n', '<leader>pr', function()
+  local path = vim.fn.expand '%:.'
+  vim.fn.setreg('+', path)
+  print('Copied relative path: ' .. path)
+end, { desc = 'Copy [P]ath [R]elative' })
+
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
 -- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
@@ -455,6 +468,7 @@ require('lazy').setup({
         { '<leader>q', group = '[Q]uickfix', mode = { 'n', 'v' } },
         { '<leader>r', group = '[R]ename/Replace', mode = { 'n', 'v' } },
         { '<leader>d', group = '[D]iagnostics', mode = { 'n', 'v' } },
+        { '<leader>p', group = '[P]ath', mode = { 'n', 'v' } },
         { '<leader>1', hidden = true },
         { '<leader>2', hidden = true },
         { '<leader>3', hidden = true },
@@ -790,35 +804,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {
-          -- Disable overlapping diagnostics since we use eslint_d
-          on_attach = function(client, bufnr)
-            -- Disable semantic tokens to reduce conflicts
-            client.server_capabilities.semanticTokensProvider = nil
-          end,
-          settings = {
-            typescript = {
-              -- Support for Bun runtime
-              preferences = {
-                includePackageJsonAutoImports = 'auto',
-              },
-              -- Disable TypeScript's built-in ESLint-like checks
-              suggest = {
-                includeCompletionsForModuleExports = true,
-                includeCompletionsWithInsertText = true,
-              },
-            },
-            javascript = {
-              preferences = {
-                includePackageJsonAutoImports = 'auto',
-              },
-              suggest = {
-                includeCompletionsForModuleExports = true,
-                includeCompletionsWithInsertText = true,
-              },
-            },
-          },
-        },
+        ts_ls = {},
 
         -- Lua
         lua_ls = {
