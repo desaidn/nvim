@@ -49,7 +49,6 @@ return {
       },
     },
     filesystem = {
-      hijack_netrw_behavior = 'disabled',
       filtered_items = {
         hide_dotfiles = false,
         hide_hidden = false,
@@ -81,13 +80,6 @@ return {
               vim.api.nvim_set_current_win(neo_tree_wins[1])
             end
           end)
-        end,
-      },
-      {
-        event = 'neo_tree_buffer_enter',
-        handler = function()
-          vim.wo.number = false
-          vim.wo.relativenumber = false
         end,
       },
     },
