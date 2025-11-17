@@ -494,24 +494,21 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
 
       -- Setup telescope keymaps
-      local function setup_telescope_keymaps()
-        local keymaps = {
-          { '<leader>sh', builtin.help_tags, '[S]earch [H]elp' },
-          { '<leader>sk', builtin.keymaps, '[S]earch [K]eymaps' },
-          { '<leader>sf', builtin.find_files, '[S]earch [F]iles' },
-          { '<leader>ss', builtin.builtin, '[S]earch [S]elect Telescope' },
-          { '<leader>sw', builtin.grep_string, '[S]earch current [W]ord' },
-          { '<leader>sg', builtin.live_grep, '[S]earch by [G]rep' },
-          { '<leader>sd', builtin.diagnostics, '[S]earch [D]iagnostics' },
-          { '<leader>sr', builtin.resume, '[S]earch [R]esume' },
-          { '<leader>s.', builtin.oldfiles, '[S]earch Recent Files ("." for repeat)' },
-          { '<leader><leader>', builtin.buffers, '[ ] Find existing buffers' },
-        }
-        for _, keymap in ipairs(keymaps) do
-          vim.keymap.set('n', keymap[1], keymap[2], { desc = keymap[3] })
-        end
+      local telescope_keymaps = {
+        { '<leader>sh', builtin.help_tags, '[S]earch [H]elp' },
+        { '<leader>sk', builtin.keymaps, '[S]earch [K]eymaps' },
+        { '<leader>sf', builtin.find_files, '[S]earch [F]iles' },
+        { '<leader>ss', builtin.builtin, '[S]earch [S]elect Telescope' },
+        { '<leader>sw', builtin.grep_string, '[S]earch current [W]ord' },
+        { '<leader>sg', builtin.live_grep, '[S]earch by [G]rep' },
+        { '<leader>sd', builtin.diagnostics, '[S]earch [D]iagnostics' },
+        { '<leader>sr', builtin.resume, '[S]earch [R]esume' },
+        { '<leader>s.', builtin.oldfiles, '[S]earch Recent Files ("." for repeat)' },
+        { '<leader><leader>', builtin.buffers, '[ ] Find existing buffers' },
+      }
+      for _, keymap in ipairs(telescope_keymaps) do
+        vim.keymap.set('n', keymap[1], keymap[2], { desc = keymap[3] })
       end
-      setup_telescope_keymaps()
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
