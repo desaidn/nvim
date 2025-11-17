@@ -67,6 +67,34 @@ vim.api.nvim_create_autocmd('InsertLeave', {
   end,
 })
 
+-- Special buffer configuration (terminal, neo-tree, etc.)
+local special_buffer_group = vim.api.nvim_create_augroup('special-buffer-config', { clear = true })
+vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter', 'InsertLeave', 'ModeChanged', 'BufWinEnter' }, {
+  desc = 'Configure special buffers without line numbers',
+  group = special_buffer_group,
+  callback = function()
+    local buftype = vim.bo.buftype
+    local filetype = vim.bo.filetype
+
+    -- Disable line numbers for special buffer types
+    if
+      buftype == 'terminal'
+      or filetype == 'neo-tree'
+      or filetype == 'help'
+      or filetype == 'quickfix'
+      or filetype == 'trouble'
+      or buftype == 'nofile'
+      or buftype == 'prompt'
+    then
+      vim.opt_local.number = false
+      vim.opt_local.relativenumber = false
+      if buftype == 'terminal' then
+        vim.opt_local.signcolumn = 'no'
+      end
+    end
+  end,
+})
+
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
 
@@ -87,28 +115,8 @@ end)
 -- Enable break indent
 vim.o.breakindent = true
 
--- Default indentation settings
-vim.o.tabstop = 2 -- Number of spaces that a tab counts for
-vim.o.shiftwidth = 2 -- Number of spaces for each indentation level
-vim.o.expandtab = true -- Convert tabs to spaces
-vim.o.softtabstop = 2 -- Number of spaces for tab in insert mode
-vim.o.smartindent = true -- Smart indentation for new lines
-
 -- Save undo history
 vim.o.undofile = true
-
--- Auto-reload buffers when files change on disk
-vim.o.autoread = true
-
--- Enhanced autoread: trigger on focus, buffer enter, and cursor hold
-vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI' }, {
-  pattern = '*',
-  callback = function()
-    if vim.fn.mode() ~= 'c' then
-      vim.cmd 'checktime'
-    end
-  end,
-})
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.o.ignorecase = true
@@ -170,8 +178,6 @@ for _, group in ipairs(transparent_groups) do
   vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = 'NONE' }))
 end
 
-local FLOAT_BG = '#1e222a' -- Dark grey
-
 local float_groups = {
   'NormalFloat', -- Floating window background
   'FloatBorder', -- Floating window border
@@ -184,11 +190,8 @@ local float_groups = {
 
 for _, group in ipairs(float_groups) do
   local hl = vim.api.nvim_get_hl(0, { name = group })
-  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = FLOAT_BG }))
+  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = '#1e222a' })) -- Dark Grey
 end
-
--- Replace cyan accent with peach
-local ACCENT_COLOR = '#ffb86c'
 
 local cyan_groups = {
   'Function',
@@ -203,7 +206,7 @@ local cyan_groups = {
 
 for _, group in ipairs(cyan_groups) do
   local hl = vim.api.nvim_get_hl(0, { name = group })
-  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { fg = ACCENT_COLOR }))
+  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { fg = '#ffb86c' })) -- Peach
 end
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
@@ -228,18 +231,15 @@ vim.keymap.set('n', '<C-z>', '<C-u>zz', { desc = 'Half-page up and center cursor
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --  See `:help wincmd` for a list of all window commands
-local function setup_window_navigation()
-  local keymaps = {
-    { '<C-h>', '<C-w><C-h>', 'Move focus to the left window' },
-    { '<C-l>', '<C-w><C-l>', 'Move focus to the right window' },
-    { '<C-j>', '<C-w><C-j>', 'Move focus to the lower window' },
-    { '<C-k>', '<C-w><C-k>', 'Move focus to the upper window' },
-  }
-  for _, keymap in ipairs(keymaps) do
-    vim.keymap.set('n', keymap[1], keymap[2], { desc = keymap[3] })
-  end
+local window_navigation_keymaps = {
+  { '<C-h>', '<C-w><C-h>', 'Move focus to the left window' },
+  { '<C-l>', '<C-w><C-l>', 'Move focus to the right window' },
+  { '<C-j>', '<C-w><C-j>', 'Move focus to the lower window' },
+  { '<C-k>', '<C-w><C-k>', 'Move focus to the upper window' },
+}
+for _, keymap in ipairs(window_navigation_keymaps) do
+  vim.keymap.set('n', keymap[1], keymap[2], { desc = keymap[3] })
 end
-setup_window_navigation()
 
 -- Copy file paths to clipboard
 vim.keymap.set('n', '<leader>pa', function()
@@ -274,79 +274,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- Special buffer configuration (terminal, neo-tree, etc.)
-local special_buffer_group = vim.api.nvim_create_augroup('special-buffer-config', { clear = true })
-vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter', 'InsertLeave', 'ModeChanged', 'BufWinEnter' }, {
-  desc = 'Configure special buffers without line numbers',
-  group = special_buffer_group,
-  callback = function()
-    local buftype = vim.bo.buftype
-    local filetype = vim.bo.filetype
-
-    -- Disable line numbers for special buffer types
-    if
-      buftype == 'terminal'
-      or filetype == 'neo-tree'
-      or filetype == 'help'
-      or filetype == 'quickfix'
-      or filetype == 'trouble'
-      or buftype == 'nofile'
-      or buftype == 'prompt'
-    then
-      vim.opt_local.number = false
-      vim.opt_local.relativenumber = false
-      if buftype == 'terminal' then
-        vim.opt_local.signcolumn = 'no'
-      end
-    end
-  end,
-})
-
--- [[ Terminal Configuration ]]
--- Terminal mode escape mapping
+-- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
+-- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
+-- is not what someone will guess without a bit more experience.
+--
+-- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
+-- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
--- [[ Diagnostic Configuration ]]
--- Diagnostic keymaps
--- Note: Diagnostic list functionality now handled by trouble.nvim with <leader>dd
-vim.keymap.set('n', '<leader>Td', function()
-  vim.diagnostic.enable(not vim.diagnostic.is_enabled { bufnr = 0 })
-end, { desc = '[T]oggle [D]iagnostics for current buffer' })
-
--- Diagnostic config
--- See `:help vim.diagnostic.Opts`
-vim.diagnostic.config {
-  severity_sort = true,
-  float = {
-    border = 'rounded',
-    source = 'if_many',
-    wrap = true,
-    max_width = 80,
-    max_height = 20,
-  },
-  underline = { severity = vim.diagnostic.severity.ERROR },
-  signs = vim.g.have_nerd_font and {
-    text = {
-      [vim.diagnostic.severity.ERROR] = '󰅚 ',
-      [vim.diagnostic.severity.WARN] = '󰀪 ',
-      [vim.diagnostic.severity.INFO] = '󰋽 ',
-      [vim.diagnostic.severity.HINT] = '󰌶 ',
-    },
-  } or {},
-  virtual_text = {
-    source = 'if_many',
-    spacing = 2,
-    format = function(diagnostic)
-      local diagnostic_message = {
-        [vim.diagnostic.severity.ERROR] = diagnostic.message,
-        [vim.diagnostic.severity.WARN] = diagnostic.message,
-        [vim.diagnostic.severity.INFO] = diagnostic.message,
-        [vim.diagnostic.severity.HINT] = diagnostic.message,
-      }
-      return diagnostic_message[diagnostic.severity]
-    end,
-  },
-}
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -771,12 +705,41 @@ require('lazy').setup({
           --
           -- This may be unwanted, since they displace some of your code
           if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
-            map('<leader>Th', function()
+            map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
           end
         end,
       })
+
+      -- Diagnostic Config
+      -- See :help vim.diagnostic.Opts
+      vim.diagnostic.config {
+        severity_sort = true,
+        float = { border = 'rounded', source = 'if_many' },
+        underline = { severity = vim.diagnostic.severity.ERROR },
+        signs = vim.g.have_nerd_font and {
+          text = {
+            [vim.diagnostic.severity.ERROR] = '󰅚 ',
+            [vim.diagnostic.severity.WARN] = '󰀪 ',
+            [vim.diagnostic.severity.INFO] = '󰋽 ',
+            [vim.diagnostic.severity.HINT] = '󰌶 ',
+          },
+        } or {},
+        virtual_text = {
+          source = 'if_many',
+          spacing = 2,
+          format = function(diagnostic)
+            local diagnostic_message = {
+              [vim.diagnostic.severity.ERROR] = diagnostic.message,
+              [vim.diagnostic.severity.WARN] = diagnostic.message,
+              [vim.diagnostic.severity.INFO] = diagnostic.message,
+              [vim.diagnostic.severity.HINT] = diagnostic.message,
+            }
+            return diagnostic_message[diagnostic.severity]
+          end,
+        },
+      }
 
       -- LSP servers and clients are able to communicate to each other what features they support.
       --  By default, Neovim doesn't support everything that is in the LSP specification.
