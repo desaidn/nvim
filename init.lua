@@ -49,9 +49,9 @@ vim.o.number = true
 vim.o.relativenumber = true
 
 -- Auto-toggle relative numbers based on mode
-local id = vim.api.nvim_create_augroup('relative-numbers', { clear = true })
+local relative_numbers_group_id = vim.api.nvim_create_augroup('relative-numbers', { clear = true })
 vim.api.nvim_create_autocmd('InsertEnter', {
-  group = id,
+  group = relative_numbers_group_id,
   callback = function()
     if vim.bo.buftype == '' and vim.bo.filetype ~= 'neo-tree' then
       vim.wo.relativenumber = false
@@ -59,7 +59,7 @@ vim.api.nvim_create_autocmd('InsertEnter', {
   end,
 })
 vim.api.nvim_create_autocmd('InsertLeave', {
-  group = id,
+  group = relative_numbers_group_id,
   callback = function()
     if vim.bo.buftype == '' and vim.bo.filetype ~= 'neo-tree' then
       vim.wo.relativenumber = true
@@ -193,7 +193,7 @@ for _, group in ipairs(float_groups) do
   vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = '#1e222a' })) -- Dark Grey
 end
 
-local cyan_groups = {
+local peach_groups = {
   'Function',
   'Special',
   'Changed',
@@ -204,7 +204,7 @@ local cyan_groups = {
   'DiagnosticInfo',
 }
 
-for _, group in ipairs(cyan_groups) do
+for _, group in ipairs(peach_groups) do
   local hl = vim.api.nvim_get_hl(0, { name = group })
   vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { fg = '#ffb86c' })) -- Peach
 end
