@@ -92,10 +92,10 @@ Neo-tree file explorer is enabled with right-side positioning and minimal stylin
 
 ### Important Settings
 
-- `vim.g.have_nerd_font = false` - Set to true if using a Nerd Font
 - Leader key is Space (`vim.g.mapleader = ' '`)
 - Auto-formatting on save enabled (can be disabled per filetype)
 - Clipboard integration with system clipboard enabled
+- Icons disabled - clean text-based interface without Nerd Font requirements
 
 ## Dependencies
 
