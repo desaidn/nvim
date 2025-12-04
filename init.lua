@@ -206,6 +206,11 @@ for _, group in ipairs(peach_groups) do
   vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { fg = '#ffb86c' })) -- Peach
 end
 
+vim.api.nvim_set_hl(0, 'DiffDelete', { fg = '#f38ba8', bg = '#31262e' })
+vim.api.nvim_set_hl(0, 'DiffAdd', { fg = '#a6e3a1', bg = '#263329' })
+vim.api.nvim_set_hl(0, 'DiffChange', { fg = '#f9e2af', bg = '#2e2c26' })
+vim.api.nvim_set_hl(0, 'DiffText', { fg = '#1e1e2e', bg = '#f9e2af' })
+
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`
@@ -710,15 +715,6 @@ require('lazy').setup({
         virtual_text = {
           source = 'if_many',
           spacing = 2,
-          format = function(diagnostic)
-            local diagnostic_message = {
-              [vim.diagnostic.severity.ERROR] = diagnostic.message,
-              [vim.diagnostic.severity.WARN] = diagnostic.message,
-              [vim.diagnostic.severity.INFO] = diagnostic.message,
-              [vim.diagnostic.severity.HINT] = diagnostic.message,
-            }
-            return diagnostic_message[diagnostic.severity]
-          end,
         },
       }
 
@@ -1033,6 +1029,19 @@ require('lazy').setup({
       vim.g.undotree_WindowLayout = 2
       vim.g.undotree_SetFocusWhenToggle = 1
     end,
+  },
+
+  -- Git diff and file history
+  {
+    'sindrets/diffview.nvim',
+    cmd = { 'DiffviewOpen', 'DiffviewFileHistory' },
+    keys = {
+      { '<leader>gd', '<cmd>DiffviewOpen<cr>', desc = 'Git [D]iff' },
+      { '<leader>gh', '<cmd>DiffviewFileHistory %<cr>', desc = 'File [H]istory' },
+    },
+    opts = {
+      use_icons = false,
+    },
   },
 
   {
