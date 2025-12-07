@@ -187,7 +187,7 @@ local float_groups = {
 
 for _, group in ipairs(float_groups) do
   local hl = vim.api.nvim_get_hl(0, { name = group })
-  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = '#1e222a' })) -- Dark Grey
+  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = '#3b4252' })) -- Nord polar night
 end
 
 local peach_groups = {
@@ -210,6 +210,10 @@ vim.api.nvim_set_hl(0, 'DiffDelete', { fg = '#f38ba8', bg = '#31262e' })
 vim.api.nvim_set_hl(0, 'DiffAdd', { fg = '#a6e3a1', bg = '#263329' })
 vim.api.nvim_set_hl(0, 'DiffChange', { fg = '#f9e2af', bg = '#2e2c26' })
 vim.api.nvim_set_hl(0, 'DiffText', { fg = '#1e1e2e', bg = '#f9e2af' })
+
+vim.api.nvim_set_hl(0, 'MiniStatuslineModeNormal', { fg = '#1e1e2e', bg = '#A6DBFF', bold = true })
+vim.api.nvim_set_hl(0, 'MiniStatuslineModeInsert', { fg = '#1e1e2e', bg = '#ffb86c', bold = true })
+vim.api.nvim_set_hl(0, 'MiniStatuslineModeCommand', { fg = '#1e1e2e', bg = '#b4f6c0', bold = true })
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
