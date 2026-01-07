@@ -125,6 +125,9 @@ vim.o.signcolumn = 'yes'
 -- Decrease update time
 vim.o.updatetime = 250
 
+-- Auto-reload files when changed externally
+vim.o.autoread = true
+
 -- Decrease mapped sequence wait time
 vim.o.timeoutlen = 300
 
@@ -268,6 +271,26 @@ end, { desc = 'Copy [P]ath [R]elative' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
+
+-- Auto-reload files when changed externally
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI' }, {
+  desc = 'Check if file changed on disk and reload',
+  group = vim.api.nvim_create_augroup('auto-reload', { clear = true }),
+  callback = function()
+    if vim.fn.getcmdwintype() == '' then
+      vim.cmd 'checktime'
+    end
+  end,
+})
+
+-- Notify when file is reloaded
+vim.api.nvim_create_autocmd('FileChangedShellPost', {
+  desc = 'Notify when file is reloaded',
+  group = vim.api.nvim_create_augroup('auto-reload-notify', { clear = true }),
+  callback = function()
+    vim.notify('File changed on disk. Buffer reloaded.', vim.log.levels.WARN)
+  end,
+})
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
