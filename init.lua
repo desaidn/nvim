@@ -813,17 +813,19 @@ require('lazy').setup({
       --
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
-      vim.list_extend(ensure_installed, {
-        'stylua', -- Used to format Lua code
-        'prettier', -- Code formatter
-        'prettierd', -- Faster prettier daemon
-        'eslint_d', -- ESLint daemon for faster linting
-      })
-      require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+      -- NOTE: Only non-LSP tools go here. LSP servers are installed via mason-lspconfig.
+      require('mason-tool-installer').setup {
+        ensure_installed = {
+          'stylua', -- Used to format Lua code
+          'prettier', -- Code formatter
+          'prettierd', -- Faster prettier daemon
+          'eslint_d', -- ESLint daemon for faster linting
+        },
+      }
 
+      -- mason-lspconfig handles name translation (e.g., ts_ls -> typescript-language-server)
       require('mason-lspconfig').setup {
-        ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
+        ensure_installed = vim.tbl_keys(servers or {}),
         automatic_installation = false,
         automatic_enable = false, -- We configure servers manually below
       }
