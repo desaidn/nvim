@@ -7,7 +7,8 @@ return {
       local lint = require 'lint'
 
       -- Configuration: Set to false to disable fallback to regular eslint
-      local ESLINT_FALLBACK_ENABLED = true
+      -- Disabled by default to prevent duplicate diagnostics
+      local ESLINT_FALLBACK_ENABLED = false
 
       -- Real-time linting configuration
       local REAL_TIME_LINTING_ENABLED = true
@@ -74,14 +75,18 @@ return {
           lint.linters_by_ft.javascriptreact = { 'eslint_d' }
           lint.linters_by_ft.typescript = { 'eslint_d' }
           lint.linters_by_ft.typescriptreact = { 'eslint_d' }
+          print('[nvim-lint] Using eslint_d: ' .. eslint_cmd)
         else
-          -- Fallback to regular eslint
+          -- Fallback to regular eslint (only if enabled)
           lint.linters.eslint.cmd = eslint_cmd
           lint.linters_by_ft.javascript = { 'eslint' }
           lint.linters_by_ft.javascriptreact = { 'eslint' }
           lint.linters_by_ft.typescript = { 'eslint' }
           lint.linters_by_ft.typescriptreact = { 'eslint' }
+          print('[nvim-lint] Fallback to eslint: ' .. eslint_cmd)
         end
+      else
+        print('[nvim-lint] No ESLint linter found. Install eslint_d via :Mason')
       end
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,

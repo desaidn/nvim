@@ -105,14 +105,18 @@ ESLint diagnostics are handled exclusively by **nvim-lint** using **eslint_d** f
 
 In `lua/kickstart/plugins/lint.lua`:
 
-- `ESLINT_FALLBACK_ENABLED` (default: `true`) - Falls back to regular eslint if eslint_d is unavailable
+- `ESLINT_FALLBACK_ENABLED` (default: `false`) - Falls back to regular eslint if eslint_d is unavailable (disabled to prevent duplicates)
 - `REAL_TIME_LINTING_ENABLED` (default: `true`) - Enables linting as you type
 - `LINT_DEBOUNCE_MS` (default: `100`) - Debounce delay for real-time linting
 
 #### Troubleshooting
 
 - **No linting**: Ensure eslint_d is installed and your project has an ESLint config file
-- **Duplicate messages**: Verify ts_ls ESLint filtering is enabled (init.lua line 774)
+- **Duplicate messages**:
+  1. Run `:luafile debug-lint.lua` to see diagnostic sources
+  2. Verify `ESLINT_FALLBACK_ENABLED = false` in `lua/kickstart/plugins/lint.lua`
+  3. Verify ts_ls ESLint filtering is enabled (init.lua line 774)
+  4. Restart Neovim after configuration changes
 - **Slow linting**: Adjust `LINT_DEBOUNCE_MS` or disable `REAL_TIME_LINTING_ENABLED`
 - **Check linter status**: Run `:lua print(vim.inspect(require('lint').linters_by_ft))`
 
