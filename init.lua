@@ -209,10 +209,11 @@ for _, group in ipairs(peach_groups) do
   vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { fg = '#ffb86c' })) -- Peach
 end
 
-vim.api.nvim_set_hl(0, 'DiffDelete', { fg = '#f38ba8', bg = '#31262e' })
-vim.api.nvim_set_hl(0, 'DiffAdd', { fg = '#a6e3a1', bg = '#263329' })
-vim.api.nvim_set_hl(0, 'DiffChange', { fg = '#f9e2af', bg = '#2e2c26' })
-vim.api.nvim_set_hl(0, 'DiffText', { fg = '#1e1e2e', bg = '#f9e2af' })
+-- Islands Dark diff colors
+vim.api.nvim_set_hl(0, 'DiffDelete', { fg = '#f75464', bg = '#3f2d2d' })
+vim.api.nvim_set_hl(0, 'DiffAdd', { fg = '#6aab73', bg = '#294436' })
+vim.api.nvim_set_hl(0, 'DiffChange', { fg = '#6897bb', bg = '#303c47' })
+vim.api.nvim_set_hl(0, 'DiffText', { fg = '#bcbec4', bg = '#214283' })
 
 vim.api.nvim_set_hl(0, 'MiniStatuslineModeNormal', { fg = '#1e1e2e', bg = '#A6DBFF', bold = true })
 vim.api.nvim_set_hl(0, 'MiniStatuslineModeInsert', { fg = '#1e1e2e', bg = '#ffb86c', bold = true })
