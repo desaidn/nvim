@@ -7,7 +7,7 @@ return {
       local lint = require 'lint'
 
       -- Configuration: Set to false to disable fallback to regular eslint
-      local ESLINT_FALLBACK_ENABLED = true
+      local ESLINT_FALLBACK_ENABLED = false
 
       -- Real-time linting configuration
       local REAL_TIME_LINTING_ENABLED = true

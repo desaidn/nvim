@@ -773,29 +773,20 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {
-          -- Disable ESLint integration to avoid duplicates with nvim-lint
-          settings = {
-            diagnostics = {
-              ignoredCodes = {
-                -- Disable all ESLint-related diagnostics from ts_ls
-                -- ESLint is handled exclusively by nvim-lint with eslint_d
-                80001, -- File is a CommonJS module
-              },
-            },
-          },
-          on_attach = function(client, bufnr)
-            -- Disable ESLint-related diagnostics from ts_ls
-            -- We use nvim-lint with eslint_d instead to avoid duplicates
-            client.handlers['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
-              -- Filter out ESLint diagnostics (source = "eslint")
+          -- Filter out ESLint diagnostics to avoid duplicates with nvim-lint
+          -- ESLint is handled exclusively by nvim-lint with eslint_d
+          handlers = {
+            ['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
+              -- Filter out ESLint diagnostics (source = "eslint" or "eslint_d")
               if result and result.diagnostics then
                 result.diagnostics = vim.tbl_filter(function(diagnostic)
-                  return not (diagnostic.source and diagnostic.source:match 'eslint')
+                  return not (diagnostic.source and (diagnostic.source:match 'eslint'))
                 end, result.diagnostics)
               end
-              vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-            end
-          end,
+              -- Call the default handler with filtered diagnostics
+              vim.lsp.handlers['textDocument/publishDiagnostics'](err, result, ctx, config)
+            end,
+          },
         },
 
         -- Lua
