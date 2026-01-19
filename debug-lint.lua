@@ -49,10 +49,21 @@ else
   for _, client in ipairs(clients) do
     print(string.format('  %s (id: %d)', client.name, client.id))
 
-    -- Check if ts_ls has custom diagnostic handler
-    if client.name == 'ts_ls' and client.handlers then
-      local has_handler = client.handlers['textDocument/publishDiagnostics'] ~= nil
-      print(string.format('    Custom diagnostic handler: %s', has_handler and '✓ Yes' or '✗ No'))
+    -- Show which buffers this client is attached to
+    local bufs = vim.lsp.get_buffers_by_client_id(client.id)
+    print(string.format('    Attached to %d buffer(s)', #bufs))
+
+    -- Check for custom diagnostic handler
+    if client.handlers and client.handlers['textDocument/publishDiagnostics'] then
+      print '    Custom diagnostic handler: ✓ Yes'
+    else
+      print '    Custom diagnostic handler: ✗ No'
+    end
+
+    -- For eslint LSP, show if it should be disabled
+    if client.name == 'eslint' then
+      print '    ⚠ ESLint LSP is running - this will cause duplicates with nvim-lint!'
+      print '    Solution: Add eslint = {} to servers table in init.lua with disabled config'
     end
   end
 end
