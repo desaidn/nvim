@@ -774,18 +774,6 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {},
 
-        -- ESLint LSP - disable diagnostics since we use nvim-lint instead
-        eslint = {
-          -- Disable all diagnostics from ESLint LSP
-          handlers = {
-            ['textDocument/publishDiagnostics'] = function() end,
-          },
-          -- Still allow code actions and formatting, just not diagnostics
-          on_attach = function(client, bufnr)
-            client.server_capabilities.diagnosticProvider = false
-          end,
-        },
-
         -- Lua
         lua_ls = {
           -- cmd = { ... },
