@@ -55,67 +55,6 @@ Configured with multiple language servers including TypeScript, Python, Rust, Go
 2. Add formatters to `formatters_by_ft` in conform.nvim config (around line 1087)
 3. Run `:Mason` to install required tools
 
-### Linting with ESLint
-
-ESLint diagnostics are handled exclusively by **nvim-lint** using **eslint_d** for fast, real-time linting. The TypeScript Language Server (ts_ls) has ESLint integration disabled to prevent duplicate diagnostics.
-
-#### How It Works
-
-- **nvim-lint** (`lua/kickstart/plugins/lint.lua`) runs eslint_d for JavaScript/TypeScript files
-- **ts_ls** filters out ESLint diagnostics to avoid duplicates
-- Linting runs on file save, buffer enter, and in real-time as you type (with debouncing)
-
-#### Setup Requirements
-
-1. **Install eslint_d** (automatically installed via Mason):
-   ```bash
-   # Verify installation
-   which eslint_d
-   ```
-
-2. **Project-level ESLint configuration** - Create `.eslintrc.js` (or `.eslintrc.json`) in your project:
-   ```javascript
-   module.exports = {
-     env: {
-       browser: true,
-       es2021: true,
-       node: true,
-     },
-     extends: [
-       'eslint:recommended',
-       'plugin:@typescript-eslint/recommended',
-     ],
-     parser: '@typescript-eslint/parser',
-     parserOptions: {
-       ecmaVersion: 'latest',
-       sourceType: 'module',
-     },
-     rules: {
-       // Your custom rules
-     },
-   };
-   ```
-
-3. **Install ESLint dependencies in your project**:
-   ```bash
-   npm install --save-dev eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin
-   ```
-
-#### Configuration Options
-
-In `lua/kickstart/plugins/lint.lua`:
-
-- `ESLINT_FALLBACK_ENABLED` (default: `true`) - Falls back to regular eslint if eslint_d is unavailable
-- `REAL_TIME_LINTING_ENABLED` (default: `true`) - Enables linting as you type
-- `LINT_DEBOUNCE_MS` (default: `100`) - Debounce delay for real-time linting
-
-#### Troubleshooting
-
-- **No linting**: Ensure eslint_d is installed and your project has an ESLint config file
-- **Duplicate messages**: Verify ts_ls ESLint filtering is enabled (init.lua line 774)
-- **Slow linting**: Adjust `LINT_DEBOUNCE_MS` or disable `REAL_TIME_LINTING_ENABLED`
-- **Check linter status**: Run `:lua print(vim.inspect(require('lint').linters_by_ft))`
-
 ### Terminal Integration
 
 Minimal terminal integration (tmux handles primary terminal functionality):

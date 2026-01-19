@@ -772,31 +772,7 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {
-          -- Disable ESLint integration to avoid duplicates with nvim-lint
-          settings = {
-            diagnostics = {
-              ignoredCodes = {
-                -- Disable all ESLint-related diagnostics from ts_ls
-                -- ESLint is handled exclusively by nvim-lint with eslint_d
-                80001, -- File is a CommonJS module
-              },
-            },
-          },
-          on_attach = function(client, bufnr)
-            -- Disable ESLint-related diagnostics from ts_ls
-            -- We use nvim-lint with eslint_d instead to avoid duplicates
-            client.handlers['textDocument/publishDiagnostics'] = function(err, result, ctx, config)
-              -- Filter out ESLint diagnostics (source = "eslint")
-              if result and result.diagnostics then
-                result.diagnostics = vim.tbl_filter(function(diagnostic)
-                  return not (diagnostic.source and diagnostic.source:match 'eslint')
-                end, result.diagnostics)
-              end
-              vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-            end
-          end,
-        },
+        ts_ls = {},
 
         -- Lua
         lua_ls = {
