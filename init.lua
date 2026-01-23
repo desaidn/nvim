@@ -190,7 +190,17 @@ local float_groups = {
 
 for _, group in ipairs(float_groups) do
   local hl = vim.api.nvim_get_hl(0, { name = group })
-  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = '#3b4252' })) -- Nord polar night
+  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = '#2a2e38' }))
+end
+
+if vim.fn.has 'nvim-0.11' == 1 then
+  vim.o.winborder = 'rounded'
+else
+  local orig_open_floating_preview = vim.lsp.util.open_floating_preview
+  vim.lsp.util.open_floating_preview = function(contents, syntax, opts)
+    opts = vim.tbl_deep_extend('force', opts or {}, { border = 'rounded' })
+    return orig_open_floating_preview(contents, syntax, opts)
+  end
 end
 
 local peach_groups = {
@@ -209,11 +219,11 @@ for _, group in ipairs(peach_groups) do
   vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { fg = '#ffb86c' })) -- Peach
 end
 
--- Islands Dark diff colors
-vim.api.nvim_set_hl(0, 'DiffDelete', { fg = '#f75464', bg = '#3f2d2d' })
-vim.api.nvim_set_hl(0, 'DiffAdd', { fg = '#6aab73', bg = '#294436' })
-vim.api.nvim_set_hl(0, 'DiffChange', { fg = '#6897bb', bg = '#303c47' })
-vim.api.nvim_set_hl(0, 'DiffText', { fg = '#bcbec4', bg = '#214283' })
+-- Diff colors (background only to preserve syntax highlighting)
+vim.api.nvim_set_hl(0, 'DiffAdd', { bg = '#1e3d2a' })
+vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#3d1e1e' })
+vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#1e2a3d' })
+vim.api.nvim_set_hl(0, 'DiffText', { bg = '#2d3a4d' })
 
 vim.api.nvim_set_hl(0, 'MiniStatuslineModeNormal', { fg = '#1e1e2e', bg = '#A6DBFF', bold = true })
 vim.api.nvim_set_hl(0, 'MiniStatuslineModeInsert', { fg = '#1e1e2e', bg = '#ffb86c', bold = true })
