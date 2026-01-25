@@ -61,6 +61,10 @@ return {
         lint.linters_by_ft.markdown = { 'markdownlint' }
       end
 
+      if vim.fn.executable 'ruff' == 1 then
+        lint.linters_by_ft.python = { 'ruff' }
+      end
+
       -- Only add ESLint daemon if it's available
       local eslint_cmd = find_eslint_d()
       local using_eslint_d = false

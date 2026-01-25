@@ -801,7 +801,7 @@ require('lazy').setup({
         },
 
         -- Additional language servers
-        pyright = {}, -- Python
+        ty = {}, -- Python (astral.sh type checker)
         rust_analyzer = {}, -- Rust
         gopls = {}, -- Go
         jsonls = {}, -- JSON
@@ -897,7 +897,9 @@ require('lazy').setup({
         end
 
         -- Conform can also run multiple formatters sequentially
-        -- formatters.python = { "isort", "black" }
+        if vim.fn.executable 'ruff' == 1 then
+          formatters.python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' }
+        end
 
         return formatters
       end)(),
@@ -1210,7 +1212,7 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
