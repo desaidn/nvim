@@ -1040,44 +1040,21 @@ require('lazy').setup({
 
   {
     'nvim-treesitter/nvim-treesitter',
-    lazy = false, -- Treesitter does not support lazy-loading
-    build = ':TSUpdate',
+    lazy = false,
+    -- Parser installation in `build` (runs on install/update) vs `config` (runs every startup).
+    -- This prevents parser checks on every nvim launch.
+    build = function()
+      require('nvim-treesitter').install({
+        'bash', 'c', 'diff', 'html', 'lua', 'luadoc',
+        'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc',
+        'java', 'kotlin', 'javascript', 'typescript', 'tsx',
+        'css', 'scss', 'json', 'yaml', 'toml',
+        'dockerfile', 'sql', 'regex', 'gitignore', 'gitcommit',
+        'python', 'go', 'rust',
+      }):wait(60000)
+    end,
     config = function()
-      local ts = require 'nvim-treesitter'
-      ts.setup {}
-
-      -- Install parsers (no-op if already installed)
-      ts.install({
-        'bash',
-        'c',
-        'diff',
-        'html',
-        'lua',
-        'luadoc',
-        'markdown',
-        'markdown_inline',
-        'query',
-        'vim',
-        'vimdoc',
-        'java',
-        'kotlin',
-        'javascript',
-        'typescript',
-        'tsx',
-        'css',
-        'scss',
-        'json',
-        'yaml',
-        'toml',
-        'dockerfile',
-        'sql',
-        'regex',
-        'gitignore',
-        'gitcommit',
-        'python',
-        'go',
-        'rust',
-      }, { summary = false })
+      require('nvim-treesitter').setup {}
 
       -- Languages with poor treesitter support
       local skip_langs = { ruby = true, smithy = true }
