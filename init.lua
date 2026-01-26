@@ -158,40 +158,8 @@ vim.o.scrolloff = 10
 -- Terminal color integration
 vim.o.termguicolors = true
 
-local transparent_groups = {
-  'Normal', -- Main editor background
-  'NormalNC', -- Non-current window background
-  'SignColumn', -- Sign column (git signs, diagnostics)
-  'EndOfBuffer', -- ~ lines past end of buffer
-  'WinBar', -- Window title bar
-  'WinBarNC', -- Non-current window title bar
-  -- 'StatusLine', -- Status line
-  -- 'StatusLineNC', -- Non-current status line
-  'CursorLine', -- Current line highlight
-  'CursorColumn', -- Current column highlight
-  'ColorColumn', -- Column guide
-  'Folded', -- Folded lines
-}
-
-for _, group in ipairs(transparent_groups) do
-  local hl = vim.api.nvim_get_hl(0, { name = group })
-  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = 'NONE' }))
-end
-
-local float_groups = {
-  'NormalFloat', -- Floating window background
-  'FloatBorder', -- Floating window border
-  'Pmenu', -- Popup menu (completion)
-  'PmenuSbar', -- Popup menu scrollbar background
-  'TelescopeNormal', -- Telescope picker background
-  'TelescopeBorder', -- Telescope border
-  'WhichKeyFloat', -- Which-key popup background
-}
-
-for _, group in ipairs(float_groups) do
-  local hl = vim.api.nvim_get_hl(0, { name = group })
-  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = '#2a2e38' }))
-end
+-- Load custom colorscheme (see colors/custom.lua)
+vim.cmd.colorscheme 'custom'
 
 if vim.fn.has 'nvim-0.11' == 1 then
   vim.o.winborder = 'rounded'
@@ -202,32 +170,6 @@ else
     return orig_open_floating_preview(contents, syntax, opts)
   end
 end
-
-local peach_groups = {
-  'Function',
-  'Special',
-  'Changed',
-  'MoreMsg',
-  'Question',
-  'Directory',
-  'QuickFixLine',
-  'DiagnosticInfo',
-}
-
-for _, group in ipairs(peach_groups) do
-  local hl = vim.api.nvim_get_hl(0, { name = group })
-  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { fg = '#ffb86c' })) -- Peach
-end
-
--- Diff colors (background only to preserve syntax highlighting)
-vim.api.nvim_set_hl(0, 'DiffAdd', { bg = '#1e3d2a' })
-vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#3d1e1e' })
-vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#1e2a3d' })
-vim.api.nvim_set_hl(0, 'DiffText', { bg = '#2d3a4d' })
-
-vim.api.nvim_set_hl(0, 'MiniStatuslineModeNormal', { fg = '#1e1e2e', bg = '#A6DBFF', bold = true })
-vim.api.nvim_set_hl(0, 'MiniStatuslineModeInsert', { fg = '#1e1e2e', bg = '#ffb86c', bold = true })
-vim.api.nvim_set_hl(0, 'MiniStatuslineModeCommand', { fg = '#1e1e2e', bg = '#b4f6c0', bold = true })
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
@@ -327,9 +269,15 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  local out = vim.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
   if vim.v.shell_error ~= 0 then
-    error('Error cloning lazy.nvim:\n' .. out)
+    vim.api.nvim_echo({
+      { 'Failed to clone lazy.nvim:\n', 'ErrorMsg' },
+      { out, 'WarningMsg' },
+      { '\nPress any key to exit...' },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
   end
 end
 
@@ -1089,13 +1037,17 @@ require('lazy').setup({
     main = 'ibl',
     opts = {},
   },
-  { -- Highlight, edit, and navigate code
+
+  {
     'nvim-treesitter/nvim-treesitter',
+    lazy = false, -- Treesitter does not support lazy-loading
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-    -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-    opts = {
-      ensure_installed = {
+    config = function()
+      local ts = require 'nvim-treesitter'
+      ts.setup {}
+
+      -- Install parsers (no-op if already installed)
+      ts.install({
         'bash',
         'c',
         'diff',
@@ -1115,7 +1067,6 @@ require('lazy').setup({
         'css',
         'scss',
         'json',
-        'jsonc',
         'yaml',
         'toml',
         'dockerfile',
@@ -1126,30 +1077,29 @@ require('lazy').setup({
         'python',
         'go',
         'rust',
-      },
-      -- Autoinstall languages that are not installed
-      auto_install = true,
-      sync_install = false,
-      highlight = {
-        enable = true,
-        -- Disable highlighting for large files to improve performance
-        disable = function(lang, buf)
-          if lang == 'ruby' or lang == 'smithy' then
-            return true
+      }, { summary = false })
+
+      -- Languages with poor treesitter support
+      local skip_langs = { ruby = true, smithy = true }
+      local max_filesize = 100 * 1024 -- 100 KB
+
+      vim.api.nvim_create_autocmd('FileType', {
+        group = vim.api.nvim_create_augroup('treesitter-start', { clear = true }),
+        callback = function(event)
+          local lang = vim.treesitter.language.get_lang(event.match) or event.match
+          if skip_langs[lang] then
+            return
           end
-          local max_filesize = 100 * 1024 -- 100 KB
-          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+
+          local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(event.buf))
           if ok and stats and stats.size > max_filesize then
-            return true
+            return
           end
+
+          pcall(vim.treesitter.start, event.buf, lang)
         end,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-        additional_vim_regex_highlighting = { 'ruby', 'smithy' },
-      },
-      indent = { enable = true, disable = { 'ruby', 'smithy' } },
-    },
+      })
+    end,
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
     --
@@ -1223,6 +1173,19 @@ require('lazy').setup({
     'folke/trouble.nvim',
     opts = {
       focus = true,
+      icons = {
+        indent = {
+          top = '| ',
+          middle = '|-',
+          last = '`-',
+          fold_open = '- ',
+          fold_closed = '+ ',
+          ws = '  ',
+        },
+        folder_closed = '+ ',
+        folder_open = '- ',
+        kinds = {}, -- Empty table disables kind icons
+      },
     },
     cmd = 'Trouble',
     keys = {

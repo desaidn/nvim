@@ -142,3 +142,7 @@ Avoid redundant comments that simply restate what the code does. Reserve comment
 ### Development Practices
 
 - Always look up nvim documentation before implementing anything
+- Always inline clear, concise and useful documentation in code
+- Always explain choices and follow latest standards and best practices
+- Prioritize reliable, cross-platform solutions over clever hacks
+- The simplest solution is often the most correct and maintainable
