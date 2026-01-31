@@ -20,9 +20,7 @@ return {
           local args = { ... }
           timer:stop()
           timer:start(delay, 0, function()
-            vim.schedule(function()
-              func(unpack(args))
-            end)
+            vim.schedule(function() func(unpack(args)) end)
           end)
         end
       end
@@ -30,24 +28,16 @@ return {
       -- Function to find available ESLint daemon with configurable fallback
       local function find_eslint_d()
         -- Check for local project eslint_d first
-        if vim.fn.executable './node_modules/.bin/eslint_d' == 1 then
-          return './node_modules/.bin/eslint_d'
-        end
+        if vim.fn.executable './node_modules/.bin/eslint_d' == 1 then return './node_modules/.bin/eslint_d' end
         -- Check for global eslint_d from Mason
-        if vim.fn.executable 'eslint_d' == 1 then
-          return 'eslint_d'
-        end
+        if vim.fn.executable 'eslint_d' == 1 then return 'eslint_d' end
 
         -- Fallback behavior based on configuration
         if ESLINT_FALLBACK_ENABLED then
           -- Check for local project eslint
-          if vim.fn.executable './node_modules/.bin/eslint' == 1 then
-            return './node_modules/.bin/eslint'
-          end
+          if vim.fn.executable './node_modules/.bin/eslint' == 1 then return './node_modules/.bin/eslint' end
           -- Check for global eslint from Mason
-          if vim.fn.executable 'eslint' == 1 then
-            return 'eslint'
-          end
+          if vim.fn.executable 'eslint' == 1 then return 'eslint' end
         end
 
         return nil -- No linter available or fallback disabled
@@ -57,13 +47,9 @@ return {
       lint.linters_by_ft = {}
 
       -- Only add markdownlint if it's available
-      if vim.fn.executable 'markdownlint' == 1 then
-        lint.linters_by_ft.markdown = { 'markdownlint' }
-      end
+      if vim.fn.executable 'markdownlint' == 1 then lint.linters_by_ft.markdown = { 'markdownlint' } end
 
-      if vim.fn.executable 'ruff' == 1 then
-        lint.linters_by_ft.python = { 'ruff' }
-      end
+      if vim.fn.executable 'ruff' == 1 then lint.linters_by_ft.python = { 'ruff' } end
 
       -- Only add ESLint daemon if it's available
       local eslint_cmd = find_eslint_d()
@@ -125,9 +111,7 @@ return {
         -- Only run the linter in buffers that you can modify in order to
         -- avoid superfluous noise, notably within the handy LSP pop-ups that
         -- describe the hovered symbol using Markdown.
-        if vim.bo.modifiable then
-          lint.try_lint()
-        end
+        if vim.bo.modifiable then lint.try_lint() end
       end
 
       -- Create debounced version for real-time events

@@ -15,9 +15,7 @@ return {
   opts = {
     window = {
       position = 'right',
-      width = function()
-        return math.floor(vim.o.columns * 0.25)
-      end,
+      width = function() return math.floor(vim.o.columns * 0.25) end,
     },
     default_component_configs = {
       icon = {
@@ -28,14 +26,14 @@ return {
       },
       git_status = {
         symbols = {
-          added = '✚',
-          modified = '●',
-          deleted = '✖',
-          renamed = '➜',
-          untracked = '◐',
-          ignored = '◌',
-          unstaged = '◯',
-          staged = '●',
+          added = '+',
+          modified = '~',
+          deleted = '_',
+          renamed = '>',
+          untracked = '?',
+          ignored = '.',
+          unstaged = 'U',
+          staged = 'S',
           conflict = '!',
         },
       },
@@ -43,8 +41,8 @@ return {
         indent_size = 2,
         padding = 1,
         with_markers = true,
-        indent_marker = '│',
-        last_indent_marker = '└',
+        indent_marker = '|',
+        last_indent_marker = '`',
         highlight = 'NeoTreeIndentMarker',
       },
     },
@@ -64,7 +62,9 @@ return {
       },
       use_libuv_file_watcher = true,
       window = {
-        mappings = {},
+        mappings = {
+          ['\\'] = 'close_window',
+        },
       },
     },
     event_handlers = {
@@ -76,9 +76,7 @@ return {
               return vim.bo[vim.api.nvim_win_get_buf(win)].filetype == 'neo-tree'
             end, vim.api.nvim_list_wins())
 
-            if #neo_tree_wins > 0 then
-              vim.api.nvim_set_current_win(neo_tree_wins[1])
-            end
+            if #neo_tree_wins > 0 then vim.api.nvim_set_current_win(neo_tree_wins[1]) end
           end)
         end,
       },
