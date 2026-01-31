@@ -13,6 +13,9 @@ Kickstart.nvim targets _only_ the latest
 ['nightly'](https://github.com/neovim/neovim/releases/tag/nightly) of Neovim.
 If you are experiencing issues, please make sure you have the latest versions.
 
+> For detailed installation methods (Homebrew, Bob, Flatpak, etc.), see the
+> [upstream kickstart.nvim documentation](https://github.com/nvim-lua/kickstart.nvim#install-neovim).
+
 ### Dependencies
 
 Required:
