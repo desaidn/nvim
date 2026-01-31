@@ -41,8 +41,8 @@ return {
         indent_size = 2,
         padding = 1,
         with_markers = true,
-        indent_marker = '|',
-        last_indent_marker = '`',
+        indent_marker = '│',
+        last_indent_marker = '└',
         highlight = 'NeoTreeIndentMarker',
       },
     },
@@ -62,9 +62,7 @@ return {
       },
       use_libuv_file_watcher = true,
       window = {
-        mappings = {
-          ['\\'] = 'close_window',
-        },
+        mappings = {},
       },
     },
     event_handlers = {

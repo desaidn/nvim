@@ -34,9 +34,6 @@ vim.g.maplocalleader = ' '
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
--- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
-
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
@@ -73,7 +70,7 @@ vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter', 'InsertLeave',
     local filetype = vim.bo.filetype
 
     -- Disable line numbers for special buffer types
-    if buftype == 'terminal' or filetype == 'neo-tree' or filetype == 'help' or filetype == 'quickfix' or filetype == 'trouble' or buftype == 'nofile' or buftype == 'prompt' then
+    if buftype == 'terminal' or filetype == 'neo-tree' or filetype == 'help' or filetype == 'quickfix' or buftype == 'nofile' or buftype == 'prompt' then
       vim.opt_local.number = false
       vim.opt_local.relativenumber = false
       if buftype == 'terminal' then vim.opt_local.signcolumn = 'no' end
@@ -148,16 +145,7 @@ vim.o.termguicolors = true
 -- Load custom colorscheme (see colors/custom.lua)
 vim.cmd.colorscheme 'custom'
 
--- Rounded borders for floating windows (Neovim 0.11+ uses winborder, older versions patch manually)
-if vim.fn.has 'nvim-0.11' == 1 then
-  vim.o.winborder = 'rounded'
-else
-  local orig_open_floating_preview = vim.lsp.util.open_floating_preview
-  vim.lsp.util.open_floating_preview = function(contents, syntax, opts)
-    opts = vim.tbl_deep_extend('force', opts or {}, { border = 'rounded' })
-    return orig_open_floating_preview(contents, syntax, opts)
-  end
-end
+vim.o.winborder = 'rounded'
 
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
@@ -326,7 +314,7 @@ require('lazy').setup({
       -- delay between pressing a key and opening which-key (milliseconds)
       delay = 0,
       icons = {
-        mappings = vim.g.have_nerd_font,
+        mappings = false,
         keys = {
           Up = '<Up> ',
           Down = '<Down> ',
@@ -410,9 +398,6 @@ require('lazy').setup({
         cond = function() return vim.fn.executable 'make' == 1 end,
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
-
-      -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -514,12 +499,17 @@ require('lazy').setup({
 
       -- It's also possible to pass additional configuration options.
       --  See `:help telescope.builtin.live_grep()` for information about particular keys
-      vim.keymap.set('n', '<leader>s/', function()
-        builtin.live_grep {
-          grep_open_files = true,
-          prompt_title = 'Live Grep in Open Files',
-        }
-      end, { desc = '[S]earch [/] in Open Files' })
+      vim.keymap.set(
+        'n',
+        '<leader>s/',
+        function()
+          builtin.live_grep {
+            grep_open_files = true,
+            prompt_title = 'Live Grep in Open Files',
+          }
+        end,
+        { desc = '[S]earch [/] in Open Files' }
+      )
 
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function() builtin.find_files { cwd = vim.fn.stdpath 'config' } end, { desc = '[S]earch [N]eovim files' })
@@ -708,21 +698,21 @@ require('lazy').setup({
       require('mason-tool-installer').setup {
         ensure_installed = {
           -- LSP servers (Mason package names)
-          'lua-language-server', -- lua_ls
-          'typescript-language-server', -- ts_ls
-          'rust-analyzer', -- rust_analyzer
-          'gopls', -- gopls
-          -- 'ty', -- ty (install via pipx/uv, not Mason)
-          'json-lsp', -- jsonls
-          'yaml-language-server', -- yamlls
-          'html-lsp', -- html
-          'css-lsp', -- cssls
-          'haskell-language-server', -- hls
-          -- Formatters and linters
-          'stylua', -- Lua formatter
-          'prettier', -- Code formatter
-          'prettierd', -- Faster prettier daemon
-          'eslint_d', -- ESLint daemon for faster linting
+          'lua-language-server',
+          'typescript-language-server',
+          'rust-analyzer',
+          'gopls',
+          'ty',
+          'json-lsp',
+          'yaml-language-server',
+          'html-lsp',
+          'css-lsp',
+          'haskell-language-server',
+          'stylua',
+          'prettier',
+          'prettierd',
+          'eslint_d',
+          'ruff',
         },
       }
     end,
@@ -892,7 +882,7 @@ require('lazy').setup({
   },
 
   { -- Collection of various small independent plugins/modules
-    'echasnovski/mini.nvim',
+    'nvim-mini/mini.nvim',
     config = function()
       -- Better Around/Inside textobjects
       --
@@ -922,7 +912,7 @@ require('lazy').setup({
       statusline.section_location = function() return '%2l:%-2v' end
 
       -- ... and there is more!
-      --  Check out: https://github.com/echasnovski/mini.nvim
+      --  Check out: https://github.com/nvim-mini/mini.nvim
     end,
   },
 
@@ -960,39 +950,44 @@ require('lazy').setup({
     opts = {},
   },
 
-  {
+  { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
-    lazy = false,
-    -- Parser installation in `build` (runs on install/update) vs `config` (runs every startup).
-    -- This prevents parser checks on every nvim launch.
-    build = function()
-      require('nvim-treesitter').install({
-        'bash', 'c', 'diff', 'html', 'lua', 'luadoc',
-        'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc',
-        'java', 'kotlin', 'javascript', 'typescript', 'tsx',
-        'css', 'scss', 'json', 'yaml', 'toml',
-        'dockerfile', 'sql', 'regex', 'gitignore', 'gitcommit',
-        'python', 'go', 'rust',
-      }):wait(60000)
-    end,
     config = function()
-      require('nvim-treesitter').setup {}
-
-      -- Languages with poor treesitter support
-      local skip_langs = { ruby = true, smithy = true }
-      local max_filesize = 100 * 1024 -- 100 KB
-
+      local filetypes = {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'java',
+        'kotlin',
+        'javascript',
+        'typescript',
+        'tsx',
+        'css',
+        'scss',
+        'json',
+        'yaml',
+        'toml',
+        'dockerfile',
+        'sql',
+        'regex',
+        'gitignore',
+        'gitcommit',
+        'python',
+        'go',
+        'rust',
+      }
+      require('nvim-treesitter').install(filetypes)
       vim.api.nvim_create_autocmd('FileType', {
-        group = vim.api.nvim_create_augroup('treesitter-start', { clear = true }),
-        callback = function(event)
-          local lang = vim.treesitter.language.get_lang(event.match) or event.match
-          if skip_langs[lang] then return end
-
-          local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(event.buf))
-          if ok and stats and stats.size > max_filesize then return end
-
-          pcall(vim.treesitter.start, event.buf, lang)
-        end,
+        pattern = filetypes,
+        callback = function() vim.treesitter.start() end,
       })
     end,
     -- There are additional nvim-treesitter modules that you can use to interact
@@ -1062,33 +1057,6 @@ require('lazy').setup({
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-
-  -- trouble.nvim - Enhanced diagnostics and lists UI
-  {
-    'folke/trouble.nvim',
-    opts = {
-      focus = true,
-      icons = {
-        indent = {
-          top = '| ',
-          middle = '|-',
-          last = '`-',
-          fold_open = '- ',
-          fold_closed = '+ ',
-          ws = '  ',
-        },
-        folder_closed = '+ ',
-        folder_open = '- ',
-        kinds = {}, -- Empty table disables kind icons
-      },
-    },
-    cmd = 'Trouble',
-    keys = {
-      { '<leader>dd', '<cmd>Trouble diagnostics toggle<cr>', desc = '[D]iagnostics trouble' },
-      { '<leader>dr', '<cmd>Trouble lsp_references toggle<cr>', desc = '[D]iagnostics [R]eferences' },
-      { '<leader>ds', '<cmd>Trouble symbols toggle focus=false<cr>', desc = '[D]iagnostics [S]ymbols' },
-    },
-  },
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
