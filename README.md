@@ -69,9 +69,18 @@ nvim
 
 - `<leader>dd` - Toggle diagnostics
 
-
 ## Configuration
 
 Leader key is `<Space>`. Configuration is documented in `init.lua` and `CLAUDE.md`.
 
 Use `:Lazy` to manage plugins, `:Mason` for LSP servers, and `:checkhealth` to diagnose issues.
+
+## Reset
+
+```sh
+# Reset plugins and Mason installations
+alias nvim-reset='rm -rf ~/.local/share/nvim/lazy ~/.local/share/nvim/mason'
+
+# Full reset (all state, cache, and data)
+alias nvim-reset-all='rm -rf ~/.local/share/nvim ~/.local/state/nvim ~/.cache/nvim'
+```
