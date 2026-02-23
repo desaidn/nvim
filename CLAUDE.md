@@ -12,31 +12,38 @@ This is a Neovim configuration based on kickstart.nvim, providing a well-documen
 
 - `init.lua` - Main configuration file containing all core settings, keymaps, and plugin configurations
 - `lua/custom/plugins/init.lua` - Entry point for custom plugin additions (currently empty)
-- `lua/kickstart/plugins/` - Optional modular plugins that can be enabled:
-  - `gitsigns.lua` - Enhanced git integration with keymaps (currently enabled)
-  - `autopairs.lua`, `debug.lua`, `lint.lua`, `neo-tree.lua` - Available but not enabled
+- `lua/kickstart/plugins/` - Modular plugins (all currently enabled via require in init.lua):
+  - `gitsigns.lua` - Git signs, blame, and hunk navigation keymaps
+  - `autopairs.lua` - Auto-close brackets, quotes, etc.
+  - `debug.lua` - DAP debugger setup (Go, Python)
+  - `lint.lua` - nvim-lint with eslint_d, ruff, markdownlint
+  - `neo-tree.lua` - File explorer (right-side, text-based icons)
 - `lazy-lock.json` - Plugin version lockfile
 
 ### Plugin Management
 
 Uses lazy.nvim as the plugin manager. Core plugins include:
 
-- **LSP**: nvim-lspconfig with Mason for auto-installation
+- **LSP**: nvim-lspconfig with Mason for auto-installation, native Neovim 0.11+ LSP config (`lsp/*.lua`)
 - **Completion**: blink.cmp with LuaSnip for snippets
 - **Fuzzy Finding**: Telescope with fzf-native
-- **Git Integration**: gitsigns + lazygit for GUI operations
-- **Treesitter**: Syntax highlighting and code parsing
+- **Git Integration**: gitsigns + diffview.nvim (lazygit for GUI operations via tmux)
+- **Treesitter**: Syntax highlighting, code parsing, and context (nvim-treesitter-context)
 - **Formatting**: conform.nvim for auto-formatting
-- **UI**: which-key, mini.nvim modules (statusline, surround, text objects)
+- **Linting**: nvim-lint with eslint_d, ruff, markdownlint
+- **Debugging**: nvim-dap with Go (delve) and Python (debugpy via uv)
+- **UI**: which-key, mini.nvim (statusline, surround, text objects), undotree, todo-comments
 
 ### Key Bindings Structure
 
 - Leader key: `<Space>`
 - Search operations: `<leader>s*` (files, grep, help, etc.)
-- Toggle options: `<leader>T*` (inlay hints, diagnostics)
-- Git operations: `<leader>g*` (blame toggle)
-- LSP operations: `gr*` prefix (rename, references, definitions)
-- Diagnostics: `<leader>d*` (trouble, references, symbols)
+- Toggle options: `<leader>t*` (inlay hints, blame)
+- Git operations: `<leader>g*` (blame, diff, history), `<leader>h*` (hunks)
+- LSP operations: `gr*` prefix (rename, references, definitions, code action)
+- Format: `<leader>f` (format buffer)
+- Explorer: `<leader>e` (neo-tree toggle)
+- Debug: `<leader>b` (breakpoint), `F1-F5/F7` (stepping, continue, DAP UI)
 
 ## Development Workflows
 
@@ -49,11 +56,13 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 
 ### LSP and Language Support
 
-Configured with multiple language servers including TypeScript, Python, Rust, Go, Lua, and more. To add other languages:
+Configured with multiple language servers (TypeScript, Python/ty, Rust, Go, Lua, JSON, YAML, HTML, CSS, Haskell). LSP configs live in `lsp/*.lua` using the native Neovim 0.11+ config system. To add other languages:
 
-1. Add server to `servers` table in init.lua (around line 941)
-2. Add formatters to `formatters_by_ft` in conform.nvim config (around line 1087)
-3. Run `:Mason` to install required tools
+1. Create `lsp/<server_name>.lua` with server config (cmd, filetypes, root_markers, settings)
+2. Add server name to `servers` table in init.lua
+3. Add Mason package name to `ensure_installed` in mason-tool-installer config
+4. Add formatters to `formatters_by_ft` in conform.nvim config if needed
+5. Run `:Mason` to install required tools
 
 ### Terminal Integration
 
@@ -67,10 +76,11 @@ Minimal terminal integration (tmux handles primary terminal functionality):
 Focused on in-editor git functionality:
 
 - **gitsigns**: In-editor git signs, blame, and hunk navigation
-- `<leader>gb` - Toggle git blame line
+- `<leader>gb` / `<leader>tb` - Toggle git blame line
+- `<leader>h*` - Hunk operations (stage, reset, undo, preview, diff)
+- `<leader>gd` - Open diffview
+- `<leader>gh` - File history (diffview)
 - `]c` / `[c` - Navigate between git hunks
-
-Git blame line styling is configured with enhanced visibility and appears at the end of lines with improved contrast while maintaining a subtle background appearance.
 
 ### File Explorer
 
@@ -86,9 +96,10 @@ Neo-tree file explorer is enabled with right-side positioning and minimal stylin
 ### Customization Points
 
 - `lua/custom/plugins/init.lua` - Add new plugins without modifying core files
-- Uncomment kickstart plugins in init.lua (lines 1012-1016) to enable additional features
-- Modify `servers` table for LSP configuration
-- Adjust `formatters_by_ft` for language-specific formatting
+- `lsp/*.lua` - Add/modify LSP server configurations
+- Modify `servers` table in init.lua for enabling LSP servers
+- Adjust `formatters_by_ft` in conform.nvim config for language-specific formatting
+- Adjust `linters_by_ft` in lint.lua for language-specific linting
 
 ### Important Settings
 
@@ -103,8 +114,8 @@ External tools required:
 
 - `git`, `make`, `unzip`, C compiler
 - `ripgrep` (rg) for searching
-- `fd-find` for file finding
-- Clipboard tool (xclip/xsel/win32yank)
+- `fd-find` for file finding (optional, Telescope uses it if available)
+- Clipboard tool (pbcopy on macOS, xclip/xsel on Linux)
 - Language-specific tools (npm for TypeScript, go for Golang, etc.)
 
 ## Configuration Philosophy
@@ -112,8 +123,8 @@ External tools required:
 This configuration prioritizes:
 
 - **Text editing focus**: Core LSP, search, and navigation functionality
-- **Minimal external dependencies**: Let tmux handle terminal/window management  
-- **Readability and documentation**: Single-file simplicity with extensive comments
+- **Minimal external dependencies**: Let tmux handle terminal/window management
+- **Readability and documentation**: Single init.lua with modular LSP configs and plugin files
 - **Integration with ecosystem**: Works seamlessly with tmux-based workflows
 
 ## Coding Guidelines
