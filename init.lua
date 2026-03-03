@@ -45,41 +45,39 @@ vim.o.number = true
 --  Experiment for yourself to see if you like it!
 vim.o.relativenumber = true
 
--- Auto-toggle relative numbers based on mode
-local relative_numbers_group_id = vim.api.nvim_create_augroup('relative-numbers', { clear = true })
+-- Line number management (relative number toggling + special buffer suppression)
+local line_numbers_group = vim.api.nvim_create_augroup('line-numbers', { clear = true })
+
 vim.api.nvim_create_autocmd('InsertEnter', {
-  group = relative_numbers_group_id,
+  desc = 'Disable relative numbers in insert mode',
+  group = line_numbers_group,
   callback = function()
     if vim.bo.buftype == '' and vim.bo.filetype ~= 'neo-tree' then vim.wo.relativenumber = false end
   end,
 })
+
 vim.api.nvim_create_autocmd('InsertLeave', {
-  group = relative_numbers_group_id,
+  desc = 'Re-enable relative numbers in normal mode',
+  group = line_numbers_group,
   callback = function()
     if vim.bo.buftype == '' and vim.bo.filetype ~= 'neo-tree' then vim.wo.relativenumber = true end
   end,
 })
 
--- Special buffer configuration (terminal, neo-tree, etc.)
-local special_buffer_group = vim.api.nvim_create_augroup('special-buffer-config', { clear = true })
-vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter', 'InsertLeave', 'ModeChanged', 'BufWinEnter' }, {
-  desc = 'Configure special buffers without line numbers',
-  group = special_buffer_group,
+vim.api.nvim_create_autocmd({ 'TermOpen', 'BufEnter', 'WinEnter', 'FileType' }, {
+  desc = 'Disable line numbers for special buffers',
+  group = line_numbers_group,
   callback = function()
     local buftype = vim.bo.buftype
     local filetype = vim.bo.filetype
 
-    -- Disable line numbers for special buffer types
-    if buftype == 'terminal' or filetype == 'neo-tree' or filetype == 'help' or filetype == 'quickfix' or buftype == 'nofile' or buftype == 'prompt' then
+    if buftype == 'terminal' or filetype == 'neo-tree' or filetype == 'help' or filetype == 'qf' or buftype == 'nofile' or buftype == 'prompt' then
       vim.opt_local.number = false
       vim.opt_local.relativenumber = false
       if buftype == 'terminal' then vim.opt_local.signcolumn = 'no' end
     end
   end,
 })
-
--- Enable mouse mode, can be useful for resizing splits for example!
-vim.o.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
 vim.o.showmode = false
@@ -109,9 +107,6 @@ vim.o.signcolumn = 'yes'
 -- Decrease update time
 vim.o.updatetime = 250
 
--- Auto-reload files when changed externally
-vim.o.autoread = true
-
 -- Decrease mapped sequence wait time
 vim.o.timeoutlen = 300
 
@@ -139,9 +134,6 @@ vim.o.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
--- Terminal color integration
-vim.o.termguicolors = true
-
 -- Load custom colorscheme (see colors/custom.lua)
 vim.cmd.colorscheme 'custom'
 
@@ -160,7 +152,7 @@ vim.o.showtabline = 0
 vim.diagnostic.config {
   update_in_insert = false,
   severity_sort = true,
-  float = { border = 'rounded', source = 'if_many' },
+  float = { source = 'if_many' },
   underline = { severity = vim.diagnostic.severity.ERROR },
   signs = {},
   virtual_text = { source = 'if_many', spacing = 2 },
@@ -177,7 +169,7 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Half-page navigation with centered cursor
 vim.keymap.set('n', '<C-d>', '<C-d>zz', { desc = 'Half-page down and center cursor' })
-vim.keymap.set('n', '<C-z>', '<C-u>zz', { desc = 'Half-page up and center cursor' })
+vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Half-page up and center cursor' })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -221,18 +213,19 @@ end, { desc = 'Copy [P]ath [R]elative' })
 --  See `:help lua-guide-autocommands`
 
 -- Auto-reload files when changed externally
+local auto_reload_group = vim.api.nvim_create_augroup('auto-reload', { clear = true })
+
 vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI' }, {
   desc = 'Check if file changed on disk and reload',
-  group = vim.api.nvim_create_augroup('auto-reload', { clear = true }),
+  group = auto_reload_group,
   callback = function()
     if vim.fn.getcmdwintype() == '' then vim.cmd 'checktime' end
   end,
 })
 
--- Notify when file is reloaded
 vim.api.nvim_create_autocmd('FileChangedShellPost', {
   desc = 'Notify when file is reloaded',
-  group = vim.api.nvim_create_augroup('auto-reload-notify', { clear = true }),
+  group = auto_reload_group,
   callback = function() vim.notify('File changed on disk. Buffer reloaded.', vim.log.levels.WARN) end,
 })
 
@@ -262,9 +255,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   end
 end
 
----@type vim.Option
-local rtp = vim.opt.rtp
-rtp:prepend(lazypath)
+vim.opt.rtp:prepend(lazypath)
 
 -- [[ Configure and install plugins ]]
 --
@@ -352,13 +343,7 @@ require('lazy').setup({
         { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
-        { '<leader>e', group = '[E]xplorer', mode = { 'n', 'v' } },
         { '<leader>g', group = '[G]it', mode = { 'n', 'v' } },
-        { '<leader>c', group = '[C]laude', mode = { 'n', 'v' } },
-        { '<leader>f', group = '[F]ormat', mode = { 'n', 'v' } },
-        { '<leader>q', group = '[Q]uickfix', mode = { 'n', 'v' } },
-        { '<leader>r', group = '[R]ename/Replace', mode = { 'n', 'v' } },
-        { '<leader>d', group = '[D]iagnostics', mode = { 'n', 'v' } },
         { '<leader>p', group = '[P]ath', mode = { 'n', 'v' } },
         { '<leader>1', hidden = true },
         { '<leader>2', hidden = true },
@@ -746,27 +731,20 @@ require('lazy').setup({
           }
         end
       end,
-      formatters_by_ft = (function()
-        local prettier_config = { 'prettierd', 'prettier', stop_after_first = true }
-        local formatters = { lua = { 'stylua' } }
-
-        -- JavaScript/TypeScript formatting with Prettier
-        local js_ts_filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' }
-        for _, filetype in ipairs(js_ts_filetypes) do
-          formatters[filetype] = prettier_config
-        end
-
-        -- Other Prettier-supported filetypes
-        local prettier_filetypes = { 'json', 'jsonc', 'css', 'scss', 'html', 'markdown' }
-        for _, filetype in ipairs(prettier_filetypes) do
-          formatters[filetype] = prettier_config
-        end
-
-        -- Conform can also run multiple formatters sequentially
-        if vim.fn.executable 'ruff' == 1 then formatters.python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' } end
-
-        return formatters
-      end)(),
+      formatters_by_ft = {
+        lua = { 'stylua' },
+        javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        jsonc = { 'prettierd', 'prettier', stop_after_first = true },
+        css = { 'prettierd', 'prettier', stop_after_first = true },
+        scss = { 'prettierd', 'prettier', stop_after_first = true },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
+        markdown = { 'prettierd', 'prettier', stop_after_first = true },
+        python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' },
+      },
     },
   },
 
@@ -833,11 +811,6 @@ require('lazy').setup({
       },
 
       appearance = {
-        -- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
-        -- Adjusts spacing to ensure icons are aligned
-        nerd_font_variant = 'mono',
-        -- Disable all icons
-        use_nvim_cmp_as_default = false,
         kind_icons = {},
       },
 
@@ -945,12 +918,6 @@ require('lazy').setup({
   },
 
   {
-    'lukas-reineke/indent-blankline.nvim',
-    main = 'ibl',
-    opts = {},
-  },
-
-  {
     'nvim-treesitter/nvim-treesitter',
     lazy = false,
     -- Parser installation in `build` (runs on install/update) vs `config` (runs every startup).
@@ -1021,46 +988,7 @@ require('lazy').setup({
   { -- Show treesitter context
     'nvim-treesitter/nvim-treesitter-context',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    opts = {
-      -- Enable this plugin (Can be enabled/disabled later via commands)
-      enable = true,
-
-      -- Enable multiwindow support.
-      multiwindow = false,
-
-      -- How many lines the window should span. Values <= 0 mean no limit.
-      -- Can be '<int>%' like '30%' - to specify percentage of win.height
-      max_lines = 0,
-
-      -- Minimum editor window height to enable context. Values <= 0 mean no
-      -- limit.
-      min_window_height = 0,
-
-      -- Whether to show line numbers
-      line_numbers = true,
-
-      -- Maximum number of lines to show for a single context
-      multiline_threshold = 20,
-
-      -- Which context lines to discard if `max_lines` is exceeded.
-      -- Choices: 'inner', 'outer'
-      trim_scope = 'outer',
-
-      -- Line used to calculate context.
-      -- Choices: 'cursor', 'topline'
-      mode = 'cursor',
-
-      -- Separator between context and content. Should be a single character
-      -- string, like '-'. When separator is set, the context will only show
-      -- up when there are at least 2 lines above cursorline.
-      separator = nil,
-
-      -- The Z-index of the context window
-      zindex = 20,
-
-      -- (fun(buf: integer): boolean) return false to disable attaching
-      on_attach = nil,
-    },
+    opts = {},
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
@@ -1077,6 +1005,7 @@ require('lazy').setup({
   require 'kickstart.plugins.autopairs',
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.indent_line',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.

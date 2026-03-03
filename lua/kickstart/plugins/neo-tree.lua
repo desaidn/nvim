@@ -51,19 +51,12 @@ return {
         hide_dotfiles = false,
         hide_hidden = false,
         hide_gitignored = false,
-        hide_by_name = {},
-        hide_by_pattern = {},
-        always_show = {},
-        never_show = {},
       },
       follow_current_file = {
         enabled = true,
         leave_dirs_open = true,
       },
       use_libuv_file_watcher = true,
-      window = {
-        mappings = {},
-      },
     },
     event_handlers = {
       {

@@ -8,7 +8,7 @@ return {
   filetypes = { 'html', 'templ' },
   root_markers = { '.git' },
   init_options = {
-    provideFormatter = true,
+    provideFormatter = false,
     embeddedLanguages = { css = true, javascript = true },
   },
 }

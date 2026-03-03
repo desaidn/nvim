@@ -53,12 +53,10 @@ return {
 
       -- Only add ESLint daemon if it's available
       local eslint_cmd = find_eslint_d()
-      local using_eslint_d = false
       if eslint_cmd then
         -- Configure the linter based on what we found
         if eslint_cmd:match 'eslint_d' then
           -- Using eslint_d - configure eslint_d linter
-          using_eslint_d = true
           lint.linters.eslint_d.cmd = eslint_cmd
           lint.linters_by_ft.javascript = { 'eslint_d' }
           lint.linters_by_ft.javascriptreact = { 'eslint_d' }
@@ -127,7 +125,7 @@ return {
       })
 
       -- Real-time linting events (with debounce) - only for stdin-compatible linters
-      if REAL_TIME_LINTING_ENABLED and using_eslint_d then
+      if REAL_TIME_LINTING_ENABLED then
         vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
           group = lint_augroup,
           callback = debounced_lint,

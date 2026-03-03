@@ -157,3 +157,5 @@ Avoid redundant comments that simply restate what the code does. Reserve comment
 - Always explain choices and follow latest standards and best practices
 - Prioritize reliable, cross-platform solutions over clever hacks
 - The simplest solution is often the most correct and maintainable
+- Never remove kickstart.nvim instructional comments or other educational comments
+- Preserve multi-platform compatibility checks (e.g., Windows detection) even on a macOS-only setup
