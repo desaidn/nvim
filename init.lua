@@ -662,6 +662,8 @@ require('lazy').setup({
         'html', -- HTML
         'cssls', -- CSS
         'hls', -- Haskell
+        'jdtls', -- Java
+        'kotlin_language_server', -- Kotlin
       }
 
       -- Configure and enable each server with blink.cmp capabilities
@@ -698,6 +700,10 @@ require('lazy').setup({
           'prettierd',
           'eslint_d',
           'ruff',
+          'jdtls',
+          'kotlin-language-server',
+          'google-java-format',
+          'ktlint',
         },
       }
     end,
@@ -744,6 +750,8 @@ require('lazy').setup({
         html = { 'prettierd', 'prettier', stop_after_first = true },
         markdown = { 'prettierd', 'prettier', stop_after_first = true },
         python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' },
+        java = { 'google-java-format' },
+        kotlin = { 'ktlint' },
       },
     },
   },
