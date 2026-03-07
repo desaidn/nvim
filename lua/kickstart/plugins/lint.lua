@@ -6,41 +6,31 @@ return {
     config = function()
       local lint = require 'lint'
 
-      -- Configuration: Set to false to disable fallback to regular eslint
-      local ESLINT_FALLBACK_ENABLED = true
-
-      -- Real-time linting configuration
-      local REAL_TIME_LINTING_ENABLED = true
-      local LINT_DEBOUNCE_MS = 100
-
-      -- Debounce utility function using vim.uv.new_timer
-      local function debounce(func, delay)
-        local timer = vim.uv.new_timer()
+      -- Debounce lint calls during real-time editing to avoid excessive runs
+      local debounce_timer = assert(vim.uv.new_timer())
+      local function debounce(func)
         return function(...)
           local args = { ... }
-          timer:stop()
-          timer:start(delay, 0, function()
+          debounce_timer:stop()
+          debounce_timer:start(100, 0, function()
             vim.schedule(function() func(unpack(args)) end)
           end)
         end
       end
 
-      -- Function to find available ESLint daemon with configurable fallback
-      local function find_eslint_d()
-        -- Check for local project eslint_d first
-        if vim.fn.executable './node_modules/.bin/eslint_d' == 1 then return './node_modules/.bin/eslint_d' end
-        -- Check for global eslint_d from Mason
-        if vim.fn.executable 'eslint_d' == 1 then return 'eslint_d' end
-
-        -- Fallback behavior based on configuration
-        if ESLINT_FALLBACK_ENABLED then
-          -- Check for local project eslint
-          if vim.fn.executable './node_modules/.bin/eslint' == 1 then return './node_modules/.bin/eslint' end
-          -- Check for global eslint from Mason
-          if vim.fn.executable 'eslint' == 1 then return 'eslint' end
+      -- Find the best available eslint variant: eslint_d (preferred), then eslint as fallback.
+      -- Checks local node_modules first, then global/Mason installs.
+      local function find_eslint()
+        local candidates = {
+          { cmd = './node_modules/.bin/eslint_d', name = 'eslint_d' },
+          { cmd = 'eslint_d', name = 'eslint_d' },
+          { cmd = './node_modules/.bin/eslint', name = 'eslint' },
+          { cmd = 'eslint', name = 'eslint' },
+        }
+        for _, c in ipairs(candidates) do
+          if vim.fn.executable(c.cmd) == 1 then return c.cmd, c.name end
         end
-
-        return nil -- No linter available or fallback disabled
+        return nil, nil
       end
 
       -- Base linter configuration
@@ -51,24 +41,12 @@ return {
 
       if vim.fn.executable 'ruff' == 1 then lint.linters_by_ft.python = { 'ruff' } end
 
-      -- Only add ESLint daemon if it's available
-      local eslint_cmd = find_eslint_d()
+      local eslint_cmd, eslint_name = find_eslint()
       if eslint_cmd then
-        -- Configure the linter based on what we found
-        if eslint_cmd:match 'eslint_d' then
-          -- Using eslint_d - configure eslint_d linter
-          lint.linters.eslint_d.cmd = eslint_cmd
-          lint.linters_by_ft.javascript = { 'eslint_d' }
-          lint.linters_by_ft.javascriptreact = { 'eslint_d' }
-          lint.linters_by_ft.typescript = { 'eslint_d' }
-          lint.linters_by_ft.typescriptreact = { 'eslint_d' }
-        else
-          -- Fallback to regular eslint
-          lint.linters.eslint.cmd = eslint_cmd
-          lint.linters_by_ft.javascript = { 'eslint' }
-          lint.linters_by_ft.javascriptreact = { 'eslint' }
-          lint.linters_by_ft.typescript = { 'eslint' }
-          lint.linters_by_ft.typescriptreact = { 'eslint' }
+        lint.linters[eslint_name].cmd = eslint_cmd
+        local js_fts = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' }
+        for _, ft in ipairs(js_fts) do
+          lint.linters_by_ft[ft] = { eslint_name }
         end
       end
 
@@ -104,39 +82,25 @@ return {
       -- lint.linters_by_ft['terraform'] = nil
       -- lint.linters_by_ft['text'] = nil
 
-      -- Create lint function with modifiable buffer check
+      -- Skip read-only buffers (e.g. LSP hover popups) to avoid superfluous noise
       local function try_lint_if_modifiable()
-        -- Only run the linter in buffers that you can modify in order to
-        -- avoid superfluous noise, notably within the handy LSP pop-ups that
-        -- describe the hovered symbol using Markdown.
         if vim.bo.modifiable then lint.try_lint() end
       end
 
-      -- Create debounced version for real-time events
-      local debounced_lint = debounce(try_lint_if_modifiable, LINT_DEBOUNCE_MS)
+      local debounced_lint = debounce(try_lint_if_modifiable)
 
       -- Create autocommand which carries out the actual linting
       local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
 
-      -- Immediate linting events (no debounce needed)
-      vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave' }, {
+      vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost', 'InsertLeave', 'CursorHold', 'CursorHoldI' }, {
         group = lint_augroup,
         callback = try_lint_if_modifiable,
       })
 
-      -- Real-time linting events (with debounce) - only for stdin-compatible linters
-      if REAL_TIME_LINTING_ENABLED then
-        vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
-          group = lint_augroup,
-          callback = debounced_lint,
-        })
-
-        -- Also lint when cursor stops moving (useful for catching errors after navigation)
-        vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-          group = lint_augroup,
-          callback = try_lint_if_modifiable,
-        })
-      end
+      vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
+        group = lint_augroup,
+        callback = debounced_lint,
+      })
     end,
   },
 }
