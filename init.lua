@@ -656,14 +656,14 @@ require('lazy').setup({
         'ts_ls', -- TypeScript/JavaScript
         'rust_analyzer', -- Rust
         'gopls', -- Go
-        'ty', -- Python (astral.sh type checker)
+        'pyright', -- Python
         'jsonls', -- JSON
         'yamlls', -- YAML
         'html', -- HTML
         'cssls', -- CSS
         'hls', -- Haskell
         'jdtls', -- Java
-        'kotlin_language_server', -- Kotlin
+        'kotlin_lsp', -- Kotlin
       }
 
       -- Configure and enable each server with blink.cmp capabilities
@@ -689,7 +689,7 @@ require('lazy').setup({
           'typescript-language-server',
           'rust-analyzer',
           'gopls',
-          'ty',
+          'pyright',
           'json-lsp',
           'yaml-language-server',
           'html-lsp',
@@ -701,7 +701,7 @@ require('lazy').setup({
           'eslint_d',
           'ruff',
           'jdtls',
-          'kotlin-language-server',
+          'kotlin-lsp',
           'google-java-format',
           'ktlint',
         },
