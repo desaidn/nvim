@@ -91,6 +91,12 @@ vim.o.laststatus = 3
 --  See `:help 'clipboard'`
 vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
+-- Use spaces for indentation (2 spaces by default)
+vim.o.expandtab = true
+vim.o.shiftwidth = 2
+vim.o.tabstop = 2
+vim.o.softtabstop = 2
+
 -- Enable break indent
 vim.o.breakindent = true
 
