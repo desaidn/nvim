@@ -76,7 +76,7 @@ Minimal terminal integration (tmux handles primary terminal functionality):
 Focused on in-editor git functionality:
 
 - **gitsigns**: In-editor git signs, blame, and hunk navigation
-- `<leader>gb` / `<leader>tb` - Toggle git blame line
+- `<leader>gb` - Toggle git blame line
 - `<leader>h*` - Hunk operations (stage, reset, undo, preview, diff)
 - `<leader>gd` - Open diffview
 - `<leader>gh` - File history (diffview)
