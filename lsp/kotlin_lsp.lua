@@ -1,3 +1,8 @@
+-- Kotlin Language Server configuration
+-- Provides IDE features for Kotlin development
+--
+-- See: https://github.com/niclaslindstedt/kotlin-lsp
+
 return {
   cmd = { 'kotlin-lsp' },
   filetypes = { 'kotlin' },

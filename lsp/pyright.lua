@@ -1,3 +1,8 @@
+-- Pyright Language Server configuration
+-- Static type checker and language server for Python
+--
+-- See: https://microsoft.github.io/pyright/
+
 return {
   cmd = { 'pyright-langserver', '--stdio' },
   filetypes = { 'python' },

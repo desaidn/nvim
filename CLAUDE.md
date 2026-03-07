@@ -152,7 +152,8 @@ Avoid redundant comments that simply restate what the code does. Reserve comment
 
 ### Development Practices
 
-- Always look up nvim documentation before implementing anything
+- Always read the latest source code and documentation (plugin READMEs, Neovim help, plugin source) before making any change
+- Always explain your reasoning and cite sources before implementing — never change code without understanding why
 - Always inline clear, concise and useful documentation in code
 - Always explain choices and follow latest standards and best practices
 - Prioritize reliable, cross-platform solutions over clever hacks

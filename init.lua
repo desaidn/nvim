@@ -691,6 +691,7 @@ require('lazy').setup({
         'prettierd',
         'eslint_d',
         'ruff',
+        'markdownlint',
         'google-java-format',
         'ktlint',
       })
@@ -954,6 +955,7 @@ require('lazy').setup({
           'python',
           'go',
           'rust',
+          'haskell',
         })
         :wait(60000)
     end,
