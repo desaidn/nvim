@@ -114,6 +114,7 @@ External tools required:
 - `git`, `make`, `unzip`, C compiler
 - `ripgrep` (rg) for searching
 - `fd-find` for file finding (optional, Telescope uses it if available)
+- `tree-sitter-cli` for Treesitter parser management (`brew install tree-sitter-cli`)
 - Clipboard tool (pbcopy on macOS, xclip/xsel on Linux)
 - Language-specific tools (npm for TypeScript, go for Golang, etc.)
 

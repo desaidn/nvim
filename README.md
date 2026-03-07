@@ -22,6 +22,7 @@ Required:
 
 - `git`, `make`, `unzip`, C Compiler (`gcc`)
 - [ripgrep](https://github.com/BurntSushi/ripgrep#installation), [fd-find](https://github.com/sharkdp/fd#installation)
+- [tree-sitter-cli](https://github.com/tree-sitter/tree-sitter/blob/master/cli/README.md) (`brew install tree-sitter-cli`)
 - Clipboard tool (xclip/xsel/win32yank)
 - Language-specific tools (`npm`, `go`, etc. as needed)
 
