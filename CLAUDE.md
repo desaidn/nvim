@@ -40,7 +40,7 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 - Search operations: `<leader>s*` (files, grep, help, etc.)
 - Toggle options: `<leader>t*` (inlay hints, blame)
 - Git operations: `<leader>g*` (blame, diff, history), `<leader>h*` (hunks)
-- LSP operations: `gr*` prefix (rename, references, definitions, code action)
+- LSP operations: `gr*` prefix (Neovim 0.11 defaults for rename/code action, Telescope overrides for references/definitions)
 - Format: `<leader>f` (format buffer)
 - Explorer: `<leader>e` (neo-tree toggle)
 - Debug: `<leader>b` (breakpoint), `F1-F5/F7` (stepping, continue, DAP UI)
@@ -59,10 +59,9 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 Configured with multiple language servers (TypeScript, Python/ty, Rust, Go, Lua, JSON, YAML, HTML, CSS, Haskell). LSP configs live in `lsp/*.lua` using the native Neovim 0.11+ config system. To add other languages:
 
 1. Create `lsp/<server_name>.lua` with server config (cmd, filetypes, root_markers, settings)
-2. Add server name to `servers` table in init.lua
-3. Add Mason package name to `ensure_installed` in mason-tool-installer config
-4. Add formatters to `formatters_by_ft` in conform.nvim config if needed
-5. Run `:Mason` to install required tools
+2. Add entry to `servers` table in init.lua (`server_name = 'mason-package-name'`)
+3. Add formatters to `formatters_by_ft` in conform.nvim config if needed
+4. Run `:Mason` to install required tools
 
 ### Terminal Integration
 

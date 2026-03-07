@@ -6,47 +6,18 @@ return {
     config = function()
       local lint = require 'lint'
 
-      -- Debounce lint calls during real-time editing to avoid excessive runs
-      local debounce_timer = assert(vim.uv.new_timer())
-      local function debounce(func)
-        return function(...)
-          local args = { ... }
-          debounce_timer:stop()
-          debounce_timer:start(100, 0, function()
-            vim.schedule(function() func(unpack(args)) end)
-          end)
-        end
-      end
-
-      -- Find the best available eslint variant: eslint_d (preferred), then eslint as fallback.
-      -- Checks local node_modules first, then global/Mason installs.
-      local function find_eslint()
-        local candidates = {
-          { cmd = './node_modules/.bin/eslint_d', name = 'eslint_d' },
-          { cmd = 'eslint_d', name = 'eslint_d' },
-          { cmd = './node_modules/.bin/eslint', name = 'eslint' },
-          { cmd = 'eslint', name = 'eslint' },
-        }
-        for _, c in ipairs(candidates) do
-          if vim.fn.executable(c.cmd) == 1 then return c.cmd, c.name end
-        end
-        return nil, nil
-      end
-
       -- Base linter configuration
       lint.linters_by_ft = {}
 
-      -- Only add markdownlint if it's available
+      -- Only add linters if they're available
       if vim.fn.executable 'markdownlint' == 1 then lint.linters_by_ft.markdown = { 'markdownlint' } end
 
       if vim.fn.executable 'ruff' == 1 then lint.linters_by_ft.python = { 'ruff' } end
 
-      local eslint_cmd, eslint_name = find_eslint()
-      if eslint_cmd then
-        lint.linters[eslint_name].cmd = eslint_cmd
+      if vim.fn.executable 'eslint_d' == 1 then
         local js_fts = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' }
         for _, ft in ipairs(js_fts) do
-          lint.linters_by_ft[ft] = { eslint_name }
+          lint.linters_by_ft[ft] = { 'eslint_d' }
         end
       end
 
@@ -87,8 +58,6 @@ return {
         if vim.bo.modifiable then lint.try_lint() end
       end
 
-      local debounced_lint = debounce(try_lint_if_modifiable)
-
       -- Create autocommand which carries out the actual linting
       local lint_augroup = vim.api.nvim_create_augroup('lint', { clear = true })
 
@@ -97,9 +66,16 @@ return {
         callback = try_lint_if_modifiable,
       })
 
+      -- Debounce lint calls during real-time editing to avoid excessive runs
+      local debounce_timer = assert(vim.uv.new_timer())
       vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
         group = lint_augroup,
-        callback = debounced_lint,
+        callback = function()
+          debounce_timer:stop()
+          debounce_timer:start(100, 0, function()
+            vim.schedule(try_lint_if_modifiable)
+          end)
+        end,
       })
     end,
   },

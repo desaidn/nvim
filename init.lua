@@ -263,6 +263,9 @@ end
 
 vim.opt.rtp:prepend(lazypath)
 
+-- Shared formatter config used across multiple filetypes
+local prettier = { 'prettierd', 'prettier', stop_after_first = true }
+
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
@@ -522,6 +525,8 @@ require('lazy').setup({
   },
   {
     -- Main LSP Configuration
+    -- NOTE: nvim-lspconfig is not called directly but serves as lazy.nvim's dependency
+    -- anchor for mason, fidget, and blink.cmp load ordering.
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
@@ -589,14 +594,6 @@ require('lazy').setup({
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          -- Rename the variable under your cursor.
-          --  Most Language Servers support renaming across files, etc.
-          map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
-
-          -- Execute a code action, usually your cursor needs to be on top of an error
-          -- or a suggestion from your LSP for this to activate.
-          map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
-
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
           map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -656,27 +653,29 @@ require('lazy').setup({
       --
       -- See `:help lsp-config` for more information.
 
-      -- List of LSP servers to enable (configs are in lsp/*.lua)
+      -- LSP servers to enable: maps server name → Mason package name.
+      -- Server configs are defined in lsp/*.lua and auto-discovered by Neovim 0.11+.
       local servers = {
-        'lua_ls', -- Lua (with Neovim runtime support)
-        'ts_ls', -- TypeScript/JavaScript
-        'rust_analyzer', -- Rust
-        'gopls', -- Go
-        'pyright', -- Python
-        'jsonls', -- JSON
-        'yamlls', -- YAML
-        'html', -- HTML
-        'cssls', -- CSS
-        'hls', -- Haskell
-        'jdtls', -- Java
-        'kotlin_lsp', -- Kotlin
+        lua_ls = 'lua-language-server',
+        ts_ls = 'typescript-language-server',
+        rust_analyzer = 'rust-analyzer',
+        gopls = 'gopls',
+        pyright = 'pyright',
+        jsonls = 'json-lsp',
+        yamlls = 'yaml-language-server',
+        html = 'html-lsp',
+        cssls = 'css-lsp',
+        hls = 'haskell-language-server',
+        jdtls = 'jdtls',
+        kotlin_lsp = 'kotlin-lsp',
       }
 
       -- Configure and enable each server with blink.cmp capabilities
-      for _, name in ipairs(servers) do
-        -- vim.lsp.config merges with existing config from lsp/*.lua files
+      local ensure_installed = {}
+      for name, mason_pkg in pairs(servers) do
         vim.lsp.config(name, { capabilities = capabilities })
         vim.lsp.enable(name)
+        table.insert(ensure_installed, mason_pkg)
       end
 
       -- Ensure the servers and tools above are installed via Mason
@@ -686,31 +685,18 @@ require('lazy').setup({
       --    :Mason
       --
       -- You can press `g?` for help in this menu.
-      --
-      -- Note: Mason package names differ from LSP server names
+      vim.list_extend(ensure_installed, {
+        'stylua',
+        'prettier',
+        'prettierd',
+        'eslint_d',
+        'ruff',
+        'google-java-format',
+        'ktlint',
+      })
+
       require('mason-tool-installer').setup {
-        ensure_installed = {
-          -- LSP servers (Mason package names)
-          'lua-language-server',
-          'typescript-language-server',
-          'rust-analyzer',
-          'gopls',
-          'pyright',
-          'json-lsp',
-          'yaml-language-server',
-          'html-lsp',
-          'css-lsp',
-          'haskell-language-server',
-          'stylua',
-          'prettier',
-          'prettierd',
-          'eslint_d',
-          'ruff',
-          'jdtls',
-          'kotlin-lsp',
-          'google-java-format',
-          'ktlint',
-        },
+        ensure_installed = ensure_installed,
       }
     end,
   },
@@ -745,16 +731,16 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        typescript = { 'prettierd', 'prettier', stop_after_first = true },
-        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        json = { 'prettierd', 'prettier', stop_after_first = true },
-        jsonc = { 'prettierd', 'prettier', stop_after_first = true },
-        css = { 'prettierd', 'prettier', stop_after_first = true },
-        scss = { 'prettierd', 'prettier', stop_after_first = true },
-        html = { 'prettierd', 'prettier', stop_after_first = true },
-        markdown = { 'prettierd', 'prettier', stop_after_first = true },
+        javascript = prettier,
+        javascriptreact = prettier,
+        typescript = prettier,
+        typescriptreact = prettier,
+        json = prettier,
+        jsonc = prettier,
+        css = prettier,
+        scss = prettier,
+        html = prettier,
+        markdown = prettier,
         python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' },
         java = { 'google-java-format' },
         kotlin = { 'ktlint' },
