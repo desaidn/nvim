@@ -592,10 +592,7 @@ require('lazy').setup({
 
       vim.lsp.config('yamlls', { settings = { yaml = { keyOrdering = false } } })
 
-      vim.lsp.config('jdtls', {
-        settings = { java = { format = { enabled = false } } },
-        init_options = { provideFormatter = false },
-      })
+      vim.lsp.config('jdtls', { init_options = { provideFormatter = false } })
 
       vim.lsp.config('jsonls', { init_options = { provideFormatter = false } })
       vim.lsp.config('cssls', { init_options = { provideFormatter = false } })
