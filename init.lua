@@ -544,16 +544,17 @@ require('lazy').setup({
 
       -- [[ Native LSP Configuration (Neovim 0.11+) ]]
       --
-      -- Neovim 0.11 introduced native LSP configuration via vim.lsp.config() and vim.lsp.enable().
-      -- Server configs are defined in the lsp/ directory (e.g., lsp/lua_ls.lua) and are
-      -- automatically discovered. We only need to:
-      --   1. Merge blink.cmp capabilities into each server
-      --   2. Enable the servers we want
+      -- Three config layers, lowest to highest priority:
+      --   1. nvim-lspconfig defaults (cmd, filetypes, root_dir, commands) — no files needed
+      --   2. after/lsp/*.lua — servers with substantial custom logic (only lua_ls)
+      --   3. vim.lsp.config() below — small overrides (settings, init_options)
       --
       -- See `:help lsp-config` for more information.
 
       -- LSP servers to enable: maps server name → Mason package name.
-      -- Server configs are defined in lsp/*.lua and auto-discovered by Neovim 0.11+.
+      -- nvim-lspconfig provides base configs (cmd, filetypes, root_dir, commands).
+      -- Server-specific overrides below are merged on top (highest priority).
+      -- lua_ls has substantial custom logic and lives in after/lsp/lua_ls.lua.
       local servers = {
         lua_ls = 'lua-language-server',
         ts_ls = 'typescript-language-server',
@@ -568,6 +569,37 @@ require('lazy').setup({
         jdtls = 'jdtls',
         kotlin_lsp = 'kotlin-lsp',
       }
+
+      -- Server-specific overrides (highest priority, merged on top of nvim-lspconfig defaults)
+      vim.lsp.config('rust_analyzer', {
+        settings = {
+          ['rust-analyzer'] = {
+            cargo = { allFeatures = true },
+            check = { command = 'clippy' },
+          },
+        },
+      })
+
+      vim.lsp.config('gopls', {
+        settings = {
+          gopls = {
+            completeUnimported = true,
+            usePlaceholders = true,
+            analyses = { unusedparams = true },
+          },
+        },
+      })
+
+      vim.lsp.config('yamlls', { settings = { yaml = { keyOrdering = false } } })
+
+      vim.lsp.config('jdtls', {
+        settings = { java = { format = { enabled = false } } },
+        init_options = { provideFormatter = false },
+      })
+
+      vim.lsp.config('jsonls', { init_options = { provideFormatter = false } })
+      vim.lsp.config('cssls', { init_options = { provideFormatter = false } })
+      vim.lsp.config('html', { init_options = { provideFormatter = false } })
 
       -- Configure and enable each server with blink.cmp capabilities
       local ensure_installed = {}
@@ -590,7 +622,6 @@ require('lazy').setup({
         'prettierd',
         'eslint_d',
         'ruff',
-        'markdownlint',
         'google-java-format',
         'ktlint',
       })

@@ -1,4 +1,4 @@
--- Linting via nvim-lint with eslint_d, ruff, and markdownlint.
+-- Linting via nvim-lint with eslint_d and ruff.
 -- https://github.com/mfussenegger/nvim-lint
 
 return {
@@ -13,8 +13,6 @@ return {
       lint.linters_by_ft = {}
 
       -- Only add linters if they're available
-      if vim.fn.executable 'markdownlint' == 1 then lint.linters_by_ft.markdown = { 'markdownlint' } end
-
       if vim.fn.executable 'ruff' == 1 then lint.linters_by_ft.python = { 'ruff' } end
 
       if vim.fn.executable 'eslint_d' == 1 then

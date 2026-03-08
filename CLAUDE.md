@@ -11,13 +11,13 @@ This is a Neovim configuration based on kickstart.nvim, providing a well-documen
 ### File Structure
 
 - `init.lua` - Main configuration file containing all core settings, keymaps, and plugin configurations
-- `lsp/*.lua` - Native Neovim 0.11+ LSP server configurations (one file per server)
+- `after/lsp/*.lua` - LSP server overrides that need substantial custom logic (only `lua_ls`)
 - `colors/custom.lua` - Custom colorscheme (transparent backgrounds, peach accents)
 - `lua/kickstart/plugins/` - Modular plugins (all currently enabled via require in init.lua):
   - `gitsigns.lua` - Git signs, blame, and hunk navigation keymaps
   - `autopairs.lua` - Auto-close brackets, quotes, etc.
   - `debug.lua` - DAP debugger setup (Go, Python)
-  - `lint.lua` - nvim-lint with eslint_d, ruff, markdownlint
+  - `lint.lua` - nvim-lint with eslint_d, ruff
   - `neo-tree.lua` - File explorer (right-side, text-based icons)
   - `indent_line.lua` - Indentation guides via indent-blankline.nvim
 - `lua/kickstart/health.lua` - Health check for `:checkhealth`
@@ -34,7 +34,7 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 - **Git Integration**: gitsigns + diffview.nvim
 - **Treesitter**: Syntax highlighting, code parsing, and context (nvim-treesitter-context)
 - **Formatting**: conform.nvim for auto-formatting
-- **Linting**: nvim-lint with eslint_d, ruff, markdownlint
+- **Linting**: nvim-lint with eslint_d, ruff
 - **Debugging**: nvim-dap with Go (delve) and Python (debugpy via uv)
 - **UI**: which-key, mini.nvim (statusline, surround, text objects), undotree, todo-comments
 
@@ -62,12 +62,19 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 
 ### LSP and Language Support
 
-Configured with multiple language servers (TypeScript, Python, Rust, Go, Lua, JSON, YAML, HTML, CSS, Haskell, Java, Kotlin). LSP configs live in `lsp/*.lua` using the native Neovim 0.11+ config system. To add other languages:
+Configured with multiple language servers (TypeScript, Python, Rust, Go, Lua, JSON, YAML, HTML, CSS, Haskell, Java, Kotlin). Three config layers (lowest to highest priority):
 
-1. Create `lsp/<server_name>.lua` with server config (cmd, filetypes, root_markers, settings)
-2. Add entry to `servers` table in init.lua (`server_name = 'mason-package-name'`)
-3. Add formatters to `formatters_by_ft` in conform.nvim config if needed
-4. Run `:Mason` to install required tools
+1. **nvim-lspconfig defaults** — cmd, filetypes, root_dir, commands (no files needed)
+2. **`after/lsp/*.lua`** — servers with substantial custom logic (only `lua_ls`)
+3. **`vim.lsp.config()` in init.lua** — small overrides (settings, init_options)
+
+To add a new language server:
+
+1. Add entry to `servers` table in init.lua (`server_name = 'mason-package-name'`)
+2. Add `vim.lsp.config()` override in init.lua if custom settings are needed
+3. Only create `after/lsp/<server_name>.lua` if the server needs substantial logic (e.g., `on_init`)
+4. Add formatters to `formatters_by_ft` in conform.nvim config if needed
+5. Run `:Mason` to install required tools
 
 ### Terminal Integration
 
@@ -101,7 +108,8 @@ Neo-tree file explorer is enabled with right-side positioning and minimal stylin
 ### Customization Points
 
 - `lua/custom/plugins/init.lua` - Add new plugins without modifying core files
-- `lsp/*.lua` - Add/modify LSP server configurations
+- `after/lsp/*.lua` - Add LSP server configs with substantial custom logic
+- `vim.lsp.config()` in init.lua for small LSP server overrides
 - Modify `servers` table in init.lua for enabling LSP servers
 - Adjust `formatters_by_ft` in conform.nvim config for language-specific formatting
 - Adjust `linters_by_ft` in lint.lua for language-specific linting
