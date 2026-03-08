@@ -11,13 +11,17 @@ This is a Neovim configuration based on kickstart.nvim, providing a well-documen
 ### File Structure
 
 - `init.lua` - Main configuration file containing all core settings, keymaps, and plugin configurations
-- `lua/custom/plugins/init.lua` - Entry point for custom plugin additions (currently empty)
+- `lsp/*.lua` - Native Neovim 0.11+ LSP server configurations (one file per server)
+- `colors/custom.lua` - Custom colorscheme (transparent backgrounds, peach accents)
 - `lua/kickstart/plugins/` - Modular plugins (all currently enabled via require in init.lua):
   - `gitsigns.lua` - Git signs, blame, and hunk navigation keymaps
   - `autopairs.lua` - Auto-close brackets, quotes, etc.
   - `debug.lua` - DAP debugger setup (Go, Python)
   - `lint.lua` - nvim-lint with eslint_d, ruff, markdownlint
   - `neo-tree.lua` - File explorer (right-side, text-based icons)
+  - `indent_line.lua` - Indentation guides via indent-blankline.nvim
+- `lua/kickstart/health.lua` - Health check for `:checkhealth`
+- `lua/custom/plugins/init.lua` - Entry point for custom plugin additions (currently empty)
 - `lazy-lock.json` - Plugin version lockfile
 
 ### Plugin Management
@@ -27,7 +31,7 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 - **LSP**: nvim-lspconfig with Mason for auto-installation, native Neovim 0.11+ LSP config (`lsp/*.lua`)
 - **Completion**: blink.cmp with LuaSnip for snippets
 - **Fuzzy Finding**: Telescope with fzf-native
-- **Git Integration**: gitsigns + diffview.nvim (lazygit for GUI operations via tmux)
+- **Git Integration**: gitsigns + diffview.nvim
 - **Treesitter**: Syntax highlighting, code parsing, and context (nvim-treesitter-context)
 - **Formatting**: conform.nvim for auto-formatting
 - **Linting**: nvim-lint with eslint_d, ruff, markdownlint
@@ -38,12 +42,14 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 
 - Leader key: `<Space>`
 - Search operations: `<leader>s*` (files, grep, help, etc.)
-- Toggle options: `<leader>t*` (inlay hints, blame)
+- Toggle options: `<leader>t*` (inlay hints, deleted hunks)
 - Git operations: `<leader>g*` (blame, diff, history), `<leader>h*` (hunks)
 - LSP operations: `gr*` prefix (Neovim 0.11 defaults for rename/code action, Telescope overrides for references/definitions)
 - Format: `<leader>f` (format buffer)
 - Explorer: `<leader>e` (neo-tree toggle)
-- Debug: `<leader>b` (breakpoint), `F1-F5/F7` (stepping, continue, DAP UI)
+- Undo tree: `<leader>u` (toggle undotree)
+- Path copy: `<leader>p*` (copy absolute/relative file paths)
+- Debug: `<leader>b` (breakpoint), `F1-F3` (stepping), `F5` (continue), `F7` (DAP UI)
 
 ## Development Workflows
 
@@ -56,7 +62,7 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 
 ### LSP and Language Support
 
-Configured with multiple language servers (TypeScript, Python/ty, Rust, Go, Lua, JSON, YAML, HTML, CSS, Haskell). LSP configs live in `lsp/*.lua` using the native Neovim 0.11+ config system. To add other languages:
+Configured with multiple language servers (TypeScript, Python, Rust, Go, Lua, JSON, YAML, HTML, CSS, Haskell, Java, Kotlin). LSP configs live in `lsp/*.lua` using the native Neovim 0.11+ config system. To add other languages:
 
 1. Create `lsp/<server_name>.lua` with server config (cmd, filetypes, root_markers, settings)
 2. Add entry to `servers` table in init.lua (`server_name = 'mason-package-name'`)
@@ -113,9 +119,9 @@ External tools required:
 
 - `git`, `make`, `unzip`, C compiler
 - `ripgrep` (rg) for searching
-- `fd-find` for file finding (optional, Telescope uses it if available)
-- `tree-sitter-cli` for Treesitter parser management (`brew install tree-sitter-cli`)
-- Clipboard tool (pbcopy on macOS, xclip/xsel on Linux)
+- [`fd-find`](https://github.com/sharkdp/fd) for file finding (optional, Telescope uses it if available)
+- [`tree-sitter-cli`](https://github.com/tree-sitter/tree-sitter) for Treesitter parser management (`brew install tree-sitter-cli`)
+- Clipboard tool (`pbcopy` on macOS, `xclip`/`xsel` on Linux)
 - Language-specific tools (npm for TypeScript, go for Golang, etc.)
 
 ## Configuration Philosophy

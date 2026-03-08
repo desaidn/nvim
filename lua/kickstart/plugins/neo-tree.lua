@@ -58,6 +58,7 @@ return {
       },
       use_libuv_file_watcher = true,
     },
+    -- Return focus to neo-tree after opening a file (keeps the explorer visible)
     event_handlers = {
       {
         event = 'file_opened',

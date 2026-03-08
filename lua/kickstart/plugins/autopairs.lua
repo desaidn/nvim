@@ -1,4 +1,4 @@
--- autopairs
+-- Auto-close brackets, quotes, etc.
 -- https://github.com/windwp/nvim-autopairs
 
 return {

@@ -1,15 +1,8 @@
--- debug.lua
---
--- Shows how to use the DAP plugin to debug your code.
---
--- Primarily focused on configuring the debugger for Go, but can
--- be extended to other languages as well. That's why it's called
--- kickstart.nvim and not kitchen-sink.nvim ;)
+-- DAP (Debug Adapter Protocol) setup for Go and Python.
+-- Can be extended to other languages — see https://github.com/mfussenegger/nvim-dap
 
 return {
-  -- NOTE: Yes, you can install new plugins here!
   'mfussenegger/nvim-dap',
-  -- NOTE: And you can specify dependencies as well
   dependencies = {
     -- Creates a beautiful debugger UI
     'rcarriga/nvim-dap-ui',
@@ -26,7 +19,7 @@ return {
     'mfussenegger/nvim-dap-python',
   },
   keys = {
-    -- Basic debugging keymaps, feel free to change to your liking!
+    -- Basic debugging keymaps
     { '<F5>', function() require('dap').continue() end, desc = 'Debug: Start/Continue' },
     { '<F1>', function() require('dap').step_into() end, desc = 'Debug: Step Into' },
     { '<F2>', function() require('dap').step_over() end, desc = 'Debug: Step Over' },
@@ -40,26 +33,22 @@ return {
     local dap = require 'dap'
     local dapui = require 'dapui'
 
+    -- mason-nvim-dap auto-installs debug adapters. See mason-nvim-dap README for more.
     require('mason-nvim-dap').setup {
-      -- Makes a best effort to setup the various debuggers with
-      -- reasonable debug configurations
+      -- Automatically set up debuggers with reasonable defaults
       automatic_installation = true,
 
-      -- You can provide additional configuration to the handlers,
-      -- see mason-nvim-dap README for more information
+      -- Custom handler overrides per adapter (see mason-nvim-dap README)
       handlers = {},
 
-      -- You'll need to check that you have the required things installed
-      -- online, please don't ask me how to install them :)
       ensure_installed = {
-        -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
         'debugpy',
       },
     }
 
     -- Dap UI setup
-    -- For more information, see |:help nvim-dap-ui|
+    -- See `:help nvim-dap-ui`
     dapui.setup {
       -- Plain ASCII icons for maximum terminal compatibility
       icons = { expanded = 'v', collapsed = '>', current_frame = '*' },
@@ -78,23 +67,11 @@ return {
       },
     }
 
-    -- Change breakpoint icons
-    -- vim.api.nvim_set_hl(0, 'DapBreak', { fg = '#e51400' })
-    -- vim.api.nvim_set_hl(0, 'DapStop', { fg = '#ffcc00' })
-    -- local breakpoint_icons = vim.g.have_nerd_font
-    --     and { Breakpoint = '', BreakpointCondition = '', BreakpointRejected = '', LogPoint = '', Stopped = '' }
-    --   or { Breakpoint = '●', BreakpointCondition = '⊜', BreakpointRejected = '⊘', LogPoint = '◆', Stopped = '⭔' }
-    -- for type, icon in pairs(breakpoint_icons) do
-    --   local tp = 'Dap' .. type
-    --   local hl = (type == 'Stopped') and 'DapStop' or 'DapBreak'
-    --   vim.fn.sign_define(tp, { text = icon, texthl = hl, numhl = hl })
-    -- end
-
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open
     dap.listeners.before.event_terminated['dapui_config'] = dapui.close
     dap.listeners.before.event_exited['dapui_config'] = dapui.close
 
-    -- Install golang specific config
+    -- Go debugger (delve)
     require('dap-go').setup {
       delve = {
         -- On Windows delve must be run attached or it crashes.
@@ -103,7 +80,7 @@ return {
       },
     }
 
-    -- Install Python specific config (uses uv for debugpy)
+    -- Python debugger (debugpy via uv)
     require('dap-python').setup 'uv'
   end,
 }

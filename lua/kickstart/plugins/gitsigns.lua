@@ -1,6 +1,5 @@
--- Adds git related signs to the gutter, as well as utilities for managing changes
--- NOTE: gitsigns is already included in init.lua but contains only the base
--- config. This will add also the recommended keymaps.
+-- Git gutter signs, inline blame, and hunk management keymaps.
+-- See `:help gitsigns`
 
 return {
   {
@@ -13,11 +12,11 @@ return {
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
       },
-      current_line_blame = true, -- Enable inline blame by default
+      current_line_blame = true,
       current_line_blame_opts = {
         virt_text = true,
-        virt_text_pos = 'eol', -- end of line
-        delay = 200, -- slight delay before showing
+        virt_text_pos = 'eol',
+        delay = 200,
         ignore_whitespace = false,
       },
       on_attach = function(bufnr)
@@ -47,10 +46,10 @@ return {
         end, { desc = 'Jump to previous git [c]hange' })
 
         -- Actions
-        -- visual mode
+        -- Visual mode
         map('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [s]tage hunk' })
         map('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line '.', vim.fn.line 'v' } end, { desc = 'git [r]eset hunk' })
-        -- normal mode
+        -- Normal mode
         map('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk' })
         map('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk' })
         map('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'git [S]tage buffer' })

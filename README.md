@@ -21,9 +21,13 @@ If you are experiencing issues, please make sure you have the latest versions.
 Required:
 
 - `git`, `make`, `unzip`, C Compiler (`gcc`)
-- [ripgrep](https://github.com/BurntSushi/ripgrep#installation), [fd-find](https://github.com/sharkdp/fd#installation)
+- [ripgrep](https://github.com/BurntSushi/ripgrep#installation)
 - [tree-sitter-cli](https://github.com/tree-sitter/tree-sitter/blob/master/cli/README.md) (`brew install tree-sitter-cli`)
-- Clipboard tool (xclip/xsel/win32yank)
+- Clipboard tool (`pbcopy` on macOS, `xclip`/`xsel` on Linux)
+
+Optional:
+
+- [fd-find](https://github.com/sharkdp/fd#installation) (Telescope uses it if available)
 - Language-specific tools (`npm`, `go`, etc. as needed)
 
 ### Install
@@ -48,11 +52,16 @@ nvim
 
 - `<leader>sf` - Find files
 - `<leader>sg` - Live grep
+- `<leader>sw` - Search current word
 - `<leader><leader>` - Find buffers
+- `<leader>/` - Fuzzy search in current buffer
 
 ### Git
 
 - `<leader>gb` - Toggle git blame
+- `<leader>gd` - Open diffview
+- `<leader>gh` - File history
+- `<leader>h*` - Hunk operations (stage, reset, preview, diff)
 - `]c` / `[c` - Navigate git hunks
 
 ### File Explorer
@@ -65,10 +74,16 @@ nvim
 - `grr` - References
 - `grn` - Rename
 - `K` - Hover documentation
+- `<leader>f` - Format buffer
 
 ### Diagnostics
 
-- `<leader>dd` - Toggle diagnostics
+- `<leader>q` - Open diagnostic quickfix list
+
+### Utilities
+
+- `<leader>u` - Toggle undo tree
+- `<leader>pa` / `<leader>pr` - Copy absolute/relative file path
 
 ## Configuration
 
