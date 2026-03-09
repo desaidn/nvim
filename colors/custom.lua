@@ -69,4 +69,7 @@ vim.api.nvim_set_hl(0, 'StatusLineNC', { bg = '#2a2e38' })
 -- Mini statusline mode colors
 vim.api.nvim_set_hl(0, 'MiniStatuslineModeNormal', { fg = '#1e1e2e', bg = '#A6DBFF', bold = true })
 vim.api.nvim_set_hl(0, 'MiniStatuslineModeInsert', { fg = '#1e1e2e', bg = '#ffb86c', bold = true })
+vim.api.nvim_set_hl(0, 'MiniStatuslineModeVisual', { fg = '#1e1e2e', bg = '#d4a0ff', bold = true })
+vim.api.nvim_set_hl(0, 'MiniStatuslineModeReplace', { fg = '#1e1e2e', bg = '#ff8fa3', bold = true })
 vim.api.nvim_set_hl(0, 'MiniStatuslineModeCommand', { fg = '#1e1e2e', bg = '#b4f6c0', bold = true })
+vim.api.nvim_set_hl(0, 'MiniStatuslineModeOther', { fg = '#1e1e2e', bg = '#A6DBFF', bold = true })

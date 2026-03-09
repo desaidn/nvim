@@ -285,7 +285,7 @@ require('lazy').setup({
     opts = {
       preset = 'classic', -- Use classic preset for familiar behavior
       -- delay between pressing a key and opening which-key (milliseconds)
-      delay = 0,
+      delay = 200,
       icons = {
         mappings = false,
         keys = {
@@ -598,10 +598,12 @@ require('lazy').setup({
       vim.lsp.config('cssls', { init_options = { provideFormatter = false } })
       vim.lsp.config('html', { init_options = { provideFormatter = false } })
 
-      -- Configure and enable each server with blink.cmp capabilities
+      -- Broadcast blink.cmp capabilities to all servers globally
+      vim.lsp.config('*', { capabilities = capabilities })
+
+      -- Enable each server and collect Mason packages to install
       local ensure_installed = {}
       for name, mason_pkg in pairs(servers) do
-        vim.lsp.config(name, { capabilities = capabilities })
         vim.lsp.enable(name)
         table.insert(ensure_installed, mason_pkg)
       end
@@ -678,7 +680,7 @@ require('lazy').setup({
 
   { -- Autocompletion
     'saghen/blink.cmp',
-    event = 'VimEnter',
+    event = 'InsertEnter',
     version = '1.*',
     dependencies = {
       -- Snippet Engine
@@ -740,7 +742,7 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets' },
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
       },
 
       snippets = { preset = 'luasnip' },

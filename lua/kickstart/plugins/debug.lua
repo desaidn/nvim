@@ -80,7 +80,13 @@ return {
       },
     }
 
-    -- Python debugger (debugpy via uv)
-    require('dap-python').setup 'uv'
+    -- Python debugger: prefer the active virtual environment's interpreter,
+    -- falling back to the system python3. Supports venv, conda, and uv projects.
+    local function get_python()
+      local venv = os.getenv 'VIRTUAL_ENV' or os.getenv 'CONDA_PREFIX'
+      if venv then return venv .. '/bin/python' end
+      return vim.fn.exepath 'python3' or 'python3'
+    end
+    require('dap-python').setup(get_python())
   end,
 }
