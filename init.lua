@@ -221,7 +221,7 @@ vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHo
   desc = 'Check if file changed on disk and reload',
   group = auto_reload_group,
   callback = function()
-    if vim.fn.getcmdwintype() == '' then vim.cmd 'checktime' end
+    if vim.fn.getcmdwintype() == '' then vim.cmd.checktime() end
   end,
 })
 
@@ -809,18 +809,6 @@ require('lazy').setup({
     end,
   },
 
-  -- Git diff and file history
-  {
-    'sindrets/diffview.nvim',
-    cmd = { 'DiffviewOpen', 'DiffviewFileHistory' },
-    keys = {
-      { '<leader>gd', '<cmd>DiffviewOpen<cr>', desc = 'Git [D]iff' },
-      { '<leader>gh', '<cmd>DiffviewFileHistory %<cr>', desc = 'File [H]istory' },
-    },
-    opts = {
-      use_icons = false,
-    },
-  },
 
   {
     'nvim-treesitter/nvim-treesitter',
@@ -907,7 +895,7 @@ require('lazy').setup({
 
   -- Add your own plugins to `lua/custom/plugins/*.lua` and import them here.
   --  See `:help lazy.nvim-🔌-plugin-spec`
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
 }, {
   ui = {
     icons = {

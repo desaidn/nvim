@@ -31,7 +31,7 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 - **LSP**: nvim-lspconfig with Mason for auto-installation, native Neovim 0.11+ LSP config (`lsp/*.lua`)
 - **Completion**: blink.cmp with LuaSnip for snippets
 - **Fuzzy Finding**: Telescope with fzf-native
-- **Git Integration**: gitsigns + diffview.nvim
+- **Git Integration**: gitsigns (in-editor signs, blame, hunks; diffs via lazygit)
 - **Treesitter**: Syntax highlighting, code parsing, and context (nvim-treesitter-context)
 - **Formatting**: conform.nvim for auto-formatting
 - **Linting**: nvim-lint with eslint_d, ruff
@@ -85,13 +85,12 @@ Minimal terminal integration (tmux handles primary terminal functionality):
 
 ### Git Integration
 
-Focused on in-editor git functionality:
+Focused on in-editor git context (diffs and file history are handled by lazygit):
 
 - **gitsigns**: In-editor git signs, blame, and hunk navigation
+- `<leader>gg` - Open lazygit in a new tab (custom plugin: `lua/custom/plugins/lazygit.lua`)
 - `<leader>gb` - Toggle git blame line
-- `<leader>h*` - Hunk operations (stage, reset, undo, preview, diff)
-- `<leader>gd` - Open diffview
-- `<leader>gh` - File history (diffview)
+- `<leader>h*` - Hunk operations (stage, reset, undo, preview)
 - `]c` / `[c` - Navigate between git hunks
 
 ### File Explorer
@@ -137,6 +136,7 @@ External tools required:
 This configuration prioritizes:
 
 - **Text editing focus**: Core LSP, search, and navigation functionality
+- **Lua API over vim.cmd**: Always use `vim.api.*` and `vim.fn.*` instead of `vim.cmd('string')` — we're using neovim for a reason
 - **Minimal external dependencies**: Let tmux handle terminal/window management
 - **Readability and documentation**: Single init.lua with modular LSP configs and plugin files
 - **Integration with ecosystem**: Works seamlessly with tmux-based workflows
