@@ -4,6 +4,20 @@ vim.g.colors_name = 'custom'
 -- Load default colorscheme as base
 vim.cmd.runtime 'colors/default.lua'
 
+local colors = {
+  white = '#ffffff', -- text, tag attributes
+  peach = '#ffb86c', -- accent, tags, functions, statusline insert mode
+  blue = '#a6dbff', -- statusline normal mode
+  green = '#b4f6c0', -- statusline command mode
+  grey = '#7a8a9e', -- tag delimiters
+  charcoal = '#2a2e38', -- floats, statusline, popups
+  midnight = '#1e1e2e', -- statusline foreground
+  light_green = '#2e5e3e', -- diff additions
+  dark_green = '#1e3d2a', -- diff changes
+  mid_green = '#2a4d35', -- diff changed text
+  dark_red = '#3d1e1e', -- diff deletions
+}
+
 -- Transparent backgrounds
 local transparent_groups = {
   'Normal',
@@ -36,11 +50,11 @@ local float_groups = {
 
 for _, group in ipairs(float_groups) do
   local hl = vim.api.nvim_get_hl(0, { name = group })
-  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = '#2a2e38' }))
+  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = colors.charcoal }))
 end
 
--- Peach accent color
-local peach_groups = {
+-- Accent color
+local accent_groups = {
   'Function',
   'Special',
   'Changed',
@@ -51,22 +65,29 @@ local peach_groups = {
   'DiagnosticInfo',
 }
 
-for _, group in ipairs(peach_groups) do
+for _, group in ipairs(accent_groups) do
   local hl = vim.api.nvim_get_hl(0, { name = group })
-  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { fg = '#ffb86c' }))
+  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { fg = colors.peach }))
 end
 
 -- Diff colors
-vim.api.nvim_set_hl(0, 'DiffAdd', { bg = '#1e3d2a' })
-vim.api.nvim_set_hl(0, 'DiffDelete', { bg = '#3d1e1e' })
-vim.api.nvim_set_hl(0, 'DiffChange', { bg = '#1e2a3d' })
-vim.api.nvim_set_hl(0, 'DiffText', { bg = '#2d3a4d' })
+vim.api.nvim_set_hl(0, 'DiffAdd', { bg = colors.light_green })
+vim.api.nvim_set_hl(0, 'DiffChange', { bg = colors.dark_green })
+vim.api.nvim_set_hl(0, 'DiffDelete', { bg = colors.dark_red })
+vim.api.nvim_set_hl(0, 'DiffText', { bg = colors.mid_green, fg = colors.white })
+vim.api.nvim_set_hl(0, 'DiffTextAdd', { bg = colors.light_green, fg = colors.white })
 
 -- Statusline background (matches float windows)
-vim.api.nvim_set_hl(0, 'StatusLine', { bg = '#2a2e38' })
-vim.api.nvim_set_hl(0, 'StatusLineNC', { bg = '#2a2e38' })
+vim.api.nvim_set_hl(0, 'StatusLine', { bg = colors.charcoal })
+vim.api.nvim_set_hl(0, 'StatusLineNC', { bg = colors.charcoal })
+
+-- Markup tag colors (HTML, XML, JSX, TSX)
+vim.api.nvim_set_hl(0, '@tag', { fg = colors.peach })
+vim.api.nvim_set_hl(0, '@tag.builtin', { fg = colors.peach })
+vim.api.nvim_set_hl(0, '@tag.delimiter', { fg = colors.grey })
+vim.api.nvim_set_hl(0, '@tag.attribute', { fg = colors.white, italic = true })
 
 -- Mini statusline mode colors
-vim.api.nvim_set_hl(0, 'MiniStatuslineModeNormal', { fg = '#1e1e2e', bg = '#A6DBFF', bold = true })
-vim.api.nvim_set_hl(0, 'MiniStatuslineModeInsert', { fg = '#1e1e2e', bg = '#ffb86c', bold = true })
-vim.api.nvim_set_hl(0, 'MiniStatuslineModeCommand', { fg = '#1e1e2e', bg = '#b4f6c0', bold = true })
+vim.api.nvim_set_hl(0, 'MiniStatuslineModeNormal', { fg = colors.midnight, bg = colors.blue, bold = true })
+vim.api.nvim_set_hl(0, 'MiniStatuslineModeInsert', { fg = colors.midnight, bg = colors.peach, bold = true })
+vim.api.nvim_set_hl(0, 'MiniStatuslineModeCommand', { fg = colors.midnight, bg = colors.green, bold = true })
