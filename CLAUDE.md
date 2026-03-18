@@ -22,6 +22,7 @@ This is a Neovim configuration based on kickstart.nvim, providing a well-documen
   - `indent_line.lua` - Indentation guides via indent-blankline.nvim
 - `lua/kickstart/health.lua` - Health check for `:checkhealth`
 - `lua/custom/plugins/init.lua` - Entry point for custom plugin additions (currently empty)
+- `lua/custom/plugins/lazygit.lua` - Toggleable lazygit in a fullscreen floating window
 - `lazy-lock.json` - Plugin version lockfile
 
 ### Plugin Management
@@ -43,7 +44,7 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 - Leader key: `<Space>`
 - Search operations: `<leader>s*` (files, grep, help, etc.)
 - Toggle options: `<leader>t*` (inlay hints, deleted hunks)
-- Git operations: `<leader>g*` (blame, diff, history), `<leader>h*` (hunks)
+- Git operations: `<leader>g` (lazygit), `<leader>gb` (blame), `<leader>h*` (hunks)
 - LSP operations: `gr*` prefix (Neovim 0.11 defaults for rename/code action, Telescope overrides for references/definitions)
 - Format: `<leader>f` (format buffer)
 - Explorer: `<leader>e` (neo-tree toggle)
@@ -88,7 +89,7 @@ Minimal terminal integration (tmux handles primary terminal functionality):
 Focused on in-editor git context (diffs and file history are handled by lazygit):
 
 - **gitsigns**: In-editor git signs, blame, and hunk navigation
-- `<leader>gg` - Open lazygit in a new tab (custom plugin: `lua/custom/plugins/lazygit.lua`)
+- `<leader>g` - Toggle lazygit floating window (custom plugin: `lua/custom/plugins/lazygit.lua`)
 - `<leader>gb` - Toggle git blame line
 - `<leader>h*` - Hunk operations (stage, reset, undo, preview)
 - `]c` / `[c` - Navigate between git hunks
