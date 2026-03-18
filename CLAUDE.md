@@ -44,7 +44,7 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 - Leader key: `<Space>`
 - Search operations: `<leader>s*` (files, grep, help, etc.)
 - Toggle options: `<leader>t*` (inlay hints, deleted hunks)
-- Git operations: `<leader>g` (lazygit), `<leader>gb` (blame), `<leader>h*` (hunks)
+- Git operations: `<leader>gg` (lazygit), `<leader>gb` (blame), `<leader>h*` (hunks)
 - LSP operations: `gr*` prefix (Neovim 0.11 defaults for rename/code action, Telescope overrides for references/definitions)
 - Format: `<leader>f` (format buffer)
 - Explorer: `<leader>e` (neo-tree toggle)
@@ -89,7 +89,7 @@ Minimal terminal integration (tmux handles primary terminal functionality):
 Focused on in-editor git context (diffs and file history are handled by lazygit):
 
 - **gitsigns**: In-editor git signs, blame, and hunk navigation
-- `<leader>g` - Toggle lazygit floating window (custom plugin: `lua/custom/plugins/lazygit.lua`)
+- `<leader>gg` - Toggle lazygit floating window (custom plugin: `lua/custom/plugins/lazygit.lua`)
 - `<leader>gb` - Toggle git blame line
 - `<leader>h*` - Hunk operations (stage, reset, undo, preview)
 - `]c` / `[c` - Navigate between git hunks

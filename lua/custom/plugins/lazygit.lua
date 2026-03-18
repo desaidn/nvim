@@ -1,5 +1,5 @@
 --- Toggleable lazygit in a fullscreen floating window.
---- <leader>g opens lazygit, <leader>g again hides it (preserving state).
+--- <leader>gg opens lazygit, <leader>gg again hides it (preserving state).
 --- Quitting lazygit (q) fully cleans up the buffer and window.
 --- Requires: lazygit (https://github.com/jesseduffield/lazygit)
 local state = { buf = nil, win = nil }
@@ -45,7 +45,7 @@ local function toggle_lazygit()
     end,
   })
 
-  vim.keymap.set('t', '<leader>g', toggle_lazygit, { buffer = state.buf, desc = 'Toggle Lazygit' })
+  vim.keymap.set('t', '<leader>gg', toggle_lazygit, { buffer = state.buf, desc = 'Toggle Lazygit' })
   vim.cmd.startinsert()
 end
 
@@ -53,6 +53,6 @@ return {
   'lazygit',
   virtual = true,
   keys = {
-    { '<leader>g', toggle_lazygit, desc = 'Lazygit' },
+    { '<leader>gg', toggle_lazygit, desc = 'Lazygit' },
   },
 }

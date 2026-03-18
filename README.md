@@ -58,7 +58,7 @@ nvim
 
 ### Git
 
-- `<leader>g` - Toggle lazygit (floating window)
+- `<leader>gg` - Toggle lazygit (floating window)
 - `<leader>gb` - Toggle git blame
 - `<leader>h*` - Hunk operations (stage, reset, preview, diff)
 - `]c` / `[c` - Navigate git hunks
