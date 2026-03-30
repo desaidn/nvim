@@ -30,15 +30,6 @@ local transparent_groups = {
   'CursorColumn',
   'ColorColumn',
   'Folded',
-}
-
-for _, group in ipairs(transparent_groups) do
-  local hl = vim.api.nvim_get_hl(0, { name = group })
-  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = 'NONE' }))
-end
-
--- Float backgrounds
-local float_groups = {
   'NormalFloat',
   'FloatBorder',
   'Pmenu',
@@ -46,11 +37,12 @@ local float_groups = {
   'TelescopeNormal',
   'TelescopeBorder',
   'WhichKeyFloat',
+  'TabLineFill',
 }
 
-for _, group in ipairs(float_groups) do
+for _, group in ipairs(transparent_groups) do
   local hl = vim.api.nvim_get_hl(0, { name = group })
-  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = colors.charcoal }))
+  vim.api.nvim_set_hl(0, group, vim.tbl_extend('force', hl, { bg = 'NONE' }))
 end
 
 -- Accent color
@@ -86,6 +78,10 @@ vim.api.nvim_set_hl(0, '@tag', { fg = colors.peach })
 vim.api.nvim_set_hl(0, '@tag.builtin', { fg = colors.peach })
 vim.api.nvim_set_hl(0, '@tag.delimiter', { fg = colors.grey })
 vim.api.nvim_set_hl(0, '@tag.attribute', { fg = colors.white, italic = true })
+
+-- Tabline
+vim.api.nvim_set_hl(0, 'TabLineSel', { fg = colors.white, bg = colors.charcoal, bold = true })
+vim.api.nvim_set_hl(0, 'TabLine', { fg = colors.grey, bg = 'NONE' })
 
 -- Mini statusline mode colors
 vim.api.nvim_set_hl(0, 'MiniStatuslineModeNormal', { fg = colors.midnight, bg = colors.blue, bold = true })
