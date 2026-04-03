@@ -69,6 +69,9 @@ vim.api.nvim_set_hl(0, 'DiffDelete', { bg = colors.dark_red })
 vim.api.nvim_set_hl(0, 'DiffText', { bg = colors.mid_green, fg = colors.white })
 vim.api.nvim_set_hl(0, 'DiffTextAdd', { bg = colors.light_green, fg = colors.white })
 
+-- Popup menu border (used when pumborder = 'rounded')
+vim.api.nvim_set_hl(0, 'PmenuBorder', { fg = colors.grey, bg = 'NONE' })
+
 -- Statusline background (matches float windows)
 vim.api.nvim_set_hl(0, 'StatusLine', { bg = colors.charcoal })
 vim.api.nvim_set_hl(0, 'StatusLineNC', { bg = colors.charcoal })
