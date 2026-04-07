@@ -47,7 +47,7 @@ local function toggle_lazygit()
     end,
   })
 
-  vim.keymap.set('t', '<leader>g', toggle_lazygit, { buffer = state.buf, desc = 'Toggle Lazygit' })
+  vim.keymap.set('t', '<leader>gg', toggle_lazygit, { buffer = state.buf, desc = 'Toggle Lazygit' })
   vim.cmd.startinsert()
 end
 
@@ -61,9 +61,7 @@ vim.api.nvim_create_autocmd('TabNewEntered', {
     if name == '' then return end
     local stale = vim.api.nvim_get_current_buf()
     vim.cmd.tabclose()
-    if vim.bo[stale].filetype == '' and vim.api.nvim_buf_is_valid(stale) then
-      vim.api.nvim_buf_delete(stale, { force = true })
-    end
+    if vim.bo[stale].filetype == '' and vim.api.nvim_buf_is_valid(stale) then vim.api.nvim_buf_delete(stale, { force = true }) end
     vim.api.nvim_win_hide(state.win)
     state.win = nil
     vim.g.lazygit_open = false
@@ -75,6 +73,6 @@ return {
   'lazygit',
   virtual = true,
   keys = {
-    { '<leader>g', toggle_lazygit, desc = 'Lazygit' },
+    { '<leader>gg', toggle_lazygit, desc = 'Lazygit' },
   },
 }
