@@ -203,6 +203,9 @@ vim.keymap.set('n', '<C-u>', '<C-u>zz', { desc = 'Half-page up and center cursor
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Toggle spell checking
+vim.keymap.set('n', '<leader>ts', function() vim.opt_local.spell = not vim.wo.spell end, { desc = '[T]oggle [S]pell check' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -265,6 +268,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function() vim.hl.on_yank() end,
+})
+
+-- Enable spell checking for prose filetypes
+vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('spell-check', { clear = true }),
+  pattern = { 'markdown', 'text' },
+  callback = function()
+    vim.opt_local.spell = true
+    vim.opt_local.spelllang = 'en_us'
+  end,
 })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
