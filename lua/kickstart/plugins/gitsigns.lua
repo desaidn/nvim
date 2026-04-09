@@ -57,8 +57,11 @@ return {
         map('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'git [R]eset buffer' })
         map('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'git [p]review hunk' })
         -- Toggles
-        map('n', '<leader>gb', gitsigns.toggle_current_line_blame, { desc = 'Toggle git [B]lame line' })
-        map('n', '<leader>tD', gitsigns.toggle_deleted, { desc = '[T]oggle git show [D]eleted' })
+        map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git [B]lame line' })
+        map('n', '<leader>td', function()
+          gitsigns.toggle_deleted()
+          gitsigns.toggle_word_diff()
+        end, { desc = '[T]oggle git inline [D]iff' })
       end,
     },
   },
