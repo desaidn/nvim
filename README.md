@@ -58,10 +58,10 @@ nvim
 
 ### Git
 
-- `<leader>gb` - Toggle git blame
-- `<leader>gd` - Open diffview
-- `<leader>gh` - File history
-- `<leader>h*` - Hunk operations (stage, reset, preview, diff)
+- `<leader>gg` - Toggle fullscreen lazygit
+- `<leader>tb` - Toggle git blame line
+- `<leader>td` - Toggle inline git diff
+- `<leader>h*` - Hunk operations (stage, reset, preview, undo)
 - `]c` / `[c` - Navigate git hunks
 
 ### File Explorer

@@ -4,34 +4,42 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Neovim Configuration Overview
 
-This is a Neovim configuration based on kickstart.nvim, providing a well-documented starting point for Neovim customization. The configuration follows a single-file approach with modular plugin loading.
+This is a Neovim configuration based on kickstart.nvim, providing a well-documented starting point for Neovim customization. `init.lua` handles core settings, basic keymaps, and the lazy.nvim plugin list; each plugin's configuration lives in its own module under `lua/kickstart/plugins/` or `lua/custom/plugins/`.
 
 ## Core Architecture
 
 ### File Structure
 
-- `init.lua` - Main configuration file containing all core settings, keymaps, and plugin configurations
-- `after/lsp/*.lua` - LSP server overrides that need substantial custom logic (only `lua_ls`)
+- `init.lua` - Core settings, basic keymaps, autocommands, and the lazy.nvim plugin list
+- `after/lsp/lua_ls.lua` - LSP server override for `lua_ls` (the only server that needs substantial custom logic)
 - `colors/custom.lua` - Custom colorscheme (transparent backgrounds, peach accents)
-- `lua/kickstart/plugins/` - Modular plugins (all currently enabled via require in init.lua):
+- `lua/kickstart/plugins/` - Modular plugin specs, each returning a lazy.nvim spec table:
+  - `lsp.lua` - nvim-lspconfig, Mason, fidget, `servers` table, and `vim.lsp.config()` overrides
+  - `blink-cmp.lua` - blink.cmp completion with LuaSnip
+  - `conform.lua` - conform.nvim formatter config and format-on-save
+  - `telescope.lua` - Telescope pickers and LSP reference/definition keymaps
+  - `treesitter.lua` - nvim-treesitter and treesitter-context
   - `gitsigns.lua` - Git signs, blame, and hunk navigation keymaps
-  - `autopairs.lua` - Auto-close brackets, quotes, etc.
-  - `debug.lua` - DAP debugger setup (Go, Python)
-  - `lint.lua` - nvim-lint with eslint_d, ruff
   - `neo-tree.lua` - File explorer (right-side, text-based icons)
-  - `indent_line.lua` - Indentation guides via indent-blankline.nvim
+  - `debug.lua` - DAP debugger setup (Go via delve, Python via debugpy/uv)
+  - `lint.lua` - nvim-lint with eslint_d and ruff
+  - `autopairs.lua` - Auto-close brackets, quotes, etc.
+  - `indent_line.lua` - Indentation guides via indent-blankline.nvim (**currently disabled** — `require` is commented out in `init.lua`)
 - `lua/kickstart/health.lua` - Health check for `:checkhealth`
-- `lua/custom/plugins/init.lua` - Entry point for custom plugin additions (currently empty)
+- `lua/custom/plugins/` - Auto-imported by lazy.nvim via `{ import = 'custom.plugins' }`; every `*.lua` file here is loaded as a plugin spec:
+  - `init.lua` - Returns `{}`; kept as a placeholder for ad-hoc additions
+  - `fff.lua` - fff.nvim fuzzy file/grep finder (owns `<leader>sf` and `<leader>sg`)
+  - `lazygit.lua` - Fullscreen floating lazygit (owns `<leader>gg`)
 - `lazy-lock.json` - Plugin version lockfile
 
 ### Plugin Management
 
 Uses lazy.nvim as the plugin manager. Core plugins include:
 
-- **LSP**: nvim-lspconfig with Mason for auto-installation, native Neovim 0.11+ LSP config (`lsp/*.lua`)
+- **LSP**: nvim-lspconfig with Mason for auto-installation. Native Neovim 0.11+ configuration lives in `lua/kickstart/plugins/lsp.lua`, with substantial overrides in `after/lsp/lua_ls.lua`
 - **Completion**: blink.cmp with LuaSnip for snippets
-- **Fuzzy Finding**: Telescope with fzf-native
-- **Git Integration**: gitsigns (in-editor signs, blame, hunks; diffs via lazygit)
+- **Fuzzy Finding**: fff.nvim for files and live grep (`<leader>sf`, `<leader>sg`); Telescope with fzf-native for help, keymaps, diagnostics, buffers, LSP symbols, and word-under-cursor grep
+- **Git Integration**: gitsigns (in-editor signs, blame, hunks); lazygit (diffs, history, staging UI)
 - **Treesitter**: Syntax highlighting, code parsing, and context (nvim-treesitter-context)
 - **Formatting**: conform.nvim for auto-formatting
 - **Linting**: nvim-lint with eslint_d, ruff
@@ -41,15 +49,16 @@ Uses lazy.nvim as the plugin manager. Core plugins include:
 ### Key Bindings Structure
 
 - Leader key: `<Space>`
-- Search operations: `<leader>s*` (files, grep, help, etc.)
-- Toggle options: `<leader>t*` (inlay hints, deleted hunks)
-- Git operations: `<leader>g*` (blame, diff, history), `<leader>h*` (hunks)
+- Search operations: `<leader>s*` (files, grep, help, keymaps, diagnostics, etc.)
+- Toggle options: `<leader>t*` — `th` inlay hints, `tb` git blame line, `td` inline git diff, `ts` spell check
+- Git operations: `<leader>gg` (lazygit), `<leader>h*` (hunk stage/reset/preview), `]c`/`[c` (hunk navigation)
 - LSP operations: `gr*` prefix (Neovim 0.11 defaults for rename/code action, Telescope overrides for references/definitions)
 - Format: `<leader>f` (format buffer)
 - Explorer: `<leader>e` (neo-tree toggle)
 - Undo tree: `<leader>u` (toggle undotree)
 - Path copy: `<leader>p*` (copy absolute/relative file paths)
 - Debug: `<leader>b` (breakpoint), `F1-F3` (stepping), `F5` (continue), `F7` (DAP UI)
+- Diagnostic quickfix: `<leader>q`
 
 ## Development Workflows
 
@@ -66,14 +75,14 @@ Configured with multiple language servers (TypeScript, Python, Rust, Go, Lua, JS
 
 1. **nvim-lspconfig defaults** — cmd, filetypes, root_dir, commands (no files needed)
 2. **`after/lsp/*.lua`** — servers with substantial custom logic (only `lua_ls`)
-3. **`vim.lsp.config()` in init.lua** — small overrides (settings, init_options)
+3. **`vim.lsp.config()` in `lua/kickstart/plugins/lsp.lua`** — small overrides (settings, init_options)
 
 To add a new language server:
 
-1. Add entry to `servers` table in init.lua (`server_name = 'mason-package-name'`)
-2. Add `vim.lsp.config()` override in init.lua if custom settings are needed
+1. Add entry to the `servers` table in `lua/kickstart/plugins/lsp.lua` (`server_name = 'mason-package-name'`)
+2. Add a `vim.lsp.config()` override in the same file if custom settings are needed
 3. Only create `after/lsp/<server_name>.lua` if the server needs substantial logic (e.g., `on_init`)
-4. Add formatters to `formatters_by_ft` in conform.nvim config if needed
+4. Add formatters to `formatters_by_ft` in `lua/kickstart/plugins/conform.lua` if needed
 5. Run `:Mason` to install required tools
 
 ### Terminal Integration
@@ -88,8 +97,9 @@ Minimal terminal integration (tmux handles primary terminal functionality):
 Focused on in-editor git context (diffs and file history are handled by lazygit):
 
 - **gitsigns**: In-editor git signs, blame, and hunk navigation
-- `<leader>gg` - Open lazygit in a new tab (custom plugin: `lua/custom/plugins/lazygit.lua`)
-- `<leader>gb` - Toggle git blame line
+- `<leader>gg` - Toggle fullscreen floating lazygit (custom plugin: `lua/custom/plugins/lazygit.lua`)
+- `<leader>tb` - Toggle git blame line
+- `<leader>td` - Toggle inline git diff (deleted lines + word diff)
 - `<leader>h*` - Hunk operations (stage, reset, undo, preview)
 - `]c` / `[c` - Navigate between git hunks
 
@@ -106,12 +116,12 @@ Neo-tree file explorer is enabled with right-side positioning and minimal stylin
 
 ### Customization Points
 
-- `lua/custom/plugins/init.lua` - Add new plugins without modifying core files
+- `lua/custom/plugins/` - Drop a new `*.lua` file here and it will be auto-imported by lazy.nvim
 - `after/lsp/*.lua` - Add LSP server configs with substantial custom logic
-- `vim.lsp.config()` in init.lua for small LSP server overrides
-- Modify `servers` table in init.lua for enabling LSP servers
-- Adjust `formatters_by_ft` in conform.nvim config for language-specific formatting
-- Adjust `linters_by_ft` in lint.lua for language-specific linting
+- `vim.lsp.config()` in `lua/kickstart/plugins/lsp.lua` for small LSP server overrides
+- Modify the `servers` table in `lua/kickstart/plugins/lsp.lua` to enable or remove LSP servers
+- Adjust `formatters_by_ft` in `lua/kickstart/plugins/conform.lua` for language-specific formatting
+- Adjust `linters_by_ft` in `lua/kickstart/plugins/lint.lua` for language-specific linting
 
 ### Important Settings
 
@@ -138,7 +148,7 @@ This configuration prioritizes:
 - **Text editing focus**: Core LSP, search, and navigation functionality
 - **Lua API over vim.cmd**: Always use `vim.api.*` and `vim.fn.*` instead of `vim.cmd('string')` — we're using neovim for a reason
 - **Minimal external dependencies**: Let tmux handle terminal/window management
-- **Readability and documentation**: Single init.lua with modular LSP configs and plugin files
+- **Readability and documentation**: Lean init.lua plus one file per plugin under `lua/kickstart/plugins/` and `lua/custom/plugins/`
 - **Integration with ecosystem**: Works seamlessly with tmux-based workflows
 
 ## Coding Guidelines
